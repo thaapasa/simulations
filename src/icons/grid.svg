@@ -4,8 +4,8 @@
     <title>grid</title>
     <desc>Created with Sketch.</desc>
     <g id="grid" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <rect fill="#282854" x="0" y="0" width="320" height="320"></rect>
-        <g id="Vertical-lines" transform="translate(16.000000, -21.000000)" stroke="#1B1A23" stroke-linecap="square">
+        <rect fill="#2286C3" x="0" y="0" width="320" height="320"></rect>
+        <g id="Vertical-lines" transform="translate(16.000000, -21.000000)" stroke="#333333" stroke-linecap="square">
             <path d="M288.5,0 L288.5,362" id="Line-2-Copy-10"></path>
             <path d="M256.5,0 L256.5,362" id="Line-2-Copy-9"></path>
             <path d="M224.5,0 L224.5,362" id="Line-2-Copy-8"></path>
@@ -17,7 +17,7 @@
             <path d="M32.5,0 L32.5,362" id="Line-2-Copy"></path>
             <path d="M0.5,0 L0.5,362" id="Line-2"></path>
         </g>
-        <g id="Horizontal-lines" transform="translate(-21.000000, 16.000000)" stroke="#1B1A23" stroke-linecap="square">
+        <g id="Horizontal-lines" transform="translate(-21.000000, 16.000000)" stroke="#333333" stroke-linecap="square">
             <path d="M0.5,288.5 L360.5,288.5" id="Line-3-Copy-11"></path>
             <path d="M0.5,256.5 L360.5,256.5" id="Line-3-Copy-10"></path>
             <path d="M0.5,224.5 L360.5,224.5" id="Line-3-Copy-9"></path>
