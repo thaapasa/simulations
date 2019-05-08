@@ -13,5 +13,8 @@ const App: React.FC = () => {
 export default App;
 
 const Container = styled.div`
-  text-align: center;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
 `;
