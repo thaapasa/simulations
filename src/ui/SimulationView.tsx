@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import blackTile from '../icons/black-tile.png';
+import blackTile from '../icons/black-tile.svg';
 import grid from '../icons/grid.svg';
-import whiteTile from '../icons/white-tile.png';
+import whiteTile from '../icons/white-tile.svg';
 import { Colors } from './Colors';
 
 const tiles = {
