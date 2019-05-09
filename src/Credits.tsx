@@ -42,6 +42,11 @@ const CreditsView: React.FC = () => (
       creator="Smashicons"
       creatorUrl="https://www.flaticon.com/authors/smashicons"
     />
+    <FlatIconCredit
+      title="Ant icon"
+      creator="Freepik"
+      creatorUrl="https://www.freepik.com/"
+    />
   </>
 );
 
