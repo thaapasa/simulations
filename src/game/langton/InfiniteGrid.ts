@@ -1,3 +1,5 @@
+import { Position } from '../common/Position';
+
 export class InfiniteGrid {
   readonly defaultValue: boolean;
   private grid: Record<number, Record<number, boolean>> = {};
@@ -25,5 +27,17 @@ export class InfiniteGrid {
     }
     column[y] = !column[y];
     return column[y];
+  }
+
+  render(from: Position, to: Position): boolean[][] {
+    const result: boolean[][] = [];
+    for (let x = from.x; x <= to.x; ++x) {
+      const col: boolean[] = [];
+      for (let y = from.y; y <= to.y; ++y) {
+        col.push(this.get(x, y));
+      }
+      result.push(col);
+    }
+    return result;
   }
 }

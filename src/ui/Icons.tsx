@@ -11,10 +11,16 @@ const IconImage = styled.img`
   height: 32px;
 `;
 
-export const PlayIcon: React.FC = () => <IconImage src={play} />;
-export const PauseIcon: React.FC = () => <IconImage src={pause} />;
-export const FastForwardIcon: React.FC = () => <IconImage src={fastforward} />;
-export const SkipIcon: React.FC = () => <IconImage src={skip} />;
+function makeIcon(src: string) {
+  return (props: { onClick?: () => void; className?: string }) => (
+    <IconImage src={src} onClick={props.onClick} className={props.className} />
+  );
+}
+
+export const PlayIcon = makeIcon(play);
+export const PauseIcon = makeIcon(pause);
+export const FastForwardIcon = makeIcon(fastforward);
+export const SkipIcon = makeIcon(skip);
 
 export const IconBar = styled.div`
   height: 48px;

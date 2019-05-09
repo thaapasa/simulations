@@ -17,6 +17,8 @@ export function getPositionTo(from: Position, direction: Direction): Position {
       return { x: from.x, y: from.y - 1 };
     case Direction.WEST:
       return { x: from.x - 1, y: from.y };
+    default:
+      return from;
   }
 }
 
