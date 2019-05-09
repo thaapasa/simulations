@@ -36,8 +36,20 @@ const Tile = ({
   />
 );
 
-const Ant = ({ pos, offset }: { pos: Position; offset: Position }) => (
-  <TileImage style={positionStyle(pos, offset)} className="ant" src={ant} />
+const Ant = ({
+  pos,
+  offset,
+  direction,
+}: {
+  pos: Position;
+  offset: Position;
+  direction: Direction;
+}) => (
+  <TileImage
+    style={positionStyle(pos, offset)}
+    className={`ant direction-${direction}`}
+    src={ant}
+  />
 );
 
 const GridRow = ({
@@ -73,7 +85,11 @@ class SimulationView extends React.Component<{
         {this.props.grid.map((col, x) => (
           <GridRow key={x} col={col} offset={this.props.gridOffset} x={x} />
         ))}
-        <Ant pos={this.props.antPosition} offset={this.props.gridOffset} />
+        <Ant
+          pos={this.props.antPosition}
+          offset={this.props.gridOffset}
+          direction={this.props.antDirection}
+        />
       </Container>
     );
   }
@@ -100,4 +116,17 @@ const TileImage = styled.img`
   &.ant {
     z-index: 1;
   }
+  &.direction-${Direction.NORTH} {
+    transform: rotate(0deg);
+  }
+  &.direction-${Direction.EAST} {
+    transform: rotate(90deg);
+  }
+  &.direction-${Direction.SOUTH} {
+    transform: rotate(180deg);
+  }
+  &.direction-${Direction.WEST} {
+    transform: rotate(270deg);
+  }
+  transition: 0.25s ease-in-out;
 `;

@@ -4,6 +4,7 @@ import { Direction } from '../game/common/Direction';
 import { Position } from '../game/common/Position';
 import { Ant } from '../game/langton/Ant';
 import { InfiniteGrid } from '../game/langton/InfiniteGrid';
+import { timeout } from '../util/Util';
 import { FastForwardIcon, IconBar, PlayIcon, SkipIcon } from './Icons';
 import SimulationView from './SimulationView';
 
@@ -21,6 +22,7 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   };
   private grid = new InfiniteGrid(false);
   private ant = new Ant();
+  private stepping = false;
 
   componentDidMount() {
     this.updateGrid();
@@ -39,6 +41,11 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
     );
   }
 
+  animateStep = async () => {
+    this.updateGrid();
+    await timeout(180);
+  };
+
   updateGrid = () => {
     const grid = this.grid.render({ x: -14, y: -8 }, { x: 15, y: 8 });
     this.setState({
@@ -48,9 +55,14 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
     });
   };
 
-  step = () => {
-    this.ant.step(this.grid);
-    this.updateGrid();
+  step = async () => {
+    if (this.stepping) {
+      return;
+    }
+    this.stepping = true;
+    await this.ant.stepAnimated(this.grid, this.animateStep);
+    await this.animateStep();
+    this.stepping = false;
   };
 }
 

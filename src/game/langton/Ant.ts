@@ -13,4 +13,13 @@ export class Ant {
       grid.flip(this.position.x, this.position.y)
     );
   }
+
+  async stepAnimated(grid: InfiniteGrid, update: () => Promise<void>) {
+    this.position = getPositionTo(this.position, this.direction);
+    await update();
+    this.direction = getDirectionTo(
+      this.direction,
+      grid.flip(this.position.x, this.position.y)
+    );
+  }
 }
