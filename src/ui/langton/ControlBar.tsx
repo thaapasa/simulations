@@ -17,7 +17,7 @@ export default class ControlBar extends React.Component<{
     const { model } = this.props;
     return (
       <IconBar>
-        {model.mode === 'play' ? (
+        {model.visibleMode === 'play' ? (
           <PauseIcon onClick={model.pause} />
         ) : (
           <PlayIcon onClick={model.play} />

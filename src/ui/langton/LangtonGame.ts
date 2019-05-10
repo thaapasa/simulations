@@ -1,10 +1,10 @@
-import { computed, observable } from 'mobx';
+import { action, computed, observable, runInAction } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { timeout } from '../../util/Util';
 
-type GameMode = 'pause' | 'play' | 'fast';
+type GameMode = 'pause' | 'step' | 'play' | 'fast';
 
 export class LangtonModel {
   @observable
@@ -17,13 +17,21 @@ export class LangtonModel {
   @observable
   mode: GameMode = 'pause';
 
+  @observable
+  private pauseRequested = false;
   private grid = new InfiniteGrid(false);
-
-  private stepping = false;
 
   @computed
   get gridOffset(): Position {
     return this.range.from;
+  }
+
+  @computed
+  get visibleMode(): GameMode {
+    if (this.pauseRequested) {
+      return 'pause';
+    }
+    return this.mode;
   }
 
   animateStep = async () => {
@@ -39,7 +47,9 @@ export class LangtonModel {
     if (this.mode !== 'pause') {
       return;
     }
+    this.mode = 'step';
     await this.doStep();
+    runInAction(this.setPause);
   };
 
   play = async () => {
@@ -47,22 +57,27 @@ export class LangtonModel {
       return;
     }
     this.mode = 'play';
-    while (this.mode === 'play') {
+    while (!this.pauseRequested) {
       await this.doStep();
     }
+    runInAction(this.setPause);
   };
 
   pause = () => {
+    if (this.mode === 'pause' || this.mode === 'step') {
+      return;
+    }
+    this.pauseRequested = true;
+  };
+
+  @action
+  private setPause = () => {
     this.mode = 'pause';
+    this.pauseRequested = false;
   };
 
   private doStep = async () => {
-    if (this.stepping) {
-      return;
-    }
-    this.stepping = true;
     await this.ant.stepAnimated(this.grid, this.animateStep);
     await this.animateStep();
-    this.stepping = false;
   };
 }
