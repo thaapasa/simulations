@@ -15,10 +15,14 @@ const tiles = {
 
 const tileSize = 32;
 
-function positionStyle(pos: Position, offset: Position) {
+function positionStyle(pos: Position, offset: Position, rotation?: number) {
   const x = pos.x - offset.x;
   const y = pos.y - offset.y;
-  return { left: `${x * tileSize - 1}px`, bottom: `${y * tileSize - 1}px` };
+  return {
+    left: `${x * tileSize - 1}px`,
+    bottom: `${y * tileSize - 1}px`,
+    transform: rotation ? `rotate(${rotation}deg` : undefined,
+  };
 }
 
 const Tile = ({
@@ -39,15 +43,15 @@ const Tile = ({
 const Ant = ({
   pos,
   offset,
-  direction,
+  rotation,
 }: {
   pos: Position;
   offset: Position;
-  direction: Direction;
+  rotation: number;
 }) => (
   <TileImage
-    style={positionStyle(pos, offset)}
-    className={`ant direction-${direction}`}
+    style={positionStyle(pos, offset, rotation)}
+    className={'ant'}
     src={ant}
   />
 );
@@ -74,7 +78,7 @@ const GridRow = ({
 );
 
 class SimulationView extends React.Component<{
-  antDirection: Direction;
+  antRotation: number;
   antPosition: Position;
   gridOffset: Position;
   grid: boolean[][];
@@ -88,7 +92,7 @@ class SimulationView extends React.Component<{
         <Ant
           pos={this.props.antPosition}
           offset={this.props.gridOffset}
-          direction={this.props.antDirection}
+          rotation={this.props.antRotation}
         />
       </Container>
     );

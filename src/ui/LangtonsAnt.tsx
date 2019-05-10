@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Direction } from '../game/common/Direction';
 import { Position } from '../game/common/Position';
 import { Ant } from '../game/langton/Ant';
 import { InfiniteGrid } from '../game/langton/InfiniteGrid';
@@ -11,14 +10,14 @@ import SimulationView from './SimulationView';
 interface GameState {
   grid: boolean[][];
   antPosition: Position;
-  antDirection: Direction;
+  antRotation: number;
 }
 
 export default class LangtonsAnt extends React.Component<{}, GameState> {
   state: GameState = {
     grid: [],
     antPosition: { x: 0, y: 0 },
-    antDirection: Direction.NORTH,
+    antRotation: 0,
   };
   private grid = new InfiniteGrid(false);
   private ant = new Ant();
@@ -52,7 +51,7 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
     const grid = this.grid.render(this.range.from, this.range.to);
     this.setState({
       antPosition: { ...this.ant.position },
-      antDirection: this.ant.direction,
+      antRotation: this.ant.rotation,
       grid,
     });
   };
