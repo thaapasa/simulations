@@ -1,25 +1,20 @@
+import { observable } from 'mobx';
+import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Position } from '../game/common/Position';
 import { Ant } from '../game/langton/Ant';
 import { InfiniteGrid } from '../game/langton/InfiniteGrid';
 import { timeout } from '../util/Util';
 import { FastForwardIcon, IconBar, PlayIcon, SkipIcon } from './Icons';
 import SimulationView from './SimulationView';
 
-interface GameState {
-  grid: boolean[][];
-  antPosition: Position;
-  antRotation: number;
-}
-
-export default class LangtonsAnt extends React.Component<{}, GameState> {
-  state: GameState = {
-    grid: [],
-    antPosition: { x: 0, y: 0 },
-    antRotation: 0,
-  };
+@observer
+export default class LangtonsAnt extends React.Component<{}> {
   private grid = new InfiniteGrid(false);
+
+  @observable
+  private renderedGrid: boolean[][] = [];
+  @observable
   private ant = new Ant();
   private stepping = false;
 
@@ -32,7 +27,11 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   render() {
     return (
       <Container>
-        <SimulationView {...this.state} gridOffset={this.range.from} />
+        <SimulationView
+          gridOffset={this.range.from}
+          grid={this.renderedGrid}
+          ant={this.ant}
+        />
         <IconBar>
           <PlayIcon />
           <SkipIcon onClick={this.step} />
@@ -48,12 +47,7 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   };
 
   updateGrid = () => {
-    const grid = this.grid.render(this.range.from, this.range.to);
-    this.setState({
-      antPosition: { ...this.ant.position },
-      antRotation: this.ant.rotation,
-      grid,
-    });
+    this.renderedGrid = this.grid.render(this.range.from, this.range.to);
   };
 
   step = async () => {

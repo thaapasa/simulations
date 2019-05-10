@@ -1,7 +1,9 @@
+import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { Direction } from '../game/common/Direction';
 import { Position } from '../game/common/Position';
+import { Ant } from '../game/langton/Ant';
 import ant from '../icons/ant.svg';
 import blackTile from '../icons/black-tile.svg';
 import grid from '../icons/grid.svg';
@@ -40,7 +42,7 @@ const Tile = ({
   />
 );
 
-const Ant = ({
+const AntTile = ({
   pos,
   offset,
   rotation,
@@ -77,9 +79,9 @@ const GridRow = ({
   </>
 );
 
+@observer
 class SimulationView extends React.Component<{
-  antRotation: number;
-  antPosition: Position;
+  ant: Ant;
   gridOffset: Position;
   grid: boolean[][];
 }> {
@@ -89,10 +91,10 @@ class SimulationView extends React.Component<{
         {this.props.grid.map((col, x) => (
           <GridRow key={x} col={col} offset={this.props.gridOffset} x={x} />
         ))}
-        <Ant
-          pos={this.props.antPosition}
+        <AntTile
+          pos={this.props.ant.position}
           offset={this.props.gridOffset}
-          rotation={this.props.antRotation}
+          rotation={this.props.ant.rotation}
         />
       </Container>
     );
