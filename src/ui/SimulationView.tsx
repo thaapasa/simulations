@@ -18,7 +18,7 @@ const tileSize = 32;
 function positionStyle(pos: Position, offset: Position) {
   const x = pos.x - offset.x;
   const y = pos.y - offset.y;
-  return { left: `${x * tileSize - 1}px`, top: `${y * tileSize - 1}px` };
+  return { left: `${x * tileSize - 1}px`, bottom: `${y * tileSize - 1}px` };
 }
 
 const Tile = ({
@@ -99,10 +99,10 @@ export default SimulationView;
 
 const Container = styled.div`
   position: relative;
-  margin: 32 px;
+  margin: 32px;
   padding: 0;
-  border: 2 px solid ${Colors.black};
-  border-radius: 8 px;
+  border: 2px solid ${Colors.black};
+  border-radius: 8px;
   background-color: ${Colors.darkBlue};
   background-image: url(${grid});
   background-position: 15px 15px;

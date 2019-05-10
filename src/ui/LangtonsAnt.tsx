@@ -24,6 +24,8 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   private ant = new Ant();
   private stepping = false;
 
+  private range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
+
   componentDidMount() {
     this.updateGrid();
   }
@@ -31,7 +33,7 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   render() {
     return (
       <Container>
-        <SimulationView {...this.state} gridOffset={{ x: -14, y: -8 }} />
+        <SimulationView {...this.state} gridOffset={this.range.from} />
         <IconBar>
           <PlayIcon />
           <SkipIcon onClick={this.step} />
@@ -47,7 +49,7 @@ export default class LangtonsAnt extends React.Component<{}, GameState> {
   };
 
   updateGrid = () => {
-    const grid = this.grid.render({ x: -14, y: -8 }, { x: 15, y: 8 });
+    const grid = this.grid.render(this.range.from, this.range.to);
     this.setState({
       antPosition: { ...this.ant.position },
       antDirection: this.ant.direction,
