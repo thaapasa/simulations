@@ -101,8 +101,21 @@ export class LangtonModel {
     if (!this.requestedMode) {
       return;
     }
-    this.mode = this.requestedMode;
+    this.mode = 'pause';
+    const req = this.requestedMode;
     this.requestedMode = undefined;
+    switch (req) {
+      case 'step':
+        setImmediate(this.step);
+        this.step();
+        break;
+      case 'play':
+        setImmediate(this.play);
+        break;
+      case 'fast':
+        setImmediate(this.fastForward);
+        break;
+    }
   };
 
   private doStep = async () => {
