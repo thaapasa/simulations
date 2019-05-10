@@ -15,10 +15,10 @@ export class LangtonModel {
   range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
 
   @observable
-  mode: GameMode = 'pause';
+  private requestedMode: GameMode | undefined;
 
   @observable
-  private pauseRequested = false;
+  private mode: GameMode = 'pause';
   private grid = new InfiniteGrid(false);
 
   @computed
@@ -28,10 +28,12 @@ export class LangtonModel {
 
   @computed
   get visibleMode(): GameMode {
-    if (this.pauseRequested) {
-      return 'pause';
-    }
-    return this.mode;
+    return this.requestedMode || this.mode;
+  }
+
+  @computed
+  get animate(): boolean {
+    return this.mode !== 'fast';
   }
 
   animateStep = async () => {
@@ -39,6 +41,7 @@ export class LangtonModel {
     await timeout(180);
   };
 
+  @action
   updateGrid = () => {
     this.visibleGrid = this.grid.render(this.range.from, this.range.to);
   };
@@ -48,32 +51,58 @@ export class LangtonModel {
       return;
     }
     this.mode = 'step';
+    this.requestedMode = 'pause';
     await this.doStep();
-    runInAction(this.setPause);
+    runInAction(this.setRequestedMode);
   };
 
   play = async () => {
+    if (this.mode === 'fast') {
+      this.requestedMode = 'play';
+      return;
+    }
     if (this.mode !== 'pause') {
       return;
     }
     this.mode = 'play';
-    while (!this.pauseRequested) {
+    while (this.mode === 'play' && !this.requestedMode) {
       await this.doStep();
     }
-    runInAction(this.setPause);
+    runInAction(this.setRequestedMode);
   };
 
+  fastForward = async () => {
+    if (this.mode === 'play') {
+      this.requestedMode = 'fast';
+      return;
+    }
+    if (this.mode !== 'pause') {
+      return;
+    }
+    this.mode = 'fast';
+    while (this.mode === 'fast' && !this.requestedMode) {
+      this.ant.step(this.grid);
+      this.updateGrid();
+      await timeout(20);
+    }
+    runInAction(this.setRequestedMode);
+  };
+
+  @action
   pause = () => {
     if (this.mode === 'pause' || this.mode === 'step') {
       return;
     }
-    this.pauseRequested = true;
+    this.requestedMode = 'pause';
   };
 
   @action
-  private setPause = () => {
-    this.mode = 'pause';
-    this.pauseRequested = false;
+  private setRequestedMode = () => {
+    if (!this.requestedMode) {
+      return;
+    }
+    this.mode = this.requestedMode;
+    this.requestedMode = undefined;
   };
 
   private doStep = async () => {

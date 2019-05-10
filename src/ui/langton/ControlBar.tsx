@@ -23,7 +23,11 @@ export default class ControlBar extends React.Component<{
           <PlayIcon onClick={model.play} />
         )}
         <SkipIcon onClick={model.step} />
-        <FastForwardIcon />
+        {model.visibleMode === 'fast' ? (
+          <PauseIcon onClick={model.pause} />
+        ) : (
+          <FastForwardIcon onClick={model.fastForward} />
+        )}
       </IconBar>
     );
   }

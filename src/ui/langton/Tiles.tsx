@@ -32,10 +32,11 @@ export const AntTile = (p: {
   pos: Position;
   offset: Position;
   rotation: number;
+  animated: boolean;
 }) => (
   <TileImage
     style={positionStyle(p.pos, p.offset, p.rotation)}
-    className={'ant'}
+    className={p.animated ? 'animated ant' : 'ant'}
     src={ant}
   />
 );
@@ -45,5 +46,7 @@ const TileImage = styled.img`
   &.ant {
     z-index: 1;
   }
-  transition: 0.25s ease-in-out;
+  &.animated {
+    transition: 0.25s ease-in-out;
+  }
 `;

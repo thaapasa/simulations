@@ -48,6 +48,7 @@ class SimulationView extends React.Component<{
           pos={model.ant.position}
           offset={model.gridOffset}
           rotation={model.ant.rotation}
+          animated={model.animate}
         />
       </Container>
     );
