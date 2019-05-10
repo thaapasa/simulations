@@ -2,9 +2,9 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { Position } from '../game/common/Position';
-import { Ant } from '../game/langton/Ant';
 import grid from '../icons/grid.svg';
 import { Colors } from './Colors';
+import { LangtonModel } from './langton/LangtonGame';
 import { AntTile, GridTile, tileSize } from './langton/Tiles';
 
 const tiles = {
@@ -35,20 +35,19 @@ const GridRow = ({
 
 @observer
 class SimulationView extends React.Component<{
-  ant: Ant;
-  gridOffset: Position;
-  grid: boolean[][];
+  model: LangtonModel;
 }> {
   render() {
+    const { model } = this.props;
     return (
       <Container>
-        {this.props.grid.map((col, x) => (
-          <GridRow key={x} col={col} offset={this.props.gridOffset} x={x} />
+        {model.visibleGrid.map((col, x) => (
+          <GridRow key={x} col={col} offset={model.gridOffset} x={x} />
         ))}
         <AntTile
-          pos={this.props.ant.position}
-          offset={this.props.gridOffset}
-          rotation={this.props.ant.rotation}
+          pos={model.ant.position}
+          offset={model.gridOffset}
+          rotation={model.ant.rotation}
         />
       </Container>
     );
