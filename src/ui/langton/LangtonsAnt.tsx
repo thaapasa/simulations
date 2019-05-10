@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { FastForwardIcon, IconBar, PlayIcon, SkipIcon } from './Icons';
-import { LangtonModel } from './langton/LangtonGame';
-import SimulationView from './SimulationView';
+import SimulationView from '../SimulationView';
+import ControlBar from './ControlBar';
+import { LangtonModel } from './LangtonGame';
 
 @observer
 export default class LangtonsAnt extends React.Component<{}> {
@@ -17,11 +17,7 @@ export default class LangtonsAnt extends React.Component<{}> {
     return (
       <Container>
         <SimulationView model={this.model} />
-        <IconBar>
-          <PlayIcon />
-          <SkipIcon onClick={this.model.step} />
-          <FastForwardIcon />
-        </IconBar>
+        <ControlBar model={this.model} />
       </Container>
     );
   }
