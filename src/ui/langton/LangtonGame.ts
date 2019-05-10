@@ -2,7 +2,7 @@ import { action, computed, observable, runInAction } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
-import { timeout } from '../../util/Util';
+import { nextTick, timeout } from '../../util/Util';
 
 type GameMode = 'pause' | 'step' | 'play' | 'fast';
 
@@ -13,6 +13,9 @@ export class LangtonModel {
   ant = new Ant();
   @observable
   range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
+
+  @observable
+  frame = 0;
 
   @observable
   private requestedMode: GameMode | undefined;
@@ -52,7 +55,7 @@ export class LangtonModel {
     }
     this.mode = 'step';
     this.requestedMode = 'pause';
-    await this.doStep();
+    await this.doStepAnimated();
     runInAction(this.setRequestedMode);
   };
 
@@ -66,7 +69,7 @@ export class LangtonModel {
     }
     this.mode = 'play';
     while (this.mode === 'play' && !this.requestedMode) {
-      await this.doStep();
+      await this.doStepAnimated();
     }
     runInAction(this.setRequestedMode);
   };
@@ -81,9 +84,8 @@ export class LangtonModel {
     }
     this.mode = 'fast';
     while (this.mode === 'fast' && !this.requestedMode) {
-      this.ant.step(this.grid);
-      this.updateGrid();
-      await timeout(20);
+      this.doStepNoAnimation();
+      await nextTick();
     }
     runInAction(this.setRequestedMode);
   };
@@ -118,8 +120,15 @@ export class LangtonModel {
     }
   };
 
-  private doStep = async () => {
+  private doStepAnimated = async () => {
     await this.ant.stepAnimated(this.grid, this.animateStep);
     await this.animateStep();
+    this.frame++;
+  };
+
+  private doStepNoAnimation = () => {
+    this.ant.step(this.grid);
+    this.updateGrid();
+    this.frame++;
   };
 }
