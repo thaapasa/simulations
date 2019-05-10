@@ -4,13 +4,11 @@ import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { nextTick, timeout } from '../../util/Util';
 
-type GameMode = 'pause' | 'step' | 'play' | 'fast';
+type GameMode = 'pause' | 'step' | 'play' | 'fast' | 'skip';
 
 export class LangtonModel {
   @observable
   visibleGrid: boolean[][] = [];
-  @observable
-  ant = new Ant();
   @observable
   range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
 
@@ -18,11 +16,21 @@ export class LangtonModel {
   frame = 0;
 
   @observable
+  antPosition: Position = { x: 0, y: 0 };
+  @observable
+  antRotation: number = 0;
+
+  @observable
   private requestedMode: GameMode | undefined;
 
   @observable
   private mode: GameMode = 'pause';
   private grid = new InfiniteGrid(false);
+  private ant = new Ant();
+
+  constructor() {
+    this.publish();
+  }
 
   @computed
   get gridOffset(): Position {
@@ -36,17 +44,29 @@ export class LangtonModel {
 
   @computed
   get animate(): boolean {
-    return this.mode !== 'fast';
+    return this.mode !== 'fast' && this.mode !== 'skip';
   }
 
   animateStep = async () => {
-    this.updateGrid();
+    this.publish();
     await timeout(180);
   };
 
-  @action
-  updateGrid = () => {
-    this.visibleGrid = this.grid.render(this.range.from, this.range.to);
+  skip = async (frames: number) => {
+    if (this.mode !== 'pause') {
+      return;
+    }
+    this.mode = 'skip';
+    this.requestedMode = 'pause';
+    await nextTick();
+
+    for (let i = 0; i < frames; ++i) {
+      this.ant.step(this.grid);
+    }
+    this.frame += frames;
+    this.publish();
+
+    runInAction(this.setRequestedMode);
   };
 
   step = async () => {
@@ -120,6 +140,13 @@ export class LangtonModel {
     }
   };
 
+  @action
+  private publish = () => {
+    this.visibleGrid = this.grid.render(this.range.from, this.range.to);
+    this.antPosition = this.ant.position;
+    this.antRotation = this.ant.rotation;
+  };
+
   private doStepAnimated = async () => {
     await this.ant.stepAnimated(this.grid, this.animateStep);
     await this.animateStep();
@@ -128,7 +155,7 @@ export class LangtonModel {
 
   private doStepNoAnimation = () => {
     this.ant.step(this.grid);
-    this.updateGrid();
+    this.publish();
     this.frame++;
   };
 }

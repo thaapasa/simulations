@@ -45,9 +45,9 @@ class SimulationView extends React.Component<{
           <GridRow key={x} col={col} offset={model.gridOffset} x={x} />
         ))}
         <AntTile
-          pos={model.ant.position}
+          pos={model.antPosition}
           offset={model.gridOffset}
-          rotation={model.ant.rotation}
+          rotation={model.antRotation}
           animated={model.animate}
         />
       </Container>

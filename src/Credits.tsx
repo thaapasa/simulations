@@ -38,7 +38,7 @@ const CreditsView: React.FC = () => (
       creatorUrl="https://www.freepik.com/"
     />
     <FlatIconCredit
-      title="App icons (play, pause, fast forward, skip)"
+      title="App icons (play, pause, fast forward, skip, plus)"
       creator="Smashicons"
       creatorUrl="https://www.flaticon.com/authors/smashicons"
     />

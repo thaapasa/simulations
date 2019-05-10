@@ -10,10 +10,6 @@ import { LangtonModel } from './LangtonGame';
 export default class LangtonsAnt extends React.Component<{}> {
   private model = new LangtonModel();
 
-  componentDidMount() {
-    this.model.updateGrid();
-  }
-
   render() {
     return (
       <Container>

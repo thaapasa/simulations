@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import fastforward from '../icons/fast-forward.svg';
 import pause from '../icons/pause.svg';
 import play from '../icons/play.svg';
+import plus10 from '../icons/plus-10.svg';
+import plus100 from '../icons/plus-100.svg';
+import plus1000 from '../icons/plus-1000.svg';
 import skip from '../icons/skip.svg';
 import { Colors } from './Colors';
 
@@ -21,6 +24,9 @@ export const PlayIcon = makeIcon(play);
 export const PauseIcon = makeIcon(pause);
 export const FastForwardIcon = makeIcon(fastforward);
 export const SkipIcon = makeIcon(skip);
+export const Plus10Icon = makeIcon(plus10);
+export const Plus100Icon = makeIcon(plus100);
+export const Plus1000Icon = makeIcon(plus1000);
 
 export const IconBar = styled.div`
   height: 48px;
