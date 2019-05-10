@@ -12,8 +12,12 @@ export class Ant {
   position: Position = { x: 0, y: 0 };
   direction: Direction = Direction.NORTH;
   rotation: number = DirectionRotation[Direction.NORTH];
+  private stepping = false;
 
   step(grid: InfiniteGrid) {
+    if (this.stepping) {
+      return;
+    }
     this.position = getPositionTo(this.position, this.direction);
     this.direction = getDirectionTo(
       this.direction,
@@ -22,6 +26,10 @@ export class Ant {
   }
 
   async stepAnimated(grid: InfiniteGrid, update: () => Promise<void>) {
+    if (this.stepping) {
+      return;
+    }
+    this.stepping = true;
     this.position = getPositionTo(this.position, this.direction);
     await update();
     this.direction = getDirectionTo(
@@ -32,5 +40,6 @@ export class Ant {
       this.rotation,
       DirectionRotation[this.direction]
     );
+    this.stepping = false;
   }
 }
