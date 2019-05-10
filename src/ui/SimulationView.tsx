@@ -1,62 +1,16 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Direction } from '../game/common/Direction';
 import { Position } from '../game/common/Position';
 import { Ant } from '../game/langton/Ant';
-import ant from '../icons/ant.svg';
-import blackTile from '../icons/black-tile.svg';
 import grid from '../icons/grid.svg';
-import whiteTile from '../icons/white-tile.svg';
 import { Colors } from './Colors';
+import { AntTile, GridTile, tileSize } from './langton/Tiles';
 
 const tiles = {
   width: 30,
   height: 15,
 };
-
-const tileSize = 32;
-
-function positionStyle(pos: Position, offset: Position, rotation?: number) {
-  const x = pos.x - offset.x;
-  const y = pos.y - offset.y;
-  return {
-    left: `${x * tileSize - 1}px`,
-    bottom: `${y * tileSize - 1}px`,
-    transform: rotation ? `rotate(${rotation}deg` : undefined,
-  };
-}
-
-const Tile = ({
-  pos,
-  offset,
-  white,
-}: {
-  pos: Position;
-  offset: Position;
-  white: boolean;
-}) => (
-  <TileImage
-    style={positionStyle(pos, offset)}
-    src={white ? whiteTile : blackTile}
-  />
-);
-
-const AntTile = ({
-  pos,
-  offset,
-  rotation,
-}: {
-  pos: Position;
-  offset: Position;
-  rotation: number;
-}) => (
-  <TileImage
-    style={positionStyle(pos, offset, rotation)}
-    className={'ant'}
-    src={ant}
-  />
-);
 
 const GridRow = ({
   col,
@@ -69,7 +23,7 @@ const GridRow = ({
 }) => (
   <>
     {col.map((white, y) => (
-      <Tile
+      <GridTile
         key={`${x},${y}`}
         pos={{ x: x + offset.x, y: y + offset.y }}
         offset={offset}
@@ -115,24 +69,4 @@ const Container = styled.div`
   height: ${tiles.height * tileSize}px;
   width: ${tiles.width * tileSize}px;
   overflow: hidden;
-`;
-
-const TileImage = styled.img`
-  position: absolute;
-  &.ant {
-    z-index: 1;
-  }
-  &.direction-${Direction.NORTH} {
-    transform: rotate(0deg);
-  }
-  &.direction-${Direction.EAST} {
-    transform: rotate(90deg);
-  }
-  &.direction-${Direction.SOUTH} {
-    transform: rotate(180deg);
-  }
-  &.direction-${Direction.WEST} {
-    transform: rotate(270deg);
-  }
-  transition: 0.25s ease-in-out;
 `;
