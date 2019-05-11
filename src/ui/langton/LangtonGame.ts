@@ -1,5 +1,6 @@
 import { action, computed, observable, runInAction } from 'mobx';
 import { Position } from '../../game/common/Position';
+import { Size } from '../../game/common/Size';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { nextTick, timeout } from '../../util/Util';
@@ -11,6 +12,8 @@ export class LangtonModel {
   visibleGrid: boolean[][] = [];
   @observable
   range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
+  @observable
+  drawAreaSize: Size = { width: 1, height: 1 };
 
   @observable
   frame = 0;
@@ -137,6 +140,7 @@ export class LangtonModel {
       case 'fast':
         setImmediate(this.fastForward);
         break;
+      default:
     }
   };
 
