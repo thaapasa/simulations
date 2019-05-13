@@ -9,8 +9,6 @@ type GameMode = 'pause' | 'step' | 'play' | 'fast' | 'skip';
 
 export class LangtonModel {
   @observable
-  visibleGrid: boolean[][] = [];
-  @observable
   range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
   @observable
   drawAreaSize: Size = { width: 1, height: 1 };
@@ -22,13 +20,13 @@ export class LangtonModel {
   antPosition: Position = { x: 0, y: 0 };
   @observable
   antRotation: number = 0;
+  grid = new InfiniteGrid(false);
 
   @observable
   private requestedMode: GameMode | undefined;
 
   @observable
   private mode: GameMode = 'pause';
-  private grid = new InfiniteGrid(false);
   private ant = new Ant();
 
   constructor() {
@@ -146,7 +144,6 @@ export class LangtonModel {
 
   @action
   private publish = () => {
-    this.visibleGrid = this.grid.render(this.range.from, this.range.to);
     this.antPosition = this.ant.position;
     this.antRotation = this.ant.rotation;
   };

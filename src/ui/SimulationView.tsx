@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Position } from '../game/common/Position';
 import grid from '../icons/grid.svg';
+import { allNumbers } from '../util/Util';
 import { Colors } from './Colors';
 import { LangtonModel } from './langton/LangtonGame';
 import { AntTile, GridTile, tileSize } from './langton/Tiles';
@@ -12,22 +12,14 @@ const tiles = {
   height: 15,
 };
 
-const GridRow = ({
-  col,
-  offset,
-  x,
-}: {
-  col: boolean[];
-  offset: Position;
-  x: number;
-}) => (
+const GridRow = ({ model, x }: { model: LangtonModel; x: number }) => (
   <>
-    {col.map((white, y) => (
+    {allNumbers(model.range.from.y, model.range.to.y).map(y => (
       <GridTile
         key={`${x},${y}`}
-        pos={{ x: x + offset.x, y: y + offset.y }}
-        offset={offset}
-        white={white}
+        pos={{ x, y }}
+        offset={model.gridOffset}
+        white={model.grid.get(x, y)}
       />
     ))}
   </>
@@ -41,9 +33,7 @@ class SimulationView extends React.Component<{
     const { model } = this.props;
     return (
       <Container>
-        {model.visibleGrid.map((col, x) => (
-          <GridRow key={x} col={col} offset={model.gridOffset} x={x} />
-        ))}
+        {this.renderGrid(model.frame)}
         <AntTile
           pos={model.antPosition}
           offset={model.gridOffset}
@@ -53,6 +43,13 @@ class SimulationView extends React.Component<{
       </Container>
     );
   }
+
+  renderGrid = (_: number) => {
+    const { model } = this.props;
+    return allNumbers(model.range.from.x, model.range.to.x).map(x => (
+      <GridRow key={x} x={x} model={model} />
+    ));
+  };
 }
 
 export default SimulationView;
