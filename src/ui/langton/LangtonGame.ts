@@ -1,11 +1,12 @@
-import { action, computed, observable, runInAction } from 'mobx';
+import { action, computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
-import { nextTick, timeout } from '../../util/Util';
+import { timeout } from '../../util/Util';
+import { GameMode, ModeHandler } from './ModeHandler';
 
-type GameMode = 'pause' | 'step' | 'play' | 'fast' | 'skip';
+const halfStepDelay = 180;
 
 export class LangtonModel {
   @observable
@@ -14,23 +15,27 @@ export class LangtonModel {
   drawAreaSize: Size = { width: 1, height: 1 };
 
   @observable
-  frame = 0;
-
-  @observable
   antPosition: Position = { x: 0, y: 0 };
   @observable
   antRotation: number = 0;
+
   grid = new InfiniteGrid(false);
+  control = new ModeHandler(this);
 
-  @observable
-  private requestedMode: GameMode | undefined;
-
-  @observable
-  private mode: GameMode = 'pause';
   private ant = new Ant();
 
   constructor() {
-    this.publish();
+    this.render();
+  }
+
+  @computed
+  get mode(): GameMode {
+    return this.control.visibleMode;
+  }
+
+  @computed
+  get frame(): number {
+    return this.control.frame;
   }
 
   @computed
@@ -39,124 +44,28 @@ export class LangtonModel {
   }
 
   @computed
-  get visibleMode(): GameMode {
-    return this.requestedMode || this.mode;
-  }
-
-  @computed
   get animate(): boolean {
-    return this.mode !== 'fast' && this.mode !== 'skip';
+    return this.control.mode !== 'fast' && this.control.mode !== 'skip';
   }
 
-  animateStep = async () => {
-    this.publish();
-    await timeout(180);
+  stepNoAnimation = () => {
+    this.ant.step(this.grid);
   };
 
-  skip = async (frames: number) => {
-    if (this.mode !== 'pause') {
-      return;
-    }
-    this.mode = 'skip';
-    this.requestedMode = 'pause';
-    await nextTick();
-
-    for (let i = 0; i < frames; ++i) {
-      this.ant.step(this.grid);
-    }
-    this.frame += frames;
-    this.publish();
-
-    runInAction(this.setRequestedMode);
-  };
-
-  step = async () => {
-    if (this.mode !== 'pause') {
-      return;
-    }
-    this.mode = 'step';
-    this.requestedMode = 'pause';
-    await this.doStepAnimated();
-    runInAction(this.setRequestedMode);
-  };
-
-  play = async () => {
-    if (this.mode === 'fast') {
-      this.requestedMode = 'play';
-      return;
-    }
-    if (this.mode !== 'pause') {
-      return;
-    }
-    this.mode = 'play';
-    while (this.mode === 'play' && !this.requestedMode) {
-      await this.doStepAnimated();
-    }
-    runInAction(this.setRequestedMode);
-  };
-
-  fastForward = async () => {
-    if (this.mode === 'play') {
-      this.requestedMode = 'fast';
-      return;
-    }
-    if (this.mode !== 'pause') {
-      return;
-    }
-    this.mode = 'fast';
-    while (this.mode === 'fast' && !this.requestedMode) {
-      this.doStepNoAnimation();
-      await nextTick();
-    }
-    runInAction(this.setRequestedMode);
+  stepAnimated = async () => {
+    await this.ant.stepAnimated(this.grid, this.animateStep);
+    this.render();
+    await timeout(halfStepDelay);
   };
 
   @action
-  pause = () => {
-    if (this.mode === 'pause' || this.mode === 'step') {
-      return;
-    }
-    this.requestedMode = 'pause';
-  };
-
-  @action
-  private setRequestedMode = () => {
-    if (!this.requestedMode) {
-      return;
-    }
-    this.mode = 'pause';
-    const req = this.requestedMode;
-    this.requestedMode = undefined;
-    switch (req) {
-      case 'step':
-        setImmediate(this.step);
-        this.step();
-        break;
-      case 'play':
-        setImmediate(this.play);
-        break;
-      case 'fast':
-        setImmediate(this.fastForward);
-        break;
-      default:
-    }
-  };
-
-  @action
-  private publish = () => {
+  render = () => {
     this.antPosition = this.ant.position;
     this.antRotation = this.ant.rotation;
   };
 
-  private doStepAnimated = async () => {
-    await this.ant.stepAnimated(this.grid, this.animateStep);
-    await this.animateStep();
-    this.frame++;
-  };
-
-  private doStepNoAnimation = () => {
-    this.ant.step(this.grid);
-    this.publish();
-    this.frame++;
+  animateStep = async () => {
+    this.render();
+    await timeout(halfStepDelay);
   };
 }

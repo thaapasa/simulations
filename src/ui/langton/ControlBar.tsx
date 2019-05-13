@@ -20,16 +20,16 @@ export default class ControlBar extends React.Component<{
     const { model } = this.props;
     return (
       <IconBar>
-        {model.visibleMode === 'play' ? (
-          <PauseIcon onClick={model.pause} />
+        {model.mode === 'play' ? (
+          <PauseIcon onClick={model.control.pause} />
         ) : (
-          <PlayIcon onClick={model.play} />
+          <PlayIcon onClick={model.control.play} />
         )}
-        <SkipIcon onClick={model.step} />
-        {model.visibleMode === 'fast' ? (
-          <PauseIcon onClick={model.pause} />
+        <SkipIcon onClick={model.control.step} />
+        {model.mode === 'fast' ? (
+          <PauseIcon onClick={model.control.pause} />
         ) : (
-          <FastForwardIcon onClick={model.fastForward} />
+          <FastForwardIcon onClick={model.control.fastForward} />
         )}
         <Plus10Icon onClick={this.skip10} />
         <Plus100Icon onClick={this.skip100} />
@@ -37,7 +37,7 @@ export default class ControlBar extends React.Component<{
       </IconBar>
     );
   }
-  skip10 = () => this.props.model.skip(10);
-  skip100 = () => this.props.model.skip(100);
-  skip1000 = () => this.props.model.skip(1000);
+  skip10 = () => this.props.model.control.skip(10);
+  skip100 = () => this.props.model.control.skip(100);
+  skip1000 = () => this.props.model.control.skip(1000);
 }
