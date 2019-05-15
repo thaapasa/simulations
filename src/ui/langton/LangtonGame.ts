@@ -5,14 +5,21 @@ import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { timeout } from '../../util/Util';
 import { GameMode, ModeHandler } from './ModeHandler';
+import { tileSize } from './Tiles';
 
 const halfStepDelay = 180;
 
+export interface Range {
+  from: Position;
+  to: Position;
+}
+
 export class LangtonModel {
   @observable
-  range = { from: { x: -14, y: -7 }, to: { x: 15, y: 7 } };
-  @observable
   drawAreaSize: Size = { width: 1, height: 1 };
+
+  @observable
+  offset: Position = { x: -1, y: -11 };
 
   @observable
   antPosition: Position = { x: 0, y: 0 };
@@ -26,6 +33,15 @@ export class LangtonModel {
 
   constructor() {
     this.render();
+  }
+
+  @computed
+  get range(): Range {
+    const xtiles = Math.ceil(this.drawAreaSize.width / tileSize) + 1;
+    const ytiles = Math.ceil(this.drawAreaSize.height / tileSize) + 1;
+    const from = { x: Math.round(-xtiles / 2), y: Math.round(-ytiles / 2) };
+    const to = { x: from.x + xtiles, y: from.y + ytiles };
+    return { from, to };
   }
 
   @computed

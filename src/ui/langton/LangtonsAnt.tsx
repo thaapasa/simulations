@@ -25,16 +25,19 @@ export default class LangtonsAnt extends React.Component<{}> {
 
 const Container = styled.div`
   display: flex;
-  width: 100%;
+  width: 80%;
+  max-width: 1200px;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  padding: 32px;
 `;
 
 const BottomBar = styled.div`
   display: flex;
   width: 100%;
+  margin-top: 32px;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 `;

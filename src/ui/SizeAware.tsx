@@ -1,4 +1,4 @@
-import { action, observable, toJS } from 'mobx';
+import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Size } from '../game/common/Size';
@@ -8,7 +8,9 @@ export function SizeAware<T extends { size: Size }>(
   WrappedComponent: React.ComponentType<T>
 ) {
   @observer
-  class Wrapper extends React.Component<Omit<T, 'size'>> {
+  class Wrapper extends React.Component<
+    Omit<T, 'size'> & { className?: string }
+  > {
     private ref = React.createRef<HTMLDivElement>();
 
     @observable
@@ -26,7 +28,7 @@ export function SizeAware<T extends { size: Size }>(
 
     render() {
       return (
-        <div ref={this.ref} style={{ width: '100%', height: '100%' }}>
+        <div ref={this.ref} className={this.props.className}>
           {this.size ? (
             <WrappedComponent {...this.props as any} size={this.size} />
           ) : null}
