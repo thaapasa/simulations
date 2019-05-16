@@ -5,7 +5,6 @@ import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { noop, timeout } from '../../util/Util';
 import { GameMode, ModeHandler } from './ModeHandler';
-import { tileSize } from './Tiles';
 
 const halfStepDelay = 180;
 
@@ -16,13 +15,17 @@ export interface Range {
 
 export class LangtonModel {
   @observable
-  drawAreaSize: Size = { width: 1, height: 1 };
+  tileSize: number = 32;
 
   @observable
-  offset: Position = { x: -1, y: -11 };
+  renderSize: Size = { width: 1, height: 1 };
+
+  @observable
+  centerPoint: Position = { x: 0, y: 0 };
 
   @observable
   antPosition: Position = { x: 0, y: 0 };
+
   @observable
   antRotation: number = 0;
 
@@ -38,12 +41,34 @@ export class LangtonModel {
   }
 
   @computed
-  get range(): Range {
-    const xtiles = Math.ceil(this.drawAreaSize.width / tileSize) + 1;
-    const ytiles = Math.ceil(this.drawAreaSize.height / tileSize) + 1;
-    const from = { x: Math.round(-xtiles / 2), y: Math.round(-ytiles / 2) };
-    const to = { x: from.x + xtiles, y: from.y + ytiles };
+  get renderArea(): Range {
+    const center = this.centerPoint;
+    const size = this.renderSize;
+    const from = {
+      x: Math.round(center.x - size.width / 2),
+      y: Math.round(center.y - size.height / 2),
+    };
+    const to = {
+      x: from.x + size.width,
+      y: from.y + size.height,
+    };
     return { from, to };
+  }
+
+  @computed
+  get tileRange(): Range {
+    const area = this.renderArea;
+    const size = this.tileSize;
+    return {
+      from: {
+        x: Math.floor(area.from.x / size),
+        y: Math.floor(area.from.y / size),
+      },
+      to: {
+        x: Math.floor(area.to.x / size) - 1,
+        y: Math.floor(area.to.y / size) - 1,
+      },
+    };
   }
 
   @computed
@@ -58,12 +83,15 @@ export class LangtonModel {
 
   @computed
   get gridOffset(): Position {
-    return this.range.from;
+    const area = this.renderArea;
+    const size = this.tileSize;
+    return { x: area.from.x % size, y: area.from.y % size };
   }
 
   @computed
   get animate(): boolean {
-    return this.control.mode !== 'fast' && this.control.mode !== 'skip';
+    // return this.control.mode !== 'fast' && this.control.mode !== 'skip';
+    return false;
   }
 
   stepNoAnimation = () => {
