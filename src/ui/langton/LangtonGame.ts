@@ -65,8 +65,8 @@ export class LangtonModel {
         y: Math.floor(area.from.y / size),
       },
       to: {
-        x: Math.floor(area.to.x / size) - 1,
-        y: Math.floor(area.to.y / size) - 1,
+        x: Math.ceil(area.to.x / size),
+        y: Math.ceil(area.to.y / size),
       },
     };
   }

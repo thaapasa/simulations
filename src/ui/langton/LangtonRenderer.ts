@@ -38,17 +38,31 @@ export class LangtonRenderer {
         const sprite = white
           ? this.whiteTiles[whiteIdx++]
           : this.blackTiles[blackIdx++];
-        sprite.x = x * this.model.tileSize;
-        sprite.y = y * this.model.tileSize;
+        this.showAtPosition(sprite, x, y);
       }
     }
-    for (; whiteIdx < this.whiteTiles.length; ++whiteIdx) {
-      this.whiteTiles[whiteIdx].x = -tileSize;
+    while (whiteIdx < this.whiteTiles.length) {
+      this.whiteTiles[whiteIdx++].visible = false;
     }
-    for (; blackIdx < this.blackTiles.length; ++blackIdx) {
-      this.blackTiles[blackIdx].x = -tileSize;
+    while (blackIdx < this.blackTiles.length) {
+      this.blackTiles[blackIdx++].visible = false;
     }
+    this.showAtPosition(
+      this.ant,
+      this.model.antPosition.x,
+      this.model.antPosition.y
+    );
   };
+
+  showAtPosition(sprite: PIXI.Sprite, x: number, y: number) {
+    sprite.visible = true;
+    sprite.x =
+      (x - this.model.tileRange.from.x) * this.model.tileSize +
+      this.model.gridOffset.x;
+    sprite.y =
+      (y - this.model.tileRange.from.y) * this.model.tileSize +
+      this.model.gridOffset.y;
+  }
 
   private createApp() {
     if (this.app) {
@@ -64,21 +78,36 @@ export class LangtonRenderer {
       backgroundColor: HexColors.darkBlue,
       resolution,
     });
-    this.createSprites();
+    this.createSprites(app);
     return app;
   }
 
-  private createSprites() {
+  private createSprites(app: PIXI.Application) {
     const size = this.model.renderSize;
-    const tiles = (size.height / tileSize + 2) * (size.width / tileSize + 2);
+    const tiles =
+      Math.ceil(size.height / tileSize + 2) *
+      Math.ceil(size.width / tileSize + 2);
+    for (const im of this.whiteTiles) {
+      im.destroy();
+    }
+    for (const im of this.blackTiles) {
+      im.destroy();
+    }
+    this.whiteTiles = [];
+    this.blackTiles = [];
     for (let i = 0; i < tiles; ++i) {
       const whiteSprite = PIXI.Sprite.from(whiteTile);
-      whiteSprite.x = -tileSize;
+      whiteSprite.visible = false;
+      whiteSprite.x = -tileSize - 10;
       this.whiteTiles.push(whiteSprite);
+      app.stage.addChild(whiteSprite);
 
       const blackSprite = PIXI.Sprite.from(blackTile);
-      blackSprite.x = -tileSize;
+      blackSprite.visible = false;
+      blackSprite.x = -tileSize - 10;
       this.blackTiles.push(blackSprite);
+      app.stage.addChild(blackSprite);
     }
+    app.stage.addChild(this.ant);
   }
 }
