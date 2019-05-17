@@ -47,7 +47,7 @@ class PixiSimulationView extends React.Component<{
     }
 
     const { model } = this.props;
-    const size = model.drawAreaSize;
+    const size = model.renderSize;
     const resolution = 1;
     console.log('Creating PIXI of size', toJS(size), 'resolution', resolution);
     const app = new PIXI.Application({
@@ -66,7 +66,7 @@ class PixiSimulationView extends React.Component<{
     }
     const model = this.props.model;
     console.log('Rendering frame', model.frame);
-    const renderArea = model.drawAreaSize;
+    const renderArea = model.renderSize;
     const antPosition = model.antPosition;
     antSprite.x = renderArea.width / 2 + antPosition.x * tileSize;
     antSprite.y = renderArea.height / 2 - antPosition.y * tileSize;
@@ -74,9 +74,10 @@ class PixiSimulationView extends React.Component<{
   };
 
   private updateSize = () => {
-    if (this.props.size.height > 0 && this.props.size.width > 0) {
-      if (!sizeEquals(this.props.model.drawAreaSize, this.props.size)) {
-        this.props.model.drawAreaSize = this.props.size;
+    const newSize = this.props.size;
+    if (newSize.height > 0 && newSize.width > 0) {
+      if (!sizeEquals(this.props.model.renderSize, newSize)) {
+        this.props.model.renderSize = newSize;
         this.createPixi();
       }
     }
