@@ -3,7 +3,7 @@ import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
-import { timeout } from '../../util/Util';
+import { noop, timeout } from '../../util/Util';
 import { GameMode, ModeHandler } from './ModeHandler';
 import { tileSize } from './Tiles';
 
@@ -28,6 +28,8 @@ export class LangtonModel {
 
   grid = new InfiniteGrid(false);
   control = new ModeHandler(this);
+
+  renderCallback: () => void = noop;
 
   private ant = new Ant();
 
@@ -78,6 +80,7 @@ export class LangtonModel {
   render = () => {
     this.antPosition = this.ant.position;
     this.antRotation = this.ant.rotation;
+    this.renderCallback();
   };
 
   animateStep = async () => {
