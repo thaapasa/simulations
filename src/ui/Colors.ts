@@ -9,3 +9,7 @@ export const Colors = {
   black: '#333333',
   white: '#F7F7F7',
 };
+
+export const HexColors = {
+  darkBlue: 0x2286c3,
+};
