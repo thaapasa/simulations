@@ -17,7 +17,7 @@ class PixiSimulationView extends React.Component<{
 
   componentDidMount() {
     this.updateSize();
-    this.renderGraphics();
+    this.renderer.render();
     this.props.model.renderCallback = this.renderer.render;
   }
 
@@ -32,10 +32,6 @@ class PixiSimulationView extends React.Component<{
       </Container>
     );
   }
-
-  renderGraphics = () => {
-    this.renderer.render();
-  };
 
   private updateSize = () => {
     this.renderer.updateSize(this.props.size);

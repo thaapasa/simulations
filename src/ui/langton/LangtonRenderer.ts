@@ -20,6 +20,7 @@ export class LangtonRenderer {
 
   constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement>) {
     this.model = model;
+    this.ant.anchor.set(0.5);
     this.app = this.createApp();
     this.domAttachPoint = attachRef;
   }
@@ -67,11 +68,17 @@ export class LangtonRenderer {
     this.showAtPosition(
       this.ant,
       this.model.antPosition.x,
-      this.model.antPosition.y
+      this.model.antPosition.y,
+      (this.model.antRotation * Math.PI) / 180
     );
   };
 
-  private showAtPosition(sprite: PIXI.Sprite, x: number, y: number) {
+  private showAtPosition(
+    sprite: PIXI.Sprite,
+    x: number,
+    y: number,
+    rotation?: number
+  ) {
     sprite.visible = true;
     sprite.x =
       (x - this.model.tileRange.from.x) * this.model.tileSize +
@@ -80,6 +87,9 @@ export class LangtonRenderer {
       this.model.renderSize.height -
       ((y - this.model.tileRange.from.y) * this.model.tileSize +
         this.model.gridOffset.y);
+    if (rotation !== undefined) {
+      sprite.rotation = rotation;
+    }
   }
 
   private createApp() {
@@ -115,12 +125,14 @@ export class LangtonRenderer {
     this.blackTiles = [];
     for (let i = 0; i < tiles; ++i) {
       const whiteSprite = PIXI.Sprite.from(whiteTile);
+      whiteSprite.anchor.set(0.5);
       whiteSprite.visible = false;
       whiteSprite.x = -tileSize - 10;
       this.whiteTiles.push(whiteSprite);
       app.stage.addChild(whiteSprite);
 
       const blackSprite = PIXI.Sprite.from(blackTile);
+      blackSprite.anchor.set(0.5);
       blackSprite.visible = false;
       blackSprite.x = -tileSize - 10;
       this.blackTiles.push(blackSprite);
