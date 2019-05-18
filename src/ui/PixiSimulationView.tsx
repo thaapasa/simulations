@@ -1,16 +1,11 @@
-import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
-import * as PIXI from 'pixi.js';
 import React from 'react';
 import styled from 'styled-components';
-import { Size, sizeEquals } from '../game/common/Size';
-import ant from '../icons/ant.svg';
-import { Colors, HexColors } from './Colors';
+import { Size } from '../game/common/Size';
+import { Colors } from './Colors';
 import { LangtonModel } from './langton/LangtonGame';
-import { tileSize } from './langton/Tiles';
+import { LangtonRenderer } from './langton/LangtonRenderer';
 import { SizeAware } from './SizeAware';
-
-const antSprite = PIXI.Sprite.from(ant);
 
 @observer
 class PixiSimulationView extends React.Component<{
@@ -18,16 +13,22 @@ class PixiSimulationView extends React.Component<{
   model: LangtonModel;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
-  private app: PIXI.Application | undefined;
+  private renderer = new LangtonRenderer(this.props.model);
+  private initialized = false;
 
   componentDidMount() {
     this.updateSize();
     this.renderGraphics();
-    this.props.model.renderCallback = this.renderGraphics;
+    this.props.model.renderCallback = this.renderer.render;
   }
 
   componentDidUpdate() {
     this.updateSize();
+    if (this.containerRef.current && !this.initialized) {
+      console.log('Appending');
+      this.containerRef.current.appendChild(this.renderer.app.view);
+      this.initialized = true;
+    }
   }
 
   render() {
@@ -38,48 +39,12 @@ class PixiSimulationView extends React.Component<{
     );
   }
 
-  createPixi() {
-    if (!this.containerRef.current) {
-      return;
-    }
-    if (this.app) {
-      this.app.destroy();
-    }
-
-    const { model } = this.props;
-    const size = model.drawAreaSize;
-    const resolution = 1;
-    console.log('Creating PIXI of size', toJS(size), 'resolution', resolution);
-    const app = new PIXI.Application({
-      width: size.width,
-      height: size.height,
-      backgroundColor: HexColors.darkBlue,
-      resolution,
-    });
-    this.containerRef.current.appendChild(app.view);
-    this.app = app;
-  }
-
   renderGraphics = () => {
-    if (!this.app) {
-      return;
-    }
-    const model = this.props.model;
-    console.log('Rendering frame', model.frame);
-    const renderArea = model.drawAreaSize;
-    const antPosition = model.antPosition;
-    antSprite.x = renderArea.width / 2 + antPosition.x * tileSize;
-    antSprite.y = renderArea.height / 2 - antPosition.y * tileSize;
-    this.app.stage.addChild(antSprite);
+    this.renderer.render();
   };
 
   private updateSize = () => {
-    if (this.props.size.height > 0 && this.props.size.width > 0) {
-      if (!sizeEquals(this.props.model.drawAreaSize, this.props.size)) {
-        this.props.model.drawAreaSize = this.props.size;
-        this.createPixi();
-      }
-    }
+    this.renderer.updateSize(this.props.size);
   };
 }
 

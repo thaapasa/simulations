@@ -11,12 +11,11 @@ import { SizeAware } from './SizeAware';
 
 const GridRow = ({ model, x }: { model: LangtonModel; x: number }) => (
   <>
-    {allNumbers(model.range.from.y, model.range.to.y).map(y => (
+    {allNumbers(model.tileRange.from.y, model.tileRange.to.y).map(y => (
       <GridTile
         key={`${x},${y}`}
         pos={{ x, y }}
-        gridOffset={model.gridOffset}
-        offset={model.offset}
+        offset={model.tileRange.from}
         white={model.grid.get(x, y)}
       />
     ))}
@@ -37,13 +36,13 @@ class SimulationView extends React.Component<{
 
   render() {
     const { model } = this.props;
+    const gridOffset = model.gridOffset;
     return (
-      <Container>
+      <Container style={{ left: gridOffset.x, bottom: gridOffset.y }}>
         {this.renderGrid(model.frame)}
         <AntTile
           pos={model.antPosition}
-          gridOffset={model.gridOffset}
-          offset={model.offset}
+          offset={model.tileRange.from}
           rotation={model.antRotation}
           animated={model.animate}
         />
@@ -53,14 +52,14 @@ class SimulationView extends React.Component<{
 
   renderGrid = (_: number) => {
     const { model } = this.props;
-    return allNumbers(model.range.from.x, model.range.to.x).map(x => (
+    return allNumbers(model.tileRange.from.x, model.tileRange.to.x).map(x => (
       <GridRow key={x} x={x} model={model} />
     ));
   };
 
   private updateSize = () => {
     if (this.props.size.height > 0 && this.props.size.width > 0) {
-      this.props.model.drawAreaSize = this.props.size;
+      this.props.model.renderSize = this.props.size;
     }
   };
 }
@@ -75,10 +74,6 @@ const StyledSimulationView = styled(SizedSimulationView)`
   padding: 0;
   border: 2px solid ${Colors.black};
   border-radius: 8px;
-  background-color: ${Colors.darkBlue};
-  background-image: url(${grid});
-  background-position: 15px 15px;
-  overflow: hidden;
 `;
 
 export default StyledSimulationView;
@@ -87,4 +82,7 @@ const Container = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  background-color: ${Colors.darkBlue};
+  background-image: url(${grid});
+  background-position: 15px 15px;
 `;

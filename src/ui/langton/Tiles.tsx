@@ -7,42 +7,35 @@ import whiteTile from '../../icons/white-tile.svg';
 
 export const tileSize = 32;
 
-function positionStyle(
-  pos: Position,
-  gridOffset: Position,
-  offset: Position,
-  rotation?: number
-) {
-  const x = pos.x - gridOffset.x;
-  const y = pos.y - gridOffset.y;
+function positionStyle(pos: Position, offset: Position, rotation?: number) {
+  const x = pos.x - offset.x;
+  const y = pos.y - offset.y;
   return {
-    left: `${x * tileSize + offset.x}px`,
-    bottom: `${y * tileSize + offset.y}px`,
+    left: `${x * tileSize}px`,
+    bottom: `${y * tileSize}px`,
     transform: rotation ? `rotate(${rotation}deg` : undefined,
   };
 }
 
 export const GridTile = (p: {
   pos: Position;
-  gridOffset: Position;
   offset: Position;
   white: boolean;
 }) => (
   <TileImage
-    style={positionStyle(p.pos, p.gridOffset, p.offset)}
+    style={positionStyle(p.pos, p.offset)}
     src={p.white ? whiteTile : blackTile}
   />
 );
 
 export const AntTile = (p: {
   pos: Position;
-  gridOffset: Position;
   offset: Position;
   rotation: number;
   animated: boolean;
 }) => (
   <TileImage
-    style={positionStyle(p.pos, p.gridOffset, p.offset, p.rotation)}
+    style={positionStyle(p.pos, p.offset, p.rotation)}
     className={p.animated ? 'animated ant' : 'ant'}
     src={ant}
   />
