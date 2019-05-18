@@ -60,8 +60,9 @@ export class LangtonRenderer {
       (x - this.model.tileRange.from.x) * this.model.tileSize +
       this.model.gridOffset.x;
     sprite.y =
-      (y - this.model.tileRange.from.y) * this.model.tileSize +
-      this.model.gridOffset.y;
+      this.model.renderSize.height -
+      ((y - this.model.tileRange.from.y) * this.model.tileSize +
+        this.model.gridOffset.y);
   }
 
   private createApp() {

@@ -61,12 +61,12 @@ export class LangtonModel {
     const size = this.tileSize;
     return {
       from: {
-        x: Math.floor(area.from.x / size),
-        y: Math.floor(area.from.y / size),
+        x: stepAwayZero(area.from.x, size),
+        y: stepAwayZero(area.from.y, size),
       },
       to: {
-        x: Math.ceil(area.to.x / size),
-        y: Math.ceil(area.to.y / size),
+        x: stepAwayZero(area.to.x, size),
+        y: stepAwayZero(area.to.y, size),
       },
     };
   }
@@ -85,7 +85,10 @@ export class LangtonModel {
   get gridOffset(): Position {
     const area = this.renderArea;
     const size = this.tileSize;
-    return { x: area.from.x % size, y: area.from.y % size };
+    return {
+      x: modAwayZero(area.from.x, size),
+      y: modAwayZero(area.from.y, size),
+    };
   }
 
   @computed
@@ -115,4 +118,28 @@ export class LangtonModel {
     this.render();
     await timeout(halfStepDelay);
   };
+}
+
+function modAwayZero(num: number, base: number) {
+  if (num >= 0) {
+    const mod = num % base;
+    if (mod === 0) {
+      return 0;
+    }
+    return base - mod;
+  } else {
+    const mod = -num % base;
+    if (mod === 0) {
+      return 0;
+    }
+    return -(base - mod);
+  }
+}
+
+function stepAwayZero(num: number, base: number) {
+  if (num >= 0) {
+    return Math.ceil(num / base);
+  } else {
+    return -Math.ceil(-num / base);
+  }
 }

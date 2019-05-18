@@ -14,7 +14,7 @@ export default class LangtonsAnt extends React.Component<{}> {
   private ctr = 0;
 
   componentDidMount() {
-    setInterval(this.tick, 30);
+    setInterval(this.tick, 25);
   }
 
   tick = () => {
@@ -32,15 +32,20 @@ export default class LangtonsAnt extends React.Component<{}> {
         <SimulationView model={this.model} />
         <BottomBar>
           <FrameBar model={this.model} />
-          <DebugData>
-            {dump('Center', this.model.centerPoint)}
-            {dump('Render area', this.model.renderArea)}
-            {dump('Tile range', this.model.tileRange)}
-            {dump('Grid offset', this.model.gridOffset)}
-          </DebugData>
           <ControlBar model={this.model} />
         </BottomBar>
       </Container>
+    );
+  }
+
+  renderDebugData() {
+    return (
+      <DebugData>
+        {dump('Center', this.model.centerPoint)}
+        {dump('Render area', this.model.renderArea)}
+        {dump('Tile range', this.model.tileRange)}
+        {dump('Grid offset', this.model.gridOffset)}
+      </DebugData>
     );
   }
 }
