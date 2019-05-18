@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Size } from '../game/common/Size';
-import { Colors } from './Colors';
-import { LangtonModel } from './langton/LangtonGame';
-import { LangtonRenderer } from './langton/LangtonRenderer';
-import { SizeAware } from './SizeAware';
+import { Size } from '../../game/common/Size';
+import { Colors } from '../Colors';
+import { SizeAware } from '../SizeAware';
+import { LangtonModel } from './LangtonGame';
+import { LangtonRenderer } from './LangtonRenderer';
 
 @observer
 class PixiSimulationView extends React.Component<{

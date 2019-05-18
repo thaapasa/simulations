@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Size } from '../game/common/Size';
+import { Size } from '../../game/common/Size';
+import { allNumbers } from '../../util/Util';
+import { Colors } from '../Colors';
 import grid from '../icons/grid.svg';
-import { allNumbers } from '../util/Util';
-import { Colors } from './Colors';
-import { LangtonModel } from './langton/LangtonGame';
-import { AntTile, GridTile } from './langton/Tiles';
-import { SizeAware } from './SizeAware';
+import { SizeAware } from '../SizeAware';
+import { LangtonModel } from './LangtonGame';
+import { AntTile, GridTile } from './Tiles';
 
 const GridRow = ({ model, x }: { model: LangtonModel; x: number }) => (
   <>
