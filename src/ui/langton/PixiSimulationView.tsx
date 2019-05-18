@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
-import { Size } from '../game/common/Size';
-import { Colors } from './Colors';
-import { LangtonModel } from './langton/LangtonGame';
-import { LangtonRenderer } from './langton/LangtonRenderer';
-import { SizeAware } from './SizeAware';
+import { Size } from '../../game/common/Size';
+import { Colors } from '../Colors';
+import { SizeAware } from '../SizeAware';
+import { LangtonModel } from './LangtonGame';
+import { LangtonRenderer } from './LangtonRenderer';
 
 @observer
 class PixiSimulationView extends React.Component<{
@@ -13,22 +13,16 @@ class PixiSimulationView extends React.Component<{
   model: LangtonModel;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
-  private renderer = new LangtonRenderer(this.props.model);
-  private initialized = false;
+  private renderer = new LangtonRenderer(this.props.model, this.containerRef);
 
   componentDidMount() {
     this.updateSize();
-    this.renderGraphics();
+    this.renderer.render();
     this.props.model.renderCallback = this.renderer.render;
   }
 
   componentDidUpdate() {
     this.updateSize();
-    if (this.containerRef.current && !this.initialized) {
-      console.log('Appending');
-      this.containerRef.current.appendChild(this.renderer.app.view);
-      this.initialized = true;
-    }
   }
 
   render() {
@@ -38,10 +32,6 @@ class PixiSimulationView extends React.Component<{
       </Container>
     );
   }
-
-  renderGraphics = () => {
-    this.renderer.render();
-  };
 
   private updateSize = () => {
     this.renderer.updateSize(this.props.size);
@@ -65,7 +55,6 @@ const StyledSimulationView = styled(SizedSimulationView)`
 export default StyledSimulationView;
 
 const Container = styled.div`
-  position: relative;
   width: 100%;
   height: 100%;
 `;

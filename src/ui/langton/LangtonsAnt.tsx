@@ -2,10 +2,10 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
-import SimulationView from '../PixiSimulationView';
 import ControlBar from './ControlBar';
 import FrameBar from './FrameBar';
 import { LangtonModel } from './LangtonGame';
+import SimulationView from './PixiSimulationView';
 
 @observer
 export default class LangtonsAnt extends React.Component<{}> {
