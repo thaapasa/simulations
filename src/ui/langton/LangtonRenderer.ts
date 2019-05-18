@@ -5,6 +5,7 @@ import ant from '../../icons/ant.svg';
 import blackTile from '../../icons/black-tile.svg';
 import whiteTile from '../../icons/white-tile.svg';
 import { HexColors } from '../Colors';
+import { removeChildNodes } from '../DomUtils';
 import { LangtonModel } from './LangtonGame';
 import { tileSize } from './Tiles';
 
@@ -15,16 +16,32 @@ export class LangtonRenderer {
   private whiteTiles: PIXI.Sprite[] = [];
   private blackTiles: PIXI.Sprite[] = [];
   private ant = PIXI.Sprite.from(ant);
+  private domAttachPoint: React.RefObject<HTMLDivElement>;
 
-  constructor(model: LangtonModel) {
+  constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement>) {
     this.model = model;
     this.app = this.createApp();
+    this.domAttachPoint = attachRef;
+  }
+
+  destroy() {
+    if (this.domAttachPoint.current) {
+      removeChildNodes(this.domAttachPoint.current);
+    }
+    if (this.app) {
+      this.app.destroy();
+    }
   }
 
   updateSize = (newSize: Size) => {
     if (!sizeEquals(newSize, this.model.renderSize)) {
       this.model.renderSize = newSize;
       this.app = this.createApp();
+      const cur = this.domAttachPoint.current;
+      if (cur) {
+        removeChildNodes(cur);
+        cur.appendChild(this.app.view);
+      }
     }
   };
 
@@ -54,7 +71,7 @@ export class LangtonRenderer {
     );
   };
 
-  showAtPosition(sprite: PIXI.Sprite, x: number, y: number) {
+  private showAtPosition(sprite: PIXI.Sprite, x: number, y: number) {
     sprite.visible = true;
     sprite.x =
       (x - this.model.tileRange.from.x) * this.model.tileSize +

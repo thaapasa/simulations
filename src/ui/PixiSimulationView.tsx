@@ -13,8 +13,7 @@ class PixiSimulationView extends React.Component<{
   model: LangtonModel;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
-  private renderer = new LangtonRenderer(this.props.model);
-  private initialized = false;
+  private renderer = new LangtonRenderer(this.props.model, this.containerRef);
 
   componentDidMount() {
     this.updateSize();
@@ -24,11 +23,6 @@ class PixiSimulationView extends React.Component<{
 
   componentDidUpdate() {
     this.updateSize();
-    if (this.containerRef.current && !this.initialized) {
-      console.log('Appending');
-      this.containerRef.current.appendChild(this.renderer.app.view);
-      this.initialized = true;
-    }
   }
 
   render() {
@@ -65,7 +59,6 @@ const StyledSimulationView = styled(SizedSimulationView)`
 export default StyledSimulationView;
 
 const Container = styled.div`
-  position: relative;
   width: 100%;
   height: 100%;
 `;
