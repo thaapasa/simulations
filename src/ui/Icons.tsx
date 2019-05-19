@@ -32,10 +32,12 @@ export const IconBar = styled.div`
   height: 48px;
   padding: 0 12px;
   border-radius: 24px;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  color: ${Colors.white};
+  font-weight: bold;
   background-color: ${Colors.black};
 
   & img {

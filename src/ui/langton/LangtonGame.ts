@@ -15,7 +15,7 @@ export interface Range {
 
 export class LangtonModel {
   @observable
-  tileSize: number = 32;
+  scale: number = 1;
 
   @observable
   renderSize: Size = { width: 1, height: 1 };
@@ -23,18 +23,11 @@ export class LangtonModel {
   @observable
   centerPoint: Position = { x: 0, y: 0 };
 
-  @observable
-  antPosition: Position = { x: 0, y: 0 };
-
-  @observable
-  antRotation: number = 0;
-
   grid = new InfiniteGrid(false);
+  ant = new Ant();
   control = new ModeHandler(this);
 
   renderCallback: () => void = noop;
-
-  private ant = new Ant();
 
   constructor() {
     this.render();
@@ -46,8 +39,8 @@ export class LangtonModel {
   }
 
   @computed
-  get tileScale() {
-    return this.tileSize / 32;
+  get tileSize() {
+    return 32 * this.scale;
   }
 
   @computed
@@ -119,8 +112,6 @@ export class LangtonModel {
 
   @action
   render = () => {
-    this.antPosition = this.ant.position;
-    this.antRotation = this.ant.rotation;
     this.renderCallback();
   };
 

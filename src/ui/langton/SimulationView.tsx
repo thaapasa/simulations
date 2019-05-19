@@ -11,6 +11,7 @@ import { LangtonRenderer } from './LangtonRenderer';
 class PixiSimulationView extends React.Component<{
   size: Size;
   model: LangtonModel;
+  scale: number;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
   private renderer = new LangtonRenderer(this.props.model, this.containerRef);

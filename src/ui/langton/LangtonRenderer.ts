@@ -41,13 +41,14 @@ export class LangtonRenderer {
       if (cur) {
         removeChildNodes(cur);
         cur.appendChild(this.app.view);
+        this.render();
       }
     }
   };
 
   render = () => {
     this.createMissingTiles(this.app);
-    const scale = this.model.tileScale;
+    const scale = this.model.scale;
     let whiteIdx = 0;
     let blackIdx = 0;
     const tileRange = this.model.tileRange;
@@ -68,10 +69,10 @@ export class LangtonRenderer {
     }
     this.showAtPosition(
       this.ant,
-      this.model.antPosition.x,
-      this.model.antPosition.y,
+      this.model.ant.position.x,
+      this.model.ant.position.y,
       scale,
-      (this.model.antRotation * Math.PI) / 180
+      (this.model.ant.rotation * Math.PI) / 180
     );
   };
 

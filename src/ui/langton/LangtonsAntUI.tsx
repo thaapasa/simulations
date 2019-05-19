@@ -3,9 +3,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
 import ControlBar from './ControlBar';
+import FpsBar from './FpsBar';
 import FrameBar from './FrameBar';
 import { LangtonModel } from './LangtonGame';
 import SimulationView from './SimulationView';
+import ZoomBar from './ZoomBar';
 
 @observer
 export default class LangtonsAnt extends React.Component<{}> {
@@ -14,7 +16,7 @@ export default class LangtonsAnt extends React.Component<{}> {
   private ctr = 0;
 
   componentDidMount() {
-    setInterval(this.tick, 25);
+    // setInterval(this.tick, 25);
   }
 
   tick = () => {
@@ -23,25 +25,22 @@ export default class LangtonsAnt extends React.Component<{}> {
       x: Math.sin(this.ctr / 23) * 100,
       y: Math.cos(this.ctr / 35) * 100,
     };
-    this.model.tileSize = 32 + Math.sin(this.ctr / 47) * 10;
+    this.model.scale = 1 + Math.sin(this.ctr / 47) * 0.5;
     this.model.render();
   };
 
   render() {
     return (
       <Container>
-        <SimulationView model={this.model} />
+        <SimulationView model={this.model} scale={this.model.scale} />
         <BottomBar>
           <FrameBar model={this.model} />
-          {this.renderFPS()}
+          <FpsBar model={this.model} />
+          <ZoomBar model={this.model} />
           <ControlBar model={this.model} />
         </BottomBar>
       </Container>
     );
-  }
-
-  renderFPS() {
-    return <DebugData>FPS {this.model.fps.toFixed(1)}</DebugData>;
   }
 
   renderDebugData() {
