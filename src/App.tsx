@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import LangtonsAnt from './ui/langton/LangtonsAnt';
+import LangtonsAnt from './ui/langton/LangtonsAntUI';
 
 const App: React.FC = () => (
   <Container>
