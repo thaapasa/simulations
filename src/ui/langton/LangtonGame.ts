@@ -46,6 +46,11 @@ export class LangtonModel {
   }
 
   @computed
+  get tileScale() {
+    return this.tileSize / 32;
+  }
+
+  @computed
   get renderArea(): Range {
     const center = this.centerPoint;
     const size = this.renderSize;

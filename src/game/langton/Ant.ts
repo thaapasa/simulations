@@ -48,7 +48,7 @@ export class Ant {
   private stepTurn = (grid: InfiniteGrid) => {
     this.direction = getDirectionTo(
       this.direction,
-      grid.flip(this.position.x, this.position.y)
+      !grid.flip(this.position.x, this.position.y)
     );
     this.rotation = closestEquivalentAngle(
       this.rotation,

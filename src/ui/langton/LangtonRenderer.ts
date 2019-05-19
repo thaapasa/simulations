@@ -46,6 +46,8 @@ export class LangtonRenderer {
   };
 
   render = () => {
+    this.createMissingTiles(this.app);
+    const scale = this.model.tileScale;
     let whiteIdx = 0;
     let blackIdx = 0;
     const tileRange = this.model.tileRange;
@@ -55,7 +57,7 @@ export class LangtonRenderer {
         const sprite = white
           ? this.whiteTiles[whiteIdx++]
           : this.blackTiles[blackIdx++];
-        this.showAtPosition(sprite, x, y);
+        this.showAtPosition(sprite, x, y, scale);
       }
     }
     while (whiteIdx < this.whiteTiles.length) {
@@ -68,6 +70,7 @@ export class LangtonRenderer {
       this.ant,
       this.model.antPosition.x,
       this.model.antPosition.y,
+      scale,
       (this.model.antRotation * Math.PI) / 180
     );
   };
@@ -76,6 +79,7 @@ export class LangtonRenderer {
     sprite: PIXI.Sprite,
     x: number,
     y: number,
+    scale: number,
     rotation?: number
   ) {
     sprite.visible = true;
@@ -86,6 +90,8 @@ export class LangtonRenderer {
       this.model.renderSize.height -
       ((y - this.model.tileRange.from.y) * this.model.tileSize +
         this.model.gridOffset.y);
+    sprite.scale.x = scale;
+    sprite.scale.y = scale;
     if (rotation !== undefined) {
       sprite.rotation = rotation;
     }
@@ -109,12 +115,17 @@ export class LangtonRenderer {
     return app;
   }
 
-  private createSprites(app: PIXI.Application) {
+  get tileCount(): number {
     const size = this.model.renderSize;
     const tileSize = this.model.tileSize;
-    const tiles =
+    return (
       Math.ceil(size.height / tileSize + 2) *
-      Math.ceil(size.width / tileSize + 2);
+      Math.ceil(size.width / tileSize + 2)
+    );
+  }
+
+  private createSprites(app: PIXI.Application) {
+    app.stage.removeChildren();
     for (const im of this.whiteTiles) {
       im.destroy();
     }
@@ -123,20 +134,35 @@ export class LangtonRenderer {
     }
     this.whiteTiles = [];
     this.blackTiles = [];
-    for (let i = 0; i < tiles; ++i) {
-      const whiteSprite = PIXI.Sprite.from(whiteTile);
-      whiteSprite.anchor.set(0.5);
-      whiteSprite.visible = false;
-      whiteSprite.x = -tileSize - 10;
-      this.whiteTiles.push(whiteSprite);
-      app.stage.addChild(whiteSprite);
+    app.stage.addChild(this.ant);
+    this.createMissingTiles(app);
+  }
 
-      const blackSprite = PIXI.Sprite.from(blackTile);
-      blackSprite.anchor.set(0.5);
-      blackSprite.visible = false;
-      blackSprite.x = -tileSize - 10;
-      this.blackTiles.push(blackSprite);
-      app.stage.addChild(blackSprite);
+  private createMissingTiles(app: PIXI.Application) {
+    const required = this.tileCount;
+    const tileSize = this.model.tileSize;
+    if (
+      this.whiteTiles.length >= required &&
+      this.blackTiles.length >= required
+    ) {
+      return;
+    }
+    app.stage.removeChild(this.ant);
+    for (let i = this.whiteTiles.length; i < required; ++i) {
+      const sprite = PIXI.Sprite.from(whiteTile);
+      sprite.anchor.set(0.5);
+      sprite.visible = false;
+      sprite.x = -tileSize - 10;
+      this.whiteTiles.push(sprite);
+      app.stage.addChild(sprite);
+    }
+    for (let i = this.blackTiles.length; i < required; ++i) {
+      const sprite = PIXI.Sprite.from(blackTile);
+      sprite.anchor.set(0.5);
+      sprite.visible = false;
+      sprite.x = -tileSize - 10;
+      this.blackTiles.push(sprite);
+      app.stage.addChild(sprite);
     }
     app.stage.addChild(this.ant);
   }

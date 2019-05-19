@@ -23,6 +23,7 @@ export default class LangtonsAnt extends React.Component<{}> {
       x: Math.sin(this.ctr / 23) * 100,
       y: Math.cos(this.ctr / 35) * 100,
     };
+    this.model.tileSize = 32 + Math.sin(this.ctr / 47) * 10;
     this.model.render();
   };
 
