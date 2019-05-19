@@ -2,6 +2,28 @@ import { action, computed, observable } from 'mobx';
 
 const FpsUpdateFrequencyMs = 200;
 
+class Averager {
+  @observable
+  value: number = 0;
+
+  private initialized: boolean = false;
+
+  @action
+  newValue = (newVal: number) => {
+    if (!this.initialized) {
+      this.value = newVal;
+      this.initialized = true;
+    }
+    this.value = 0.5 * this.value + 0.5 * newVal;
+  };
+
+  @action
+  reset = () => {
+    this.value = 0;
+    this.initialized = false;
+  };
+}
+
 export class FpsCalculator {
   @computed
   get fps(): number {
@@ -33,27 +55,5 @@ export class FpsCalculator {
     this.lastFrames = 0;
     this.currentFrames = 0;
     this.fpsAverager.reset();
-  };
-}
-
-export class Averager {
-  @observable
-  value: number = 0;
-
-  private initialized: boolean = false;
-
-  @action
-  newValue = (newVal: number) => {
-    if (!this.initialized) {
-      this.value = newVal;
-      this.initialized = true;
-    }
-    this.value = 0.5 * this.value + 0.5 * newVal;
-  };
-
-  @action
-  reset = () => {
-    this.value = 0;
-    this.initialized = false;
   };
 }
