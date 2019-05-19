@@ -7,7 +7,6 @@ import whiteTile from '../../icons/white-tile.svg';
 import { HexColors } from '../Colors';
 import { removeChildNodes } from '../DomUtils';
 import { LangtonModel } from './LangtonGame';
-import { tileSize } from './Tiles';
 
 export class LangtonRenderer {
   app: PIXI.Application;
@@ -112,6 +111,7 @@ export class LangtonRenderer {
 
   private createSprites(app: PIXI.Application) {
     const size = this.model.renderSize;
+    const tileSize = this.model.tileSize;
     const tiles =
       Math.ceil(size.height / tileSize + 2) *
       Math.ceil(size.width / tileSize + 2);

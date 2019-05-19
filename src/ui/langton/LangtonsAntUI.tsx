@@ -5,7 +5,7 @@ import { Colors } from '../Colors';
 import ControlBar from './ControlBar';
 import FrameBar from './FrameBar';
 import { LangtonModel } from './LangtonGame';
-import SimulationView from './PixiSimulationView';
+import SimulationView from './SimulationView';
 
 @observer
 export default class LangtonsAnt extends React.Component<{}> {
