@@ -1,4 +1,5 @@
 import { action, computed, observable, runInAction } from 'mobx';
+import { FpsCalculator } from '../../util/FpsCalculator';
 import { nextTick } from '../../util/Util';
 
 export type GameMode = 'pause' | 'step' | 'play' | 'fast' | 'skip';
@@ -16,6 +17,8 @@ export class ModeHandler {
   @observable
   mode: GameMode = 'pause';
 
+  private fpsCounter = new FpsCalculator();
+
   @observable
   private requestedMode: GameMode | undefined;
 
@@ -23,6 +26,11 @@ export class ModeHandler {
 
   constructor(game: GameImplementation) {
     this.game = game;
+  }
+
+  @computed
+  get fps() {
+    return this.fpsCounter.fps;
   }
 
   @computed
@@ -42,6 +50,7 @@ export class ModeHandler {
       this.game.stepNoAnimation();
     }
     this.frame += frames;
+    this.fpsCounter.tick(frames);
     this.game.render();
 
     runInAction(this.setRequestedMode);
@@ -55,6 +64,7 @@ export class ModeHandler {
     this.requestedMode = 'pause';
     await this.game.stepAnimated();
     this.frame++;
+    this.fpsCounter.tick();
     runInAction(this.setRequestedMode);
   };
 
@@ -67,9 +77,11 @@ export class ModeHandler {
       return;
     }
     this.mode = 'play';
+    this.fpsCounter.reset();
     while (this.mode === 'play' && !this.requestedMode) {
       await this.game.stepAnimated();
       this.frame++;
+      this.fpsCounter.tick();
     }
     runInAction(this.setRequestedMode);
   };
@@ -83,9 +95,11 @@ export class ModeHandler {
       return;
     }
     this.mode = 'fast';
+    this.fpsCounter.reset();
     while (this.mode === 'fast' && !this.requestedMode) {
       this.game.stepNoAnimation();
       this.frame++;
+      this.fpsCounter.tick();
       this.game.render();
       await nextTick();
     }

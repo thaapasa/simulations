@@ -41,6 +41,11 @@ export class LangtonModel {
   }
 
   @computed
+  get fps() {
+    return this.control.fps;
+  }
+
+  @computed
   get renderArea(): Range {
     const center = this.centerPoint;
     const size = this.renderSize;

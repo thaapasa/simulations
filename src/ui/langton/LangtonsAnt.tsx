@@ -32,10 +32,15 @@ export default class LangtonsAnt extends React.Component<{}> {
         <SimulationView model={this.model} />
         <BottomBar>
           <FrameBar model={this.model} />
+          {this.renderFPS()}
           <ControlBar model={this.model} />
         </BottomBar>
       </Container>
     );
+  }
+
+  renderFPS() {
+    return <DebugData>FPS {this.model.fps.toFixed(1)}</DebugData>;
   }
 
   renderDebugData() {
