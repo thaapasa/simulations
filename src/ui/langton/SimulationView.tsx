@@ -6,9 +6,10 @@ import { Colors } from '../Colors';
 import { SizeAware } from '../SizeAware';
 import { LangtonModel } from './LangtonGame';
 import { LangtonRenderer } from './LangtonRenderer';
+import { ModelMover } from './ModelMover';
 
 @observer
-class PixiSimulationView extends React.Component<{
+class SimulationView extends React.Component<{
   size: Size;
   model: LangtonModel;
   scale: number;
@@ -28,9 +29,9 @@ class PixiSimulationView extends React.Component<{
 
   render() {
     return (
-      <Container>
+      <ModelMover model={this.props.model}>
         <div ref={this.containerRef} />
-      </Container>
+      </ModelMover>
     );
   }
 
@@ -39,7 +40,7 @@ class PixiSimulationView extends React.Component<{
   };
 }
 
-const SizedSimulationView = SizeAware(PixiSimulationView);
+const SizedSimulationView = SizeAware(SimulationView);
 const StyledSimulationView = styled(SizedSimulationView)`
   width: 100%;
   height: 600px;
@@ -54,8 +55,3 @@ const StyledSimulationView = styled(SizedSimulationView)`
 `;
 
 export default StyledSimulationView;
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-`;
