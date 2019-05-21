@@ -1,7 +1,8 @@
 import React from 'react';
 import { useGesture } from 'react-use-gesture';
 import styled from 'styled-components';
-import { LangtonModel } from './LangtonGame';
+import { bound } from '../../util/Util';
+import { LangtonModel, MaxScale, MinScale } from './LangtonGame';
 
 export function ModelMover({
   model,
@@ -17,6 +18,10 @@ export function ModelMover({
           x: model.centerPoint.x - (s.xy[0] - s.previous[0]),
           y: model.centerPoint.y + (s.xy[1] - s.previous[1]),
         };
+        model.render();
+      },
+      onWheel: s => {
+        model.scale = bound(model.scale - s.delta[1] / 100, MinScale, MaxScale);
         model.render();
       },
     },

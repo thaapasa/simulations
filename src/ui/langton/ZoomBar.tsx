@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { IconBar } from '../Icons';
-import { LangtonModel } from './LangtonGame';
+import { LangtonModel, MaxScale, MinScale } from './LangtonGame';
 
 @observer
 export default class ZoomBar extends React.Component<{
@@ -18,8 +18,8 @@ export default class ZoomBar extends React.Component<{
           <Slider
             value={model.scale}
             onChange={this.onChange}
-            min={0.3}
-            max={1.5}
+            min={MinScale}
+            max={MaxScale}
             step={0.05}
           />
         </SliderArea>

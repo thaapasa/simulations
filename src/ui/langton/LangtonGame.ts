@@ -13,6 +13,9 @@ export interface Range {
   to: Position;
 }
 
+export const MinScale = 0.3;
+export const MaxScale = 1.5;
+
 export class LangtonModel {
   @observable
   scale: number = 1;

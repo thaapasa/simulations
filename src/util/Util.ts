@@ -17,3 +17,7 @@ export function allNumbers(from: number, to: number): number[] {
   }
   return arr;
 }
+
+export function bound(val: number, min: number, max: number): number {
+  return val < min ? min : val > max ? max : val;
+}
