@@ -2,6 +2,8 @@
 
 This is a hobby project for running various simulations. Just for fun.
 
+The project is deployed to [simulaatiot.pomeranssi.fi](https://simulaatiot.pomeranssi.fi/).
+
 Currently I've implemented [Langton's ant](https://en.wikipedia.org/wiki/Langton%27s_ant),
 but I have plans for adding at least [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 and [Mandelbrot](https://en.wikipedia.org/wiki/Mandelbrot_set)
