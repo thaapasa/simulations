@@ -11,7 +11,7 @@ export default class FpsBar extends React.Component<{
   render() {
     const { model } = this.props;
     return (
-      <IconBar>
+      <IconBar className="web">
         <Label>FPS</Label>
         <FpsArea>{model.fps.toFixed(1)}</FpsArea>
       </IconBar>

@@ -8,6 +8,7 @@ import plus100 from '../icons/plus-100.svg';
 import plus1000 from '../icons/plus-1000.svg';
 import skip from '../icons/skip.svg';
 import { Colors } from './Colors';
+import { media } from './Styles';
 
 const IconImage = styled.img`
   width: 32px;
@@ -43,4 +44,11 @@ export const IconBar = styled.div`
   & img {
     margin: 0 6px;
   }
+
+  ${media.mobile`
+    &.web {
+      display: none;
+    }
+    margin-bottom: 8px;
+  `}
 `;

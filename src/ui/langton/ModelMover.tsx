@@ -23,7 +23,6 @@ export function ModelMover({
       onWheel: s => {
         model.scale = bound(model.scale - s.xy[1] / 2000, MinScale, MaxScale);
         model.render();
-        return false;
       },
       onPinch: s => {
         model.scale = bound(
@@ -32,7 +31,6 @@ export function ModelMover({
           MaxScale
         );
         model.render();
-        return false;
       },
     },
     { event: { passive: false } }

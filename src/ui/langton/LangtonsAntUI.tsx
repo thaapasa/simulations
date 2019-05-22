@@ -2,6 +2,7 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
+import { media } from '../Styles';
 import ControlBar from './ControlBar';
 import FpsBar from './FpsBar';
 import FrameBar from './FrameBar';
@@ -13,25 +14,9 @@ import ZoomBar from './ZoomBar';
 export default class LangtonsAnt extends React.Component<{}> {
   private model = new LangtonModel();
 
-  private ctr = 0;
-
-  componentDidMount() {
-    // setInterval(this.tick, 25);
-  }
-
-  tick = () => {
-    this.ctr++;
-    this.model.centerPoint = {
-      x: Math.sin(this.ctr / 23) * 100,
-      y: Math.cos(this.ctr / 35) * 100,
-    };
-    this.model.scale = 1 + Math.sin(this.ctr / 47) * 0.5;
-    this.model.render();
-  };
-
   render() {
     return (
-      <Container>
+      <Container className="LangtonsAntUI">
         <SimulationView model={this.model} scale={this.model.scale} />
         <BottomBar>
           <FrameBar model={this.model} />
@@ -63,12 +48,17 @@ const dump = (title: string, data: any) => (
 
 const Container = styled.div`
   display: flex;
-  width: 80%;
-  max-width: 1200px;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding: 32px;
+  margin: 0;
+
+  ${media.mobile`
+    padding: 16px;
+  `}
 `;
 
 const BottomBar = styled.div`
@@ -78,6 +68,10 @@ const BottomBar = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  ${media.mobilePortrait`
+    flex-direction: column;
+  `}
 `;
 
 const DebugData = styled.div`

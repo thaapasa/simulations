@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import LangtonsAnt from './ui/langton/LangtonsAntUI';
 
 const App: React.FC = () => (
-  <Container>
+  <Container className="App">
     <LangtonsAnt />
   </Container>
 );
@@ -11,6 +11,7 @@ const App: React.FC = () => (
 const Container = styled.div`
   display: flex;
   width: 100%;
+  height: 100%;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;

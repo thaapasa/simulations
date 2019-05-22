@@ -43,7 +43,6 @@ class SimulationView extends React.Component<{
 const SizedSimulationView = SizeAware(SimulationView);
 const StyledSimulationView = styled(SizedSimulationView)`
   width: 100%;
-  height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,6 +51,7 @@ const StyledSimulationView = styled(SizedSimulationView)`
   border-radius: 8px;
   background-color: ${Colors.darkBlue};
   overflow: hidden;
+  height: 100%;
 `;
 
 export default StyledSimulationView;
