@@ -21,8 +21,18 @@ export function ModelMover({
         model.render();
       },
       onWheel: s => {
-        model.scale = bound(model.scale - s.delta[1] / 100, MinScale, MaxScale);
+        model.scale = bound(model.scale - s.xy[1] / 2000, MinScale, MaxScale);
         model.render();
+        return false;
+      },
+      onPinch: s => {
+        model.scale = bound(
+          model.scale - (s.previous[0] - s.da[0]) / 100,
+          MinScale,
+          MaxScale
+        );
+        model.render();
+        return false;
       },
     },
     { event: { passive: false } }
