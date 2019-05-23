@@ -6,9 +6,9 @@ import { LangtonModel } from './LangtonModel';
 export const DebugDataView = ({ model }: { model: LangtonModel }) => (
   <DebugData>
     {dump('Center', model.centerPoint)}
-    {dump('Render area', model.renderArea)}
-    {dump('Tile range', model.tileRange)}
-    {dump('Grid offset', model.gridOffset)}
+    {dump('Render area', model.tileCalc.renderArea)}
+    {dump('Tile range', model.tileCalc.tileRange)}
+    {dump('Grid offset', model.tileCalc.gridOffset)}
   </DebugData>
 );
 

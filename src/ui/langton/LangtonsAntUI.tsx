@@ -22,8 +22,8 @@ export default class LangtonsAntUI extends React.Component<{}> {
           createRenderer={this.createRenderer}
         />
         <BottomBar className="BottomBar">
-          <FrameBar model={this.model} />
-          <FpsBar model={this.model} />
+          <FrameBar model={this.model.control} />
+          <FpsBar model={this.model.control} />
           <ZoomBar model={this.model} />
           <ControlBar model={this.model} />
         </BottomBar>

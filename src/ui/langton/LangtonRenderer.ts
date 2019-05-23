@@ -52,7 +52,7 @@ export class LangtonRenderer implements ModelRenderer {
     const scale = this.model.scale;
     let whiteIdx = 0;
     let blackIdx = 0;
-    const tileRange = this.model.tileRange;
+    const tileRange = this.model.tileCalc.tileRange;
     for (let x = tileRange.from.x; x <= tileRange.to.x; ++x) {
       for (let y = tileRange.from.y; y <= tileRange.to.y; ++y) {
         const white = this.model.grid.get(x, y);
@@ -84,14 +84,12 @@ export class LangtonRenderer implements ModelRenderer {
     scale: number,
     rotation?: number
   ) {
+    const calc = this.model.tileCalc;
     sprite.visible = true;
-    sprite.x =
-      (x - this.model.tileRange.from.x) * this.model.tileSize +
-      this.model.gridOffset.x;
+    sprite.x = (x - calc.tileRange.from.x) * calc.tileSize + calc.gridOffset.x;
     sprite.y =
       this.model.renderSize.height -
-      ((y - this.model.tileRange.from.y) * this.model.tileSize +
-        this.model.gridOffset.y);
+      ((y - calc.tileRange.from.y) * calc.tileSize + calc.gridOffset.y);
     sprite.scale.x = scale;
     sprite.scale.y = scale;
     if (rotation !== undefined) {
@@ -119,7 +117,7 @@ export class LangtonRenderer implements ModelRenderer {
 
   get tileCount(): number {
     const size = this.model.renderSize;
-    const tileSize = this.model.tileSize;
+    const tileSize = this.model.tileCalc.tileSize;
     return (
       Math.ceil(size.height / tileSize + 2) *
       Math.ceil(size.width / tileSize + 2)
@@ -142,7 +140,7 @@ export class LangtonRenderer implements ModelRenderer {
 
   private createMissingTiles(app: PIXI.Application) {
     const required = this.tileCount;
-    const tileSize = this.model.tileSize;
+    const tileSize = this.model.tileCalc.tileSize;
     if (
       this.whiteTiles.length >= required &&
       this.blackTiles.length >= required
