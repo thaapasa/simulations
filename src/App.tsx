@@ -4,12 +4,14 @@ import { Route, Router, Switch } from 'react-router-dom';
 import styled from 'styled-components';
 import LangtonsAntUI from './ui/langton/LangtonsAntUI';
 import GameOfLifeUI from './ui/life/GameOfLifeUI';
+import UISelector from './ui/UISelector';
 
 export const history = createBrowserHistory({});
 
 const App: React.FC = () => (
   <Container className="App">
     <Router history={history}>
+      <Route component={UISelector} />
       <Switch>
         <Route path="/p/langtons-ant" component={LangtonsAntUI} />
         <Route path="/p/game-of-life" component={GameOfLifeUI} />

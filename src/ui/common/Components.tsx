@@ -9,6 +9,7 @@ export const UIContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
   padding: 32px;
+  padding-top: 16px;
   margin: 0;
 
   ${media.mobile`
