@@ -10,6 +10,10 @@ body {
   box-sizing: border-box;
 }
 
+@-ms-viewport{
+  width: device-width;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
