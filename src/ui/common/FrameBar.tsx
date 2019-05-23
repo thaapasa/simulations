@@ -3,11 +3,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
 import { IconBar } from '../Icons';
-import { LangtonModel } from './LangtonGame';
 
 @observer
 export default class FrameBar extends React.Component<{
-  model: LangtonModel;
+  model: { frame: number };
 }> {
   render() {
     const { model } = this.props;

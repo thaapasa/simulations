@@ -4,18 +4,20 @@ import styled from 'styled-components';
 import { Size } from '../../game/common/Size';
 import { Colors } from '../Colors';
 import { SizeAware } from '../SizeAware';
-import { LangtonModel } from './LangtonGame';
-import { LangtonRenderer } from './LangtonRenderer';
+import { Model, ModelRenderer } from './Model';
 import { ModelMover } from './ModelMover';
 
 @observer
 class SimulationView extends React.Component<{
   size: Size;
-  model: LangtonModel;
+  model: Model;
+  createRenderer: (
+    containerRef: React.RefObject<HTMLDivElement>
+  ) => ModelRenderer;
   scale: number;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
-  private renderer = new LangtonRenderer(this.props.model, this.containerRef);
+  private renderer = this.props.createRenderer(this.containerRef);
 
   componentDidMount() {
     this.updateSize();

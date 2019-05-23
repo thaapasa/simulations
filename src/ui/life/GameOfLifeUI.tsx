@@ -7,7 +7,7 @@ export default class GameOfLifeUI extends React.Component<{}> {
   render() {
     return (
       <UIContainer className="GameOfLifeUI">
-        <BottomBar>Hello!</BottomBar>
+        <BottomBar className="BottomBar">Hello!</BottomBar>
       </UIContainer>
     );
   }

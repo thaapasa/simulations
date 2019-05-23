@@ -5,10 +5,11 @@ import ant from '../../icons/ant.svg';
 import blackTile from '../../icons/black-tile.svg';
 import whiteTile from '../../icons/white-tile.svg';
 import { HexColors } from '../Colors';
+import { ModelRenderer } from '../common/Model';
 import { removeChildNodes } from '../DomUtils';
-import { LangtonModel } from './LangtonGame';
+import { LangtonModel } from './LangtonModel';
 
-export class LangtonRenderer {
+export class LangtonRenderer implements ModelRenderer {
   app: PIXI.Application;
   private model: LangtonModel;
 

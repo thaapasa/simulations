@@ -2,11 +2,10 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { IconBar } from '../Icons';
-import { LangtonModel } from './LangtonGame';
 
 @observer
 export default class FpsBar extends React.Component<{
-  model: LangtonModel;
+  model: { fps: number };
 }> {
   render() {
     const { model } = this.props;

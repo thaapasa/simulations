@@ -2,13 +2,13 @@ import React from 'react';
 import { useGesture } from 'react-use-gesture';
 import styled from 'styled-components';
 import { bound } from '../../util/Util';
-import { LangtonModel, MaxScale, MinScale } from './LangtonGame';
+import { Model } from './Model';
 
 export function ModelMover({
   model,
   children,
 }: {
-  model: LangtonModel;
+  model: Model;
   children?: any;
 }) {
   const bind = useGesture(
@@ -21,21 +21,29 @@ export function ModelMover({
         model.render();
       },
       onWheel: s => {
-        model.scale = bound(model.scale - s.xy[1] / 2000, MinScale, MaxScale);
+        model.scale = bound(
+          model.scale - s.xy[1] / 2000,
+          model.minScale,
+          model.maxScale
+        );
         model.render();
       },
       onPinch: s => {
         model.scale = bound(
           model.scale - (s.previous[0] - s.da[0]) / 100,
-          MinScale,
-          MaxScale
+          model.minScale,
+          model.maxScale
         );
         model.render();
       },
     },
     { event: { passive: false } }
   );
-  return <Container {...bind()}>{children}</Container>;
+  return (
+    <Container {...bind()} className="ModelMover">
+      {children}
+    </Container>
+  );
 }
 
 const Container = styled.div`

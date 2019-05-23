@@ -2,12 +2,12 @@ import Slider from '@material-ui/lab/Slider';
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
+import { Model } from '../common/Model';
 import { IconBar } from '../Icons';
-import { LangtonModel, MaxScale, MinScale } from './LangtonGame';
 
 @observer
 export default class ZoomBar extends React.Component<{
-  model: LangtonModel;
+  model: Model;
 }> {
   render() {
     const { model } = this.props;
@@ -18,8 +18,8 @@ export default class ZoomBar extends React.Component<{
           <Slider
             value={model.scale}
             onChange={this.onChange}
-            min={MinScale}
-            max={MaxScale}
+            min={model.minScale}
+            max={model.maxScale}
             step={0.05}
           />
         </SliderArea>

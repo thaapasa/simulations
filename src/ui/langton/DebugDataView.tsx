@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
-import { LangtonModel } from './LangtonGame';
+import { LangtonModel } from './LangtonModel';
 
 export const DebugDataView = ({ model }: { model: LangtonModel }) => (
   <DebugData>

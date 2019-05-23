@@ -10,7 +10,7 @@ import {
   Plus10Icon,
   SkipIcon,
 } from '../Icons';
-import { LangtonModel } from './LangtonGame';
+import { LangtonModel } from './LangtonModel';
 
 @observer
 export default class ControlBar extends React.Component<{

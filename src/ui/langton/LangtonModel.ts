@@ -4,19 +4,15 @@ import { Size } from '../../game/common/Size';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
 import { noop, timeout } from '../../util/Util';
-import { GameMode, ModeHandler } from './ModeHandler';
+import { GameMode, ModeHandler } from '../common/ModeHandler';
+import { Model, Range } from '../common/Model';
 
 const halfStepDelay = 180;
 
-export interface Range {
-  from: Position;
-  to: Position;
-}
+export class LangtonModel implements Model {
+  readonly minScale = 0.3;
+  readonly maxScale = 1.5;
 
-export const MinScale = 0.3;
-export const MaxScale = 1.5;
-
-export class LangtonModel {
   @observable
   scale: number = 1;
 

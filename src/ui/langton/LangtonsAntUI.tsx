@@ -1,12 +1,13 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { BottomBar, UIContainer } from '../common/Components';
+import FpsBar from '../common/FpsBar';
+import FrameBar from '../common/FrameBar';
+import SimulationView from '../common/SimulationView';
+import ZoomBar from '../common/ZoomBar';
 import ControlBar from './ControlBar';
-import FpsBar from './FpsBar';
-import FrameBar from './FrameBar';
-import { LangtonModel } from './LangtonGame';
-import SimulationView from './SimulationView';
-import ZoomBar from './ZoomBar';
+import { LangtonModel } from './LangtonModel';
+import { LangtonRenderer } from './LangtonRenderer';
 
 @observer
 export default class LangtonsAntUI extends React.Component<{}> {
@@ -15,8 +16,12 @@ export default class LangtonsAntUI extends React.Component<{}> {
   render() {
     return (
       <UIContainer className="LangtonsAntUI">
-        <SimulationView model={this.model} scale={this.model.scale} />
-        <BottomBar>
+        <SimulationView
+          model={this.model}
+          scale={this.model.scale}
+          createRenderer={this.createRenderer}
+        />
+        <BottomBar className="BottomBar">
           <FrameBar model={this.model} />
           <FpsBar model={this.model} />
           <ZoomBar model={this.model} />
@@ -25,4 +30,7 @@ export default class LangtonsAntUI extends React.Component<{}> {
       </UIContainer>
     );
   }
+
+  private createRenderer = (attachRef: React.RefObject<HTMLDivElement>) =>
+    new LangtonRenderer(this.model, attachRef);
 }
