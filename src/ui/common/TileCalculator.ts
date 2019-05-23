@@ -1,4 +1,4 @@
-import { computed, observable } from 'mobx';
+import { computed } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Model, Range } from './Model';
 
@@ -14,7 +14,7 @@ export class TileCalculator {
     return 32 * this.model.scale;
   }
 
-  @observable
+  @computed
   get tileCount(): number {
     const size = this.model.renderSize;
     const tileSize = this.tileSize;
