@@ -2,7 +2,7 @@ import 'jest';
 import { Ant } from './Ant';
 import { InfiniteGrid } from './InfiniteGrid';
 
-describe('InfiniteGrid', () => {
+describe('Langton-InfiniteGrid', () => {
   it('calculates grid', () => {
     // Warm-up
     console.log('Warming up...');

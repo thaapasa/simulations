@@ -1,6 +1,7 @@
 export class InfiniteGrid {
   readonly defaultValue: boolean;
   private grid: Record<string, boolean> = {};
+
   constructor(defaultValue: boolean = false) {
     this.defaultValue = defaultValue;
   }

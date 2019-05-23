@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { BottomBar, UIContainer } from '../common/Components';
+import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
 import FrameBar from '../common/FrameBar';
 import SimulationView from '../common/SimulationView';
 import ZoomBar from '../common/ZoomBar';
-import ControlBar from './ControlBar';
 import { LangtonModel } from './LangtonModel';
 import { LangtonRenderer } from './LangtonRenderer';
 
@@ -25,7 +25,7 @@ export default class LangtonsAntUI extends React.Component<{}> {
           <FrameBar model={this.model.control} />
           <FpsBar model={this.model.control} />
           <ZoomBar model={this.model} />
-          <ControlBar model={this.model} />
+          <ControlBar control={this.model.control} />
         </BottomBar>
       </UIContainer>
     );
