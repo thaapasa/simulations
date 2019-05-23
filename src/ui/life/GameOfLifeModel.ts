@@ -7,7 +7,7 @@ import { GameMode, ModeHandler } from '../common/ModeHandler';
 import { Model } from '../common/Model';
 import { TileCalculator } from '../common/TileCalculator';
 
-const halfStepDelay = 180;
+const stepDelay = 90;
 
 export class GameOfLifeModel implements Model {
   readonly minScale = 0.3;
@@ -44,7 +44,7 @@ export class GameOfLifeModel implements Model {
   stepAnimated = async () => {
     this.grid.step();
     this.render();
-    await timeout(halfStepDelay);
+    await timeout(stepDelay);
   };
 
   @action
@@ -54,6 +54,6 @@ export class GameOfLifeModel implements Model {
 
   animateStep = async () => {
     this.render();
-    await timeout(halfStepDelay);
+    await timeout(stepDelay);
   };
 }

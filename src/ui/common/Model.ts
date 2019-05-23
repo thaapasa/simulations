@@ -15,8 +15,3 @@ export interface Model {
   renderCallback: () => void;
   render(): void;
 }
-
-export interface ModelRenderer {
-  updateSize: (size: Size) => void;
-  render(): void;
-}

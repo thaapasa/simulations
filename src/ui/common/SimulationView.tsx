@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import { Size } from '../../game/common/Size';
 import { Colors } from '../Colors';
 import { SizeAware } from '../SizeAware';
-import { Model, ModelRenderer } from './Model';
+import { Model } from './Model';
 import { ModelMover } from './ModelMover';
+import { ModelRenderer } from './ModelRenderer';
 
 @observer
 class SimulationView extends React.Component<{

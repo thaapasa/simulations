@@ -1,54 +1,33 @@
-import { toJS } from 'mobx';
 import * as PIXI from 'pixi.js';
-import { Size, sizeEquals } from '../../game/common/Size';
+import { Size } from '../../game/common/Size';
 import ant from '../../icons/ant.svg';
 import blackTile from '../../icons/black-tile.svg';
 import whiteTile from '../../icons/white-tile.svg';
-import { HexColors } from '../Colors';
-import { ModelRenderer } from '../common/Model';
-import { removeChildNodes } from '../DomUtils';
+import { ModelRenderer, RendererSupport } from '../common/ModelRenderer';
 import { LangtonModel } from './LangtonModel';
 
 export class LangtonRenderer implements ModelRenderer {
-  app: PIXI.Application;
   private model: LangtonModel;
+  private support: RendererSupport;
 
   private whiteTiles: PIXI.Sprite[] = [];
   private blackTiles: PIXI.Sprite[] = [];
   private ant = PIXI.Sprite.from(ant);
-  private domAttachPoint: React.RefObject<HTMLDivElement>;
 
   constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement>) {
     this.model = model;
     this.ant.anchor.set(0.5);
-    this.app = this.createApp();
-    this.domAttachPoint = attachRef;
+    this.support = new RendererSupport(model, this, attachRef);
   }
 
-  destroy() {
-    if (this.domAttachPoint.current) {
-      removeChildNodes(this.domAttachPoint.current);
-    }
-    if (this.app) {
-      this.app.destroy();
-    }
-  }
-
-  updateSize = (newSize: Size) => {
-    if (!sizeEquals(newSize, this.model.renderSize)) {
-      this.model.renderSize = newSize;
-      this.app = this.createApp();
-      const cur = this.domAttachPoint.current;
-      if (cur) {
-        removeChildNodes(cur);
-        cur.appendChild(this.app.view);
-        this.render();
-      }
-    }
+  destroy = () => {
+    this.support.destroy();
   };
 
+  updateSize = (newSize: Size) => this.support.updateSize(newSize);
+
   render = () => {
-    this.createMissingTiles(this.app);
+    this.createMissingTiles(this.support.app);
     const scale = this.model.scale;
     let whiteIdx = 0;
     let blackIdx = 0;
@@ -77,6 +56,19 @@ export class LangtonRenderer implements ModelRenderer {
     );
   };
 
+  createSprites(app: PIXI.Application) {
+    for (const im of this.whiteTiles) {
+      im.destroy();
+    }
+    for (const im of this.blackTiles) {
+      im.destroy();
+    }
+    this.whiteTiles = [];
+    this.blackTiles = [];
+    app.stage.addChild(this.ant);
+    this.createMissingTiles(app);
+  }
+
   private showAtPosition(
     sprite: PIXI.Sprite,
     x: number,
@@ -97,49 +89,8 @@ export class LangtonRenderer implements ModelRenderer {
     }
   }
 
-  private createApp() {
-    if (this.app) {
-      this.app.destroy();
-    }
-
-    const size = this.model.renderSize;
-    const resolution = 1;
-    console.log('Creating PIXI app of size', toJS(size));
-    const app = new PIXI.Application({
-      width: size.width,
-      height: size.height,
-      backgroundColor: HexColors.darkBlue,
-      resolution,
-    });
-    this.createSprites(app);
-    return app;
-  }
-
-  get tileCount(): number {
-    const size = this.model.renderSize;
-    const tileSize = this.model.tileCalc.tileSize;
-    return (
-      Math.ceil(size.height / tileSize + 2) *
-      Math.ceil(size.width / tileSize + 2)
-    );
-  }
-
-  private createSprites(app: PIXI.Application) {
-    app.stage.removeChildren();
-    for (const im of this.whiteTiles) {
-      im.destroy();
-    }
-    for (const im of this.blackTiles) {
-      im.destroy();
-    }
-    this.whiteTiles = [];
-    this.blackTiles = [];
-    app.stage.addChild(this.ant);
-    this.createMissingTiles(app);
-  }
-
   private createMissingTiles(app: PIXI.Application) {
-    const required = this.tileCount;
+    const required = this.model.tileCalc.tileCount;
     const tileSize = this.model.tileCalc.tileSize;
     if (
       this.whiteTiles.length >= required &&
