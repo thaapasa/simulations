@@ -1,10 +1,21 @@
+import { createBrowserHistory } from 'history';
 import React from 'react';
+import { Route, Router, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-import LangtonsAnt from './ui/langton/LangtonsAntUI';
+import LangtonsAntUI from './ui/langton/LangtonsAntUI';
+import GameOfLifeUI from './ui/life/GameOfLifeUI';
+
+export const history = createBrowserHistory({});
 
 const App: React.FC = () => (
   <Container className="App">
-    <LangtonsAnt />
+    <Router history={history}>
+      <Switch>
+        <Route path="/p/langtons-ant" component={LangtonsAntUI} />
+        <Route path="/p/game-of-life" component={GameOfLifeUI} />
+        <Route component={LangtonsAntUI} />
+      </Switch>
+    </Router>
   </Container>
 );
 
