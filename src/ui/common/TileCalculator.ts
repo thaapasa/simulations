@@ -45,12 +45,12 @@ export class TileCalculator {
     const size = this.tileSize;
     return {
       from: {
-        x: stepAwayZero(area.from.x, size),
-        y: stepAwayZero(area.from.y, size),
+        x: stepAwayZero(area.from.x - size / 2, size),
+        y: stepAwayZero(area.from.y - size / 2, size),
       },
       to: {
-        x: stepAwayZero(area.to.x, size),
-        y: stepAwayZero(area.to.y, size),
+        x: stepAwayZero(area.to.x + size / 2, size),
+        y: stepAwayZero(area.to.y + size / 2, size),
       },
     };
   }
@@ -60,8 +60,8 @@ export class TileCalculator {
     const area = this.renderArea;
     const size = this.tileSize;
     return {
-      x: modAwayZero(area.from.x, size),
-      y: modAwayZero(area.from.y, size),
+      x: modAwayZero(area.from.x + size / 2, size),
+      y: modAwayZero(area.from.y + size / 2, size),
     };
   }
 }
@@ -72,7 +72,7 @@ function modAwayZero(num: number, base: number) {
     if (mod === 0) {
       return 0;
     }
-    return base - mod;
+    return -mod;
   } else {
     const mod = -num % base;
     if (mod === 0) {
@@ -84,7 +84,7 @@ function modAwayZero(num: number, base: number) {
 
 function stepAwayZero(num: number, base: number) {
   if (num >= 0) {
-    return Math.ceil(num / base);
+    return Math.floor(num / base);
   } else {
     return -Math.ceil(-num / base);
   }
