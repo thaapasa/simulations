@@ -15,7 +15,6 @@ class SimulationView extends React.Component<{
   createRenderer: (
     containerRef: React.RefObject<HTMLDivElement>
   ) => ModelRenderer;
-  scale: number;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
   private renderer = this.props.createRenderer(this.containerRef);

@@ -3,22 +3,38 @@ import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Ant } from '../../game/langton/Ant';
 import { InfiniteGrid } from '../../game/langton/InfiniteGrid';
+import { BoundValue } from '../../util/BoundValue';
 import { noop, timeout } from '../../util/Util';
 import { GameMode, ModeHandler } from '../common/ModeHandler';
 import { Model } from '../common/Model';
 import { TileCalculator } from '../common/TileCalculator';
 
-const halfStepDelay = 180;
+const halfStepDelayBase = 180;
 
 export class LangtonModel implements Model {
-  readonly minScale = 0.3;
-  readonly maxScale = 1.5;
-
   @observable
   renderSize: Size = { width: 1, height: 1 };
 
   @observable
-  scale: number = 1;
+  scale: BoundValue = {
+    min: 0.3,
+    max: 1.5,
+    value: 1,
+    step: 0.05,
+  };
+
+  @observable
+  speed: BoundValue = {
+    min: 0.1,
+    max: 5,
+    value: 1,
+    step: 0.1,
+  };
+
+  @computed
+  get halfStepDelay(): number {
+    return halfStepDelayBase / this.speed.value;
+  }
 
   set centerPoint(pos: Position) {
     this.tileCalc.centerInPx = pos;
@@ -52,7 +68,7 @@ export class LangtonModel implements Model {
   stepAnimated = async () => {
     await this.ant.stepAnimated(this.grid, this.animateStep);
     this.render();
-    await timeout(halfStepDelay);
+    await timeout(this.halfStepDelay);
   };
 
   @action
@@ -62,6 +78,6 @@ export class LangtonModel implements Model {
 
   animateStep = async () => {
     this.render();
-    await timeout(halfStepDelay);
+    await timeout(this.halfStepDelay);
   };
 }

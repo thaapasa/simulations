@@ -17,15 +17,22 @@ export const UIContainer = styled.div`
   `}
 `;
 
-export const BottomBar = styled.div`
+export const ToolBar = styled.div`
   display: flex;
   width: 100%;
-  margin-top: 32px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 
-  ${media.mobilePortrait`
-    flex-direction: column;
-  `}
+  &.TopBar {
+    margin-bottom: 16px;
+  }
+
+  &.BottomBar {
+    margin-top: 16px;
+
+    ${media.mobilePortrait`
+      flex-direction: column;
+    `}
+  }
 `;

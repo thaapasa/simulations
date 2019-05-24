@@ -15,21 +15,21 @@ export class TileCalculator {
   @computed
   get centerInPx(): Position {
     return {
-      x: (this.centerInTiles.x * this.model.scale) / 32,
-      y: (this.centerInTiles.y * this.model.scale) / 32,
+      x: (this.centerInTiles.x * this.model.scale.value) / 32,
+      y: (this.centerInTiles.y * this.model.scale.value) / 32,
     };
   }
 
   set centerInPx(pos: Position) {
     this.centerInTiles = {
-      x: (32 * pos.x) / this.model.scale,
-      y: (32 * pos.y) / this.model.scale,
+      x: (32 * pos.x) / this.model.scale.value,
+      y: (32 * pos.y) / this.model.scale.value,
     };
   }
 
   @computed
   get tileSize() {
-    return 32 * this.model.scale;
+    return 32 * this.model.scale.value;
   }
 
   @computed

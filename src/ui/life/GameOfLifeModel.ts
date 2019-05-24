@@ -2,19 +2,30 @@ import { action, computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { GameOfLife } from '../../game/gameoflife/GameOfLife';
+import { BoundValue } from '../../util/BoundValue';
 import { noop, timeout } from '../../util/Util';
 import { GameMode, ModeHandler } from '../common/ModeHandler';
 import { Model } from '../common/Model';
 import { TileCalculator } from '../common/TileCalculator';
 
-const stepDelay = 90;
+const baseStepDelay = 100;
 
 export class GameOfLifeModel implements Model {
-  readonly minScale = 0.3;
-  readonly maxScale = 1.5;
+  @observable
+  scale: BoundValue = {
+    min: 0.3,
+    max: 1.5,
+    value: 1,
+    step: 0.05,
+  };
 
   @observable
-  scale: number = 1;
+  speed: BoundValue = {
+    min: 0.1,
+    max: 5,
+    value: 1,
+    step: 0.1,
+  };
 
   @observable
   renderSize: Size = { width: 1, height: 1 };
@@ -26,6 +37,11 @@ export class GameOfLifeModel implements Model {
   @computed
   get centerPoint(): Position {
     return this.tileCalc.centerInPx;
+  }
+
+  @computed
+  get stepDelay(): number {
+    return baseStepDelay / this.speed.value;
   }
 
   grid = new GameOfLife(false);
@@ -50,7 +66,7 @@ export class GameOfLifeModel implements Model {
   stepAnimated = async () => {
     this.grid.step();
     this.render();
-    await timeout(stepDelay);
+    await timeout(this.stepDelay);
   };
 
   @action
@@ -60,6 +76,6 @@ export class GameOfLifeModel implements Model {
 
   animateStep = async () => {
     this.render();
-    await timeout(stepDelay);
+    await timeout(this.stepDelay);
   };
 }

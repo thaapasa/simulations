@@ -1,11 +1,14 @@
 import { observer } from 'mobx-react';
 import React from 'react';
-import { BottomBar, UIContainer } from '../common/Components';
+import { Route } from 'react-router';
+import { ToolBar, UIContainer } from '../common/Components';
 import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
 import FrameBar from '../common/FrameBar';
 import SimulationView from '../common/SimulationView';
+import SpeedBar from '../common/SpeedBar';
 import ZoomBar from '../common/ZoomBar';
+import UISelector from '../UISelector';
 import { DebugDataView } from './DebugDataView';
 import { LangtonModel } from './LangtonModel';
 import { LangtonRenderer } from './LangtonRenderer';
@@ -19,23 +22,26 @@ export default class LangtonsAntUI extends React.Component<{}> {
   render() {
     return (
       <UIContainer className="LangtonsAntUI">
+        <ToolBar className="TopBar">
+          <FrameBar model={this.model.control} />
+          <Route component={UISelector} />
+          <FpsBar model={this.model.control} />
+        </ToolBar>
         <SimulationView
           model={this.model}
-          scale={this.model.scale}
           createRenderer={this.createRenderer}
         />
-        <BottomBar className="BottomBar">
+        <ToolBar className="BottomBar">
           {showDebug ? (
             <DebugDataView model={this.model} />
           ) : (
             <>
-              <FrameBar model={this.model.control} />
-              <FpsBar model={this.model.control} />
+              <SpeedBar model={this.model} />
               <ZoomBar model={this.model} />
               <ControlBar control={this.model.control} />
             </>
           )}
-        </BottomBar>
+        </ToolBar>
       </UIContainer>
     );
   }

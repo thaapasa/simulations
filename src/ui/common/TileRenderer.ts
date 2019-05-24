@@ -21,7 +21,7 @@ export class TileRenderer {
   }
 
   render = () => {
-    const scale = this.model.scale;
+    const scale = this.model.scale.value;
     let whiteIdx = 0;
     let blackIdx = 0;
     const tileRange = this.model.tileCalc.tileRange;

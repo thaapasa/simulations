@@ -11,7 +11,7 @@ export default class FrameBar extends React.Component<{
   render() {
     const { model } = this.props;
     return (
-      <IconBar className="web">
+      <IconBar>
         <StepText>
           <StepPart>Askel</StepPart>
           <StepPart>{model.frame}</StepPart>

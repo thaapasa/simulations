@@ -36,7 +36,7 @@ export class LangtonRenderer implements ModelRenderer {
       this.ant,
       this.model.ant.position.x,
       this.model.ant.position.y,
-      this.model.scale,
+      this.model.scale.value,
       (this.model.ant.rotation * Math.PI) / 180
     );
   };

@@ -1,5 +1,6 @@
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
+import { BoundValue } from '../../util/BoundValue';
 
 export interface Range {
   from: Position;
@@ -9,9 +10,9 @@ export interface Range {
 export interface Model {
   renderSize: Size;
   centerPoint: Position;
-  scale: number;
-  minScale: number;
-  maxScale: number;
+  scale: BoundValue;
+  speed: BoundValue;
+
   renderCallback: () => void;
   render(): void;
 }

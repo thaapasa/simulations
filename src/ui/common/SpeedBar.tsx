@@ -7,20 +7,20 @@ import { IconBar } from '../Icons';
 
 @observer
 export default class ZoomBar extends React.Component<{
-  model: { scale: BoundValue; render: () => void };
+  model: { speed: BoundValue };
 }> {
   render() {
     const { model } = this.props;
     return (
-      <IconBar className="web">
-        <Label>Zoom</Label>
+      <IconBar>
+        <Label>Nopeus</Label>
         <SliderArea>
           <Slider
-            value={model.scale.value}
+            value={model.speed.value}
             onChange={this.onChange}
-            min={model.scale.min}
-            max={model.scale.max}
-            step={0.05}
+            min={model.speed.min}
+            max={model.speed.max}
+            step={model.speed.step}
           />
         </SliderArea>
       </IconBar>
@@ -28,8 +28,7 @@ export default class ZoomBar extends React.Component<{
   }
 
   onChange = (_: React.ChangeEvent<{}>, value: number) => {
-    this.props.model.scale.value = value;
-    this.props.model.render();
+    this.props.model.speed.value = value;
   };
 }
 
