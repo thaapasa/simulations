@@ -1,12 +1,30 @@
-import { computed } from 'mobx';
+import { computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Model, Range } from './Model';
 
 export class TileCalculator {
   model: Model;
 
+  @observable
+  centerInTiles: Position = { x: 0, y: 0 };
+
   constructor(model: Model) {
     this.model = model;
+  }
+
+  @computed
+  get centerInPx(): Position {
+    return {
+      x: (this.centerInTiles.x * this.model.scale) / 32,
+      y: (this.centerInTiles.y * this.model.scale) / 32,
+    };
+  }
+
+  set centerInPx(pos: Position) {
+    this.centerInTiles = {
+      x: (32 * pos.x) / this.model.scale,
+      y: (32 * pos.y) / this.model.scale,
+    };
   }
 
   @computed

@@ -15,13 +15,19 @@ export class LangtonModel implements Model {
   readonly maxScale = 1.5;
 
   @observable
-  scale: number = 1;
-
-  @observable
   renderSize: Size = { width: 1, height: 1 };
 
   @observable
-  centerPoint: Position = { x: 0, y: 0 };
+  scale: number = 1;
+
+  set centerPoint(pos: Position) {
+    this.tileCalc.centerInPx = pos;
+  }
+
+  @computed
+  get centerPoint(): Position {
+    return this.tileCalc.centerInPx;
+  }
 
   grid = new InfiniteGrid(false);
   ant = new Ant();

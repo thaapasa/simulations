@@ -6,8 +6,11 @@ import FpsBar from '../common/FpsBar';
 import FrameBar from '../common/FrameBar';
 import SimulationView from '../common/SimulationView';
 import ZoomBar from '../common/ZoomBar';
+import { DebugDataView } from './DebugDataView';
 import { LangtonModel } from './LangtonModel';
 import { LangtonRenderer } from './LangtonRenderer';
+
+const showDebug = false;
 
 @observer
 export default class LangtonsAntUI extends React.Component<{}> {
@@ -22,10 +25,16 @@ export default class LangtonsAntUI extends React.Component<{}> {
           createRenderer={this.createRenderer}
         />
         <BottomBar className="BottomBar">
-          <FrameBar model={this.model.control} />
-          <FpsBar model={this.model.control} />
-          <ZoomBar model={this.model} />
-          <ControlBar control={this.model.control} />
+          {showDebug ? (
+            <DebugDataView model={this.model} />
+          ) : (
+            <>
+              <FrameBar model={this.model.control} />
+              <FpsBar model={this.model.control} />
+              <ZoomBar model={this.model} />
+              <ControlBar control={this.model.control} />
+            </>
+          )}
         </BottomBar>
       </UIContainer>
     );

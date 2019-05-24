@@ -19,8 +19,14 @@ export class GameOfLifeModel implements Model {
   @observable
   renderSize: Size = { width: 1, height: 1 };
 
-  @observable
-  centerPoint: Position = { x: 0, y: 0 };
+  set centerPoint(pos: Position) {
+    this.tileCalc.centerInPx = pos;
+  }
+
+  @computed
+  get centerPoint(): Position {
+    return this.tileCalc.centerInPx;
+  }
 
   grid = new GameOfLife(false);
   control = new ModeHandler(this);
