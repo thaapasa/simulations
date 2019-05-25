@@ -2,16 +2,19 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
 import { Colors } from '../Colors';
-import { LangtonModel } from './LangtonModel';
+import { TileCalculator } from '../common/TileCalculator';
 
-export const DebugDataView = observer(({ model }: { model: LangtonModel }) => (
+const TileDebugView = observer(({ model }: { model: TileCalculator }) => (
   <DebugData>
-    {dump('Center', model.centerPoint)}
-    {dump('Render area', model.tileCalc.renderArea)}
-    {dump('Tile range', model.tileCalc.tileRange)}
-    {dump('Grid offset', model.tileCalc.gridOffset)}
+    {dump('Center px', model.centerInPx)}
+    {dump('Center tile', model.centerInTiles)}
+    {dump('Render area', model.renderArea)}
+    {dump('Tile range', model.tileRange)}
+    {dump('Grid offset', model.gridOffset)}
   </DebugData>
 ));
+
+export default TileDebugView;
 
 const dump = (title: string, data: any) => (
   <div>

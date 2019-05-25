@@ -7,9 +7,9 @@ import FpsBar from '../common/FpsBar';
 import FrameBar from '../common/FrameBar';
 import SimulationView from '../common/SimulationView';
 import SpeedBar from '../common/SpeedBar';
+import TileDebugView from '../common/TileDebugView';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
-import { DebugDataView } from './DebugDataView';
 import { LangtonModel } from './LangtonModel';
 import { LangtonRenderer } from './LangtonRenderer';
 
@@ -33,7 +33,7 @@ export default class LangtonsAntUI extends React.Component<{}> {
         />
         <ToolBar className="BottomBar">
           {showDebug ? (
-            <DebugDataView model={this.model} />
+            <TileDebugView model={this.model.tileCalc} />
           ) : (
             <>
               <SpeedBar model={this.model} />

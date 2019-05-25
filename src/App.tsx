@@ -2,6 +2,7 @@ import { createBrowserHistory } from 'history';
 import React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+import MandelbrotUI from './ui/fractal/MandelbrotUI';
 import LangtonsAntUI from './ui/langton/LangtonsAntUI';
 import GameOfLifeUI from './ui/life/GameOfLifeUI';
 
@@ -13,6 +14,7 @@ const App: React.FC = () => (
       <Switch>
         <Route path="/p/langtons-ant" component={LangtonsAntUI} />
         <Route path="/p/game-of-life" component={GameOfLifeUI} />
+        <Route path="/p/mandelbrot" component={MandelbrotUI} />
         <Route component={LangtonsAntUI} />
       </Switch>
     </Router>
