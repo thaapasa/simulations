@@ -15,7 +15,7 @@ export default class MandelbrotUI extends React.Component<{}> {
   render() {
     return (
       <UIContainer className="MandelbrotUI">
-        <ToolBar className="TopBar">
+        <ToolBar className="TopBar Center">
           <Route component={UISelector} />
         </ToolBar>
         <CanvasSimulationView

@@ -11,23 +11,10 @@ export default class FrameBar extends React.Component<{
   render() {
     const { model } = this.props;
     return (
-      <IconBar>
-        <StepText>
-          <StepPart>Askel</StepPart>
-          <StepPart>{model.frame}</StepPart>
-        </StepText>
+      <IconBar className="TextItem">
+        <div>Askel</div>
+        <div>{model.frame}</div>
       </IconBar>
     );
   }
 }
-
-const StepText = styled.div`
-  color: ${Colors.white};
-  font-weight: bold;
-  width: 130px;
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const StepPart = styled.div``;
