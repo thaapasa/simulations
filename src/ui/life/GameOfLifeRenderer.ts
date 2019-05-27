@@ -1,19 +1,20 @@
 import * as PIXI from 'pixi.js';
 import { Size } from '../../game/common/Size';
-import { ModelRenderer, RendererSupport } from '../common/ModelRenderer';
+import { ModelRenderer } from '../common/ModelRenderer';
+import { PixiRendererSupport } from '../common/PixiRendererSupport';
 import { TileRenderer } from '../common/TileRenderer';
 import { GameOfLifeModel } from './GameOfLifeModel';
 
-export class GameOfLifeRenderer implements ModelRenderer {
+export class GameOfLifeRenderer implements ModelRenderer<PIXI.Application> {
   private tileRenderer: TileRenderer;
-  private support: RendererSupport;
+  private support: PixiRendererSupport;
 
   constructor(
     model: GameOfLifeModel,
     attachRef: React.RefObject<HTMLDivElement>
   ) {
     this.tileRenderer = new TileRenderer(model);
-    this.support = new RendererSupport(model, this, attachRef);
+    this.support = new PixiRendererSupport(model, this, attachRef);
   }
 
   destroy = () => this.support.destroy();

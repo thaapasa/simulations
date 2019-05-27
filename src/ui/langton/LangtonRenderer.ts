@@ -1,14 +1,15 @@
 import * as PIXI from 'pixi.js';
 import { Size } from '../../game/common/Size';
 import ant from '../../icons/ant.svg';
-import { ModelRenderer, RendererSupport } from '../common/ModelRenderer';
+import { ModelRenderer } from '../common/ModelRenderer';
+import { PixiRendererSupport } from '../common/PixiRendererSupport';
 import { TileRenderer } from '../common/TileRenderer';
 import { LangtonModel } from './LangtonModel';
 
-export class LangtonRenderer implements ModelRenderer {
+export class LangtonRenderer implements ModelRenderer<PIXI.Application> {
   private model: LangtonModel;
   private tileRenderer: TileRenderer;
-  private support: RendererSupport;
+  private support: PixiRendererSupport;
 
   private ant = PIXI.Sprite.from(ant);
 
@@ -16,7 +17,7 @@ export class LangtonRenderer implements ModelRenderer {
     this.model = model;
     this.ant.anchor.set(0.5);
     this.tileRenderer = new TileRenderer(model);
-    this.support = new RendererSupport(model, this, attachRef);
+    this.support = new PixiRendererSupport(model, this, attachRef);
   }
 
   destroy = () => {

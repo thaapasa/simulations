@@ -1,31 +1,46 @@
-import * as PIXI from 'pixi.js';
-import { Size } from '../../game/common/Size';
-import { ModelRenderer, RendererSupport } from '../common/ModelRenderer';
+import { Size, sizeEquals } from '../../game/common/Size';
+import { ModelRenderer } from '../common/ModelRenderer';
 import { MandelbrotModel } from './MandelbrotModel';
 
-export class MandelbrotRenderer implements ModelRenderer {
+export class MandelbrotRenderer implements ModelRenderer<void> {
   private model: MandelbrotModel;
-  private support: RendererSupport;
+  private canvasRef: React.RefObject<HTMLCanvasElement>;
 
   constructor(
     model: MandelbrotModel,
-    attachRef: React.RefObject<HTMLDivElement>
+    canvasRef: React.RefObject<HTMLCanvasElement>
   ) {
     this.model = model;
-    this.support = new RendererSupport(model, this, attachRef);
+    this.canvasRef = canvasRef;
   }
 
   destroy = () => {
-    this.support.destroy();
+    // Noop
   };
 
-  updateSize = (newSize: Size) => this.support.updateSize(newSize);
+  updateSize = (newSize: Size) => {
+    if (!sizeEquals(newSize, this.model.renderSize)) {
+      this.model.renderSize = newSize;
+      this.render();
+    }
+  };
 
   render = () => {
-    // Floob
+    if (!this.canvasRef.current) {
+      console.log('Skip canvas render');
+      return;
+    }
+    const size = this.model.renderSize;
+    console.log('Canvas render', size);
+    const context = this.canvasRef.current.getContext('2d');
+    if (!context) {
+      return;
+    }
+    context.fillStyle = '#ffaac0';
+    context.fillRect(0, 0, size.width, size.height);
   };
 
-  createSprites = (app: PIXI.Application) => {
+  createSprites = (_: void) => {
     // Fliib
   };
 }
