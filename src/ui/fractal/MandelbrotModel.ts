@@ -18,9 +18,27 @@ export class MandelbrotModel implements Model {
   @observable
   centerPoint: Position = { x: 0, y: 0 };
 
+  @observable
+  resolution: number = 100;
+
+  pixels: number[][] = [];
+
   renderCallback: () => void = noop;
 
   render() {
     this.renderCallback();
   }
+
+  resetPixels = () => {
+    this.pixels = [];
+    const size = this.renderSize;
+    for (let x = 0; x < size.width; ++x) {
+      this.pixels.push([]);
+      for (let y = 0; y < size.height; ++y) {
+        this.pixels[x].push(
+          ((x + y) * this.resolution) / (size.width + size.height)
+        );
+      }
+    }
+  };
 }

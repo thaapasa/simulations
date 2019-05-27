@@ -24,6 +24,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   updateSize = (newSize: Size) => {
     if (!sizeEquals(newSize, this.model.renderSize)) {
       this.model.renderSize = newSize;
+      this.model.resetPixels();
       this.buffer = undefined;
       this.render();
     }
@@ -43,12 +44,16 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
     }
     const buffer = this.buffer;
 
+    const pixels = this.model.pixels;
+    const resolution = this.model.resolution;
+
     for (let x = 0; x < size.width; ++x) {
       for (let y = 0; y < size.height; ++y) {
         const pixelindex = (y * size.width + x) * 4;
-        buffer.data[pixelindex] = Math.round(x / 20);
-        buffer.data[pixelindex + 1] = Math.round(y / 6);
-        buffer.data[pixelindex + 2] = Math.round(x / 27);
+        const pos = (pixels[x][y] * 256) / resolution;
+        buffer.data[pixelindex] = pos / 2;
+        buffer.data[pixelindex + 1] = 0;
+        buffer.data[pixelindex + 2] = pos;
         buffer.data[pixelindex + 3] = 255;
       }
     }
@@ -56,6 +61,6 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   };
 
   createSprites = (_: void) => {
-    // Fliib
+    // Noop
   };
 }
