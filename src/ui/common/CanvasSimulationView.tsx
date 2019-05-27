@@ -33,7 +33,8 @@ class PlainCanvasSimulationView extends React.Component<{
       <ModelMover model={this.props.model}>
         <canvas
           ref={this.containerRef}
-          style={{ width: '100%', height: '100%' }}
+          width={this.props.size.width}
+          height={this.props.size.height}
         />
       </ModelMover>
     );
