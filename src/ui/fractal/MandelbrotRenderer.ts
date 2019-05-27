@@ -27,6 +27,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       this.model.resetPixels();
       this.buffer = undefined;
       this.render();
+      setImmediate(this.model.calculate);
     }
   };
 
@@ -43,6 +44,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       this.buffer = ctx.createImageData(size.width, size.height);
     }
     const buffer = this.buffer;
+    console.log('Rendering image');
 
     const pixels = this.model.pixels;
     const resolution = this.model.resolution;
