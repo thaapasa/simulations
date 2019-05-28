@@ -3,10 +3,11 @@ import { ModelRenderer } from '../common/ModelRenderer';
 import { MandelbrotModel } from './MandelbrotModel';
 
 export class MandelbrotRenderer implements ModelRenderer<void> {
+  zeroValue = 0;
+
   private model: MandelbrotModel;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private buffer: ImageData | undefined;
-  private ctx: CanvasRenderingContext2D | null = null;
 
   constructor(
     model: MandelbrotModel,
@@ -25,9 +26,8 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   updateSize = (newSize: Size) => {
     if (!sizeEquals(newSize, this.model.renderSize)) {
       this.model.renderSize = newSize;
-      this.model.resetPixels();
+      this.model.renderer.resetPixels();
       this.buffer = undefined;
-      this.ctx = null;
       this.render();
       setImmediate(this.model.calculate);
     }
@@ -38,19 +38,16 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       return;
     }
     const size = this.model.renderSize;
-    if (!this.ctx) {
-      this.ctx = this.canvasRef.current.getContext('2d');
-      if (!this.ctx) {
-        return;
-      }
+    const ctx = this.canvasRef.current.getContext('2d');
+    if (!ctx) {
+      return;
     }
-    const ctx = this.ctx;
     if (!this.buffer) {
       this.buffer = ctx.createImageData(size.width, size.height);
     }
     const buffer = this.buffer;
 
-    const pixels = this.model.pixels;
+    const pixels = this.model.renderer.pixels;
     const resolution = this.model.resolution;
 
     for (let x = 0; x < size.width; ++x) {
