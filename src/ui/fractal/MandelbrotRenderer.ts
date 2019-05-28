@@ -6,6 +6,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   private model: MandelbrotModel;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private buffer: ImageData | undefined;
+  private ctx: CanvasRenderingContext2D | null = null;
 
   constructor(
     model: MandelbrotModel,
@@ -26,6 +27,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       this.model.renderSize = newSize;
       this.model.resetPixels();
       this.buffer = undefined;
+      this.ctx = null;
       this.render();
       setImmediate(this.model.calculate);
     }
@@ -36,15 +38,17 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       return;
     }
     const size = this.model.renderSize;
-    const ctx = this.canvasRef.current.getContext('2d');
-    if (!ctx) {
-      return;
+    if (!this.ctx) {
+      this.ctx = this.canvasRef.current.getContext('2d');
+      if (!this.ctx) {
+        return;
+      }
     }
+    const ctx = this.ctx;
     if (!this.buffer) {
       this.buffer = ctx.createImageData(size.width, size.height);
     }
     const buffer = this.buffer;
-    console.log('Rendering image');
 
     const pixels = this.model.pixels;
     const resolution = this.model.resolution;

@@ -1,5 +1,5 @@
-export class Mandelbrot {
-  calculate(r: number, i: number, _: number): number {
-    return Math.abs(r + i * 1.37) / 30;
+export class ColorSlide {
+  calculate(r: number, i: number, resolution: number): number {
+    return (r + 4 + i * 1.5) * resolution * 0.2;
   }
 }
