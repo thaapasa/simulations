@@ -1,72 +1,74 @@
-import { Range } from '../ui/common/Model';
+import { Range, rangeIsValid } from '../game/common/Range';
 
 export function* generateTiling(size: number): IterableIterator<Range> {
   if (size < 1) {
     return;
   }
   const wholeArea = { from: { x: 0, y: 0 }, to: { x: size - 1, y: size - 1 } };
-  yield { ...wholeArea };
+  yield wholeArea;
   const stack: Range[] = [wholeArea];
 
   while (stack.length > 0) {
-    const val = stack.shift()!;
-    // console.log('This', val);
+    const { to, from } = stack.shift()!;
+    // console.log('This', to, from);
 
-    // Invariant: val is already yielded, so just yield sub-areas + split
+    // Invariant: { to, from } is already yielded, so just yield sub-areas + split
     const mid = {
-      x: Math.round((val.to.x - val.from.x) / 2) + val.from.x,
-      y: Math.round((val.to.y - val.from.y) / 2) + val.from.y,
+      x: Math.floor((to.x - from.x) / 2) + from.x,
+      y: Math.floor((to.y - from.y) / 2) + from.y,
     };
+    const leftMiddle = {
+      from: { x: mid.x, y: from.y },
+      to,
+    };
+    const topLeft = {
+      from,
+      to: { x: mid.x, y: mid.y },
+    };
+    const topRight = {
+      from: { x: mid.x + 1, y: from.y },
+      to: { x: to.x, y: mid.y },
+    };
+    const bottomLeft = {
+      from: { x: from.x, y: mid.y + 1 },
+      to: { x: mid.x, y: to.y },
+    };
+    const bottomRight = {
+      from: { x: mid.x + 1, y: mid.y + 1 },
+      to,
+    };
+
+    console.log('Corners', topLeft, topRight, bottomLeft, bottomRight);
+
     // Whole second half (x-axis), only for yielding
-    if (mid.x < val.to.x) {
-      yield {
-        from: { x: mid.x, y: val.from.y },
-        to: val.to,
-      };
+    if (rangeIsValid(leftMiddle) && mid.x > from.x) {
+      yield leftMiddle;
     }
 
     // Bottom parts (to yield + split)
-    if (mid.y < val.to.y) {
-      // Bottom left
-      if (mid.x > val.from.x) {
-        const bottomLeft = {
-          from: { x: val.from.x, y: mid.y },
-          to: { x: mid.x, y: val.to.y },
-        };
-        console.log('Bottom left', bottomLeft);
+    if (mid.y > from.y) {
+      if (rangeIsValid(bottomLeft) && mid.x < to.x) {
+        // console.log('Bottom left', bottomLeft);
         stack.push(bottomLeft);
         yield bottomLeft;
       }
-      // Bottom right
-      if (mid.x < val.to.x) {
-        const bottomRight = {
-          from: mid,
-          to: val.to,
-        };
-        console.log('Bottom right', bottomRight);
+      if (rangeIsValid(bottomRight) && mid.x > from.x) {
+        // console.log('Bottom right', bottomRight);
         stack.push(bottomRight);
         yield bottomRight;
       }
     }
 
     // Top parts (to split)
-    if (mid.y > val.from.y) {
+    if (mid.y < to.y) {
       // Top left
-      if (mid.x > val.from.x) {
-        const topLeft = {
-          from: val.from,
-          to: mid,
-        };
-        console.log('Top left', topLeft);
-        // stack.push(topLeft);
+      if (rangeIsValid(topLeft) && mid.x > from.x) {
+        // console.log('Top left', topLeft);
+        stack.push(topLeft);
       }
       // Top right
-      if (mid.x < val.to.x) {
-        const topRight = {
-          from: { x: mid.x, y: val.from.y },
-          to: { x: val.to.x, y: mid.y },
-        };
-        console.log('Top right', topRight);
+      if (rangeIsValid(topRight) && mid.x < to.x) {
+        // console.log('Top right', topRight);
         stack.push(topRight);
       }
     }
