@@ -35,7 +35,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   };
 
   render = () => {
-    console.time('Render');
+    // console.time('Render');
     if (!this.canvasRef.current) {
       return;
     }
@@ -64,7 +64,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       }
     }
     ctx.putImageData(buffer, 0, 0);
-    console.timeEnd('Render');
+    // console.timeEnd('Render');
   };
 
   createSprites = (_: void) => {
