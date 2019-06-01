@@ -3,7 +3,12 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
-import { GameOfLifeLogo, IconProps, LangtonsAntLogo } from './Icons';
+import {
+  GameOfLifeLogo,
+  IconProps,
+  LangtonsAntLogo,
+  MandelbrotLogo,
+} from './Icons';
 
 @observer
 export default class GameSelector extends React.Component<
@@ -23,7 +28,7 @@ export default class GameSelector extends React.Component<
           path="/p/game-of-life"
         />
         <LogoIcon
-          logo={GameOfLifeLogo}
+          logo={MandelbrotLogo}
           history={this.props.history}
           path="/p/mandelbrot"
         />
