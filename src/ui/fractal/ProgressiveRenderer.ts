@@ -44,6 +44,7 @@ export class ProgressiveRenderer<T> {
         if (next.done) {
           return;
         }
+        console.time('Calc');
         const { from, to } = next.value;
         for (let x = 0; x < size.width; x += step) {
           for (let y = 0; y < size.height; y += step) {
@@ -57,6 +58,7 @@ export class ProgressiveRenderer<T> {
             }
           }
         }
+        console.timeEnd('Calc');
         yield true;
       }
     }

@@ -1,5 +1,6 @@
 import { Size, sizeEquals } from '../../game/common/Size';
 import { ModelRenderer } from '../common/ModelRenderer';
+import { defaultPalette, getColorAt } from '../Palette';
 import { MandelbrotModel } from './MandelbrotModel';
 
 export class MandelbrotRenderer implements ModelRenderer<void> {
@@ -34,6 +35,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   };
 
   render = () => {
+    console.time('Render');
     if (!this.canvasRef.current) {
       return;
     }
@@ -53,14 +55,16 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
     for (let x = 0; x < size.width; ++x) {
       for (let y = 0; y < size.height; ++y) {
         const pixelindex = (y * size.width + x) * 4;
-        const pos = (pixels[x][y] * 256) / resolution;
-        buffer.data[pixelindex] = pos / 2;
-        buffer.data[pixelindex + 1] = 0;
-        buffer.data[pixelindex + 2] = pos;
+        const pos = pixels[x][y] / resolution;
+        const color = getColorAt(pos, defaultPalette);
+        buffer.data[pixelindex] = color.r;
+        buffer.data[pixelindex + 1] = color.g;
+        buffer.data[pixelindex + 2] = color.b;
         buffer.data[pixelindex + 3] = 255;
       }
     }
     ctx.putImageData(buffer, 0, 0);
+    console.timeEnd('Render');
   };
 
   createSprites = (_: void) => {

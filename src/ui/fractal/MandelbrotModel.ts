@@ -21,7 +21,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   centerPoint: Position = { x: 0, y: 0 };
 
   @observable
-  resolution: number = 100;
+  resolution: number = 255;
 
   fractal = new Mandelbrot();
   zeroValue = 0;
