@@ -29,6 +29,7 @@ export class ProgressiveRenderer<T> {
   };
 
   calculate = () => {
+    this.calculation = undefined;
     const source = this.source;
     const pixels = this.pixels;
     const size = source.renderSize;
