@@ -1,4 +1,5 @@
 import { Size } from '../../game/common/Size';
+import { generateTiling } from '../../util/ProgressiveTiling';
 
 export interface PixelSource<T> {
   zeroValue: T;
@@ -31,25 +32,32 @@ export class ProgressiveRenderer<T> {
     const source = this.source;
     const pixels = this.pixels;
     const size = source.renderSize;
-    const step = 16;
+    const step = 8;
     if (size.width < 0 || size.height < 0) {
       return;
     }
     function* calc(): IterableIterator<boolean> {
-      for (let x = 0; x < size.width; x += step) {
-        for (let y = 0; y < size.height; y += step) {
-          const value = source.getPixelValue(x, y, size);
-          for (let dx = 0; dx < step; ++dx) {
-            for (let dy = 0; dy < step; ++dy) {
-              if (x + dx < size.width && y + dy < size.height) {
-                pixels[x + dx][y + dy] = value;
+      const tiles = generateTiling(step);
+      while (true) {
+        const next = tiles.next();
+        if (next.done) {
+          return;
+        }
+        const { from, to } = next.value;
+        for (let x = 0; x < size.width; x += step) {
+          for (let y = 0; y < size.height; y += step) {
+            const value = source.getPixelValue(x + from.x, y + from.y, size);
+            for (let dx = from.x; dx < to.x; ++dx) {
+              for (let dy = from.y; dy < to.y; ++dy) {
+                if (x + dx < size.width && y + dy < size.height) {
+                  pixels[x + dx][y + dy] = value;
+                }
               }
             }
           }
         }
+        yield true;
       }
-      yield true;
-      return false;
     }
     this.calculation = calc();
     setImmediate(this.nextCalc);

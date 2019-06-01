@@ -2,7 +2,7 @@ import { noop } from '@babel/types';
 import { observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
-import { ColorSlide } from '../../game/fractal/ColorSlide';
+import { Mandelbrot } from '../../game/fractal/Mandelbrot';
 import { BoundValue } from '../../util/BoundValue';
 import { Model } from '../common/Model';
 import { PixelSource, ProgressiveRenderer } from './ProgressiveRenderer';
@@ -23,7 +23,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   @observable
   resolution: number = 100;
 
-  fractal = new ColorSlide();
+  fractal = new Mandelbrot();
   zeroValue = 0;
   renderCallback: () => void = noop;
 
