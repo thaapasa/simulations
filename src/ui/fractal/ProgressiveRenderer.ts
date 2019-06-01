@@ -5,7 +5,7 @@ export interface PixelSource<T> {
   zeroValue: T;
   getPixelValue: (x: number, y: number, size: Size) => T;
   renderSize: Size;
-  render: () => void;
+  repaint: () => void;
 }
 
 export class ProgressiveRenderer<T> {
@@ -48,7 +48,11 @@ export class ProgressiveRenderer<T> {
         const { from, to } = next.value;
         for (let x = 0; x < size.width; x += step) {
           for (let y = 0; y < size.height; y += step) {
-            const value = source.getPixelValue(x + from.x, y + from.y, size);
+            const value = source.getPixelValue(
+              x + from.x,
+              size.height - (y + from.y),
+              size
+            );
             for (let dx = from.x; dx < to.x; ++dx) {
               for (let dy = from.y; dy < to.y; ++dy) {
                 if (x + dx < size.width && y + dy < size.height) {
@@ -71,10 +75,10 @@ export class ProgressiveRenderer<T> {
       return;
     }
     if (this.calculation.next().value) {
-      this.source.render();
+      this.source.repaint();
       setImmediate(this.nextCalc);
     } else {
-      this.source.render();
+      this.source.repaint();
       this.calculation = undefined;
     }
   };
