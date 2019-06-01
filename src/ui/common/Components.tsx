@@ -24,6 +24,10 @@ export const ToolBar = styled.div`
   justify-content: space-between;
   align-items: center;
 
+  &.Center {
+    justify-content: center;
+  }
+
   &.TopBar {
     margin-bottom: 16px;
   }

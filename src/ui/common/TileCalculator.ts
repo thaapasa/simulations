@@ -1,6 +1,7 @@
 import { computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
-import { Model, Range } from './Model';
+import { Range } from '../../game/common/Range';
+import { Model } from './Model';
 
 export class TileCalculator {
   model: Model;

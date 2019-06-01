@@ -49,7 +49,6 @@ export const IconBar = styled.div`
   border-radius: 24px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
   color: ${Colors.white};
   font-weight: bold;
@@ -57,6 +56,12 @@ export const IconBar = styled.div`
 
   & img {
     margin: 0 6px;
+  }
+
+  &.TextItem  {
+    width: 200px;
+    justify-content: space-between;
+    padding: 0 16px;
   }
 
   ${media.mobile`

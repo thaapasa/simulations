@@ -5,7 +5,7 @@ import { ToolBar, UIContainer } from '../common/Components';
 import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
 import FrameBar from '../common/FrameBar';
-import SimulationView from '../common/SimulationView';
+import PixiSimulationView from '../common/PixiSimulationView';
 import SpeedBar from '../common/SpeedBar';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
@@ -29,7 +29,7 @@ export default class GameOfLifeUI extends React.Component<{}> {
           <Route component={UISelector} />
           <FpsBar model={this.model.control} />
         </ToolBar>
-        <SimulationView
+        <PixiSimulationView
           model={this.model}
           createRenderer={this.createRenderer}
         />

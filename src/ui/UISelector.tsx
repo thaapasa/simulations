@@ -22,6 +22,11 @@ export default class GameSelector extends React.Component<
           history={this.props.history}
           path="/p/game-of-life"
         />
+        <LogoIcon
+          logo={GameOfLifeLogo}
+          history={this.props.history}
+          path="/p/mandelbrot"
+        />
       </LogoBar>
     );
   }
