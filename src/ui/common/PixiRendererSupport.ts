@@ -60,7 +60,7 @@ export class PixiRendererSupport {
       backgroundColor: HexColors.darkBlue,
       resolution,
     });
-    this.modelRenderer.createSprites(app);
+    this.modelRenderer.createSprites(app, size);
     return app;
   };
 }

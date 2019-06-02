@@ -1,21 +1,24 @@
-import { Size, sizeEquals } from '../../game/common/Size';
+import * as PIXI from 'pixi.js';
+import { Size } from '../../game/common/Size';
 import { ModelRenderer } from '../common/ModelRenderer';
+import { PixiRendererSupport } from '../common/PixiRendererSupport';
 import { MandelbrotModel } from './MandelbrotModel';
 
-export class MandelbrotRenderer implements ModelRenderer<void> {
+export class MandelbrotRenderer implements ModelRenderer<PIXI.Application> {
   zeroValue = 0;
 
   private model: MandelbrotModel;
-  private canvasRef: React.RefObject<HTMLCanvasElement>;
-  private buffer: ImageData | undefined;
   private context: CanvasRenderingContext2D | undefined;
+  private canvas: HTMLCanvasElement | undefined;
+  private buffer: ImageData | undefined;
+  private support: PixiRendererSupport;
 
   constructor(
     model: MandelbrotModel,
-    canvasRef: React.RefObject<HTMLCanvasElement>
+    attachRef: React.RefObject<HTMLDivElement>
   ) {
     this.model = model;
-    this.canvasRef = canvasRef;
+    this.support = new PixiRendererSupport(this.model, this, attachRef);
   }
 
   destroy = () => {
@@ -25,27 +28,16 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   };
 
   updateSize = (newSize: Size) => {
-    if (!sizeEquals(newSize, this.model.renderSize)) {
-      this.model.renderSize = newSize;
-      this.model.renderer.resetPixels();
-      this.buffer = undefined;
-      this.render();
-      setImmediate(this.model.calculate);
-    }
+    this.support.updateSize(newSize);
   };
 
   render = () => {
     // console.time('Render');
-    if (!this.canvasRef.current) {
+    if (!this.context) {
       return;
     }
     const { width, height } = this.model.renderSize;
-    if (!this.context) {
-      this.context = this.canvasRef.current.getContext('2d') || undefined;
-      if (!this.context) {
-        return;
-      }
-    }
+
     const ctx = this.context;
     if (!this.buffer) {
       this.buffer = ctx.createImageData(width, height);
@@ -61,16 +53,28 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
         const pos = pixels[x][y];
         const color = colors.getColorAt(pos);
         buffer.data[pixelindex] = color.r;
-        buffer.data[pixelindex + 1] = color.g;
+        buffer.data[pixelindex + 1] = 255 - color.g;
         buffer.data[pixelindex + 2] = color.b;
         buffer.data[pixelindex + 3] = 255;
       }
     }
     ctx.putImageData(buffer, 0, 0);
-    // console.timeEnd('Render');
+    //     console.timeEnd('Render');
   };
 
-  createSprites = (_: void) => {
-    // Noop
+  createSprites = (app: PIXI.Application, size: Size) => {
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = size.width;
+    this.canvas.height = size.height;
+    this.context = this.canvas.getContext('2d')!;
+
+    const texture = PIXI.Texture.fromCanvas(this.canvas);
+    console.log('Texture size', texture.width, texture.height);
+    const sprite = new PIXI.Sprite(texture);
+    app.stage.addChild(sprite);
+
+    this.model.renderer.resetPixels();
+    this.buffer = undefined;
+    setImmediate(this.model.calculate);
   };
 }

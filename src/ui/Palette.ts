@@ -7,6 +7,10 @@ export interface ColorStop {
 
 export type Palette = ColorStop[];
 
+export interface ColorProvider {
+  getColorAt(step: number): ByteColor;
+}
+
 export const defaultPalette: Palette = [
   { position: 0, color: ByteColors.black },
   { position: 0.07, color: ByteColors.darkBlue },

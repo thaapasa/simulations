@@ -65,7 +65,7 @@ export class ProgressiveRenderer<T> {
         if (next.done) {
           return;
         }
-        // console.time('Calc');
+        console.time('Calc');
         const { from, to } = next.value;
         for (let x = 0; x < width; x += step) {
           for (let y = 0; y < height; y += step) {
@@ -85,7 +85,7 @@ export class ProgressiveRenderer<T> {
             }
           }
         }
-        // console.timeEnd('Calc');
+        console.timeEnd('Calc');
         yield true;
       }
     }
@@ -100,7 +100,7 @@ export class ProgressiveRenderer<T> {
     this.fpsCounter.tick();
     if (this.calculation.next().value) {
       this.source.repaint();
-      setImmediate(this.nextCalc);
+      setTimeout(this.nextCalc, 10);
     } else {
       this.source.repaint();
       this.calculation = undefined;

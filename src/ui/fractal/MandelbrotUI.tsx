@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Route } from 'react-router';
-import CanvasSimulationView from '../common/CanvasSimulationView';
 import { ToolBar, UIContainer } from '../common/Components';
 import FpsBar from '../common/FpsBar';
+import PixiSimulationView from '../common/PixiSimulationView';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
 import { MandelbrotModel } from './MandelbrotModel';
@@ -19,7 +19,7 @@ export default class MandelbrotUI extends React.Component<{}> {
         <ToolBar className="TopBar Center">
           <Route component={UISelector} />
         </ToolBar>
-        <CanvasSimulationView
+        <PixiSimulationView
           model={this.model}
           createRenderer={this.createRenderer}
         />
@@ -31,6 +31,6 @@ export default class MandelbrotUI extends React.Component<{}> {
     );
   }
 
-  private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement>) =>
+  private createRenderer = (attachRef: React.RefObject<HTMLDivElement>) =>
     new MandelbrotRenderer(this.model, attachRef);
 }
