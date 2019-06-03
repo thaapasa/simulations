@@ -5,6 +5,7 @@ import { Size } from '../../game/common/Size';
 import { Mandelbrot } from '../../game/fractal/Mandelbrot';
 import { BoundValue } from '../../util/BoundValue';
 import { Model } from '../common/Model';
+import { defaultPalette, PrecalcColor, precalcColors } from '../Palette';
 import { PixelSource, ProgressiveRenderer } from './ProgressiveRenderer';
 
 export class MandelbrotModel implements Model, PixelSource<number> {
@@ -60,6 +61,11 @@ export class MandelbrotModel implements Model, PixelSource<number> {
       width: size.width * ratio,
       height: size.height * ratio,
     };
+  }
+
+  @computed
+  get colorProvider(): PrecalcColor {
+    return precalcColors(this.resolution, defaultPalette);
   }
 
   screenToFractal(x: number, y: number): Position {

@@ -42,3 +42,26 @@ export function getColorAt(position: number, palette: Palette): ByteColor {
   }
   return ByteColors.black;
 }
+
+export interface PrecalcColor {
+  getColorAt(step: number): ByteColor;
+}
+
+export function precalcColors(
+  resolution: number,
+  palette: Palette
+): PrecalcColor {
+  if (resolution < 1000) {
+    const precalcArray: ByteColor[] = [];
+    for (let s = 0; s <= resolution; ++s) {
+      precalcArray.push(getColorAt(s / resolution, palette));
+    }
+    return {
+      getColorAt: step => precalcArray[step],
+    };
+  } else {
+    return {
+      getColorAt: step => getColorAt(step / resolution, palette),
+    };
+  }
+}

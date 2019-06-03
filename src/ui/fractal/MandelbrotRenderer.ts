@@ -1,6 +1,5 @@
 import { Size, sizeEquals } from '../../game/common/Size';
 import { ModelRenderer } from '../common/ModelRenderer';
-import { defaultPalette, getColorAt } from '../Palette';
 import { MandelbrotModel } from './MandelbrotModel';
 
 export class MandelbrotRenderer implements ModelRenderer<void> {
@@ -54,13 +53,13 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
     const buffer = this.buffer;
 
     const pixels = this.model.renderer.pixels;
-    const resolution = this.model.resolution;
+    const colors = this.model.colorProvider;
 
     for (let x = 0; x < width; ++x) {
       for (let y = 0; y < height; ++y) {
         const pixelindex = (y * width + x) * 4;
-        const pos = pixels[x][y] / resolution;
-        const color = getColorAt(pos, defaultPalette);
+        const pos = pixels[x][y];
+        const color = colors.getColorAt(pos);
         buffer.data[pixelindex] = color.r;
         buffer.data[pixelindex + 1] = color.g;
         buffer.data[pixelindex + 2] = color.b;
