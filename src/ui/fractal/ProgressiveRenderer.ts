@@ -32,9 +32,10 @@ export class ProgressiveRenderer<T> {
     this.calculation = undefined;
     const source = this.source;
     const pixels = this.pixels;
-    const size = source.renderSize;
+    const { width, height } = source.renderSize;
+    const size = { width, height };
     const step = 8;
-    if (size.width < 0 || size.height < 0) {
+    if (width < 0 || height < 0) {
       return;
     }
     function* calc(): IterableIterator<boolean> {
@@ -46,16 +47,16 @@ export class ProgressiveRenderer<T> {
         }
         // console.time('Calc');
         const { from, to } = next.value;
-        for (let x = 0; x < size.width; x += step) {
-          for (let y = 0; y < size.height; y += step) {
+        for (let x = 0; x < width; x += step) {
+          for (let y = 0; y < height; y += step) {
             const value = source.getPixelValue(
               x + from.x,
-              size.height - (y + from.y),
+              height - (y + from.y),
               size
             );
             for (let dx = from.x; dx < to.x; ++dx) {
               for (let dy = from.y; dy < to.y; ++dy) {
-                if (x + dx < size.width && y + dy < size.height) {
+                if (x + dx < width && y + dy < height) {
                   pixels[x + dx][y + dy] = value;
                 }
               }

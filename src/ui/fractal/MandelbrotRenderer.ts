@@ -9,6 +9,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   private model: MandelbrotModel;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private buffer: ImageData | undefined;
+  private context: CanvasRenderingContext2D | undefined;
 
   constructor(
     model: MandelbrotModel,
@@ -39,22 +40,25 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
     if (!this.canvasRef.current) {
       return;
     }
-    const size = this.model.renderSize;
-    const ctx = this.canvasRef.current.getContext('2d');
-    if (!ctx) {
-      return;
+    const { width, height } = this.model.renderSize;
+    if (!this.context) {
+      this.context = this.canvasRef.current.getContext('2d') || undefined;
+      if (!this.context) {
+        return;
+      }
     }
+    const ctx = this.context;
     if (!this.buffer) {
-      this.buffer = ctx.createImageData(size.width, size.height);
+      this.buffer = ctx.createImageData(width, height);
     }
     const buffer = this.buffer;
 
     const pixels = this.model.renderer.pixels;
     const resolution = this.model.resolution;
 
-    for (let x = 0; x < size.width; ++x) {
-      for (let y = 0; y < size.height; ++y) {
-        const pixelindex = (y * size.width + x) * 4;
+    for (let x = 0; x < width; ++x) {
+      for (let y = 0; y < height; ++y) {
+        const pixelindex = (y * width + x) * 4;
         const pos = pixels[x][y] / resolution;
         const color = getColorAt(pos, defaultPalette);
         buffer.data[pixelindex] = color.r;
