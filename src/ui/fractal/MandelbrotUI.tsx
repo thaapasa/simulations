@@ -3,6 +3,7 @@ import React from 'react';
 import { Route } from 'react-router';
 import CanvasSimulationView from '../common/CanvasSimulationView';
 import { ToolBar, UIContainer } from '../common/Components';
+import FpsBar from '../common/FpsBar';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
 import { MandelbrotModel } from './MandelbrotModel';
@@ -24,6 +25,7 @@ export default class MandelbrotUI extends React.Component<{}> {
         />
         <ToolBar className="BottomBar">
           <ZoomBar model={this.model} />
+          <FpsBar model={this.model} />
         </ToolBar>
       </UIContainer>
     );

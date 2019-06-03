@@ -1,17 +1,26 @@
+import { computed } from 'mobx';
 import { Size } from '../../game/common/Size';
+import { FpsCalculator } from '../../util/FpsCalculator';
 import { generateTiling } from '../../util/ProgressiveTiling';
 
 export interface PixelSource<T> {
   zeroValue: T;
-  getPixelValue: (x: number, y: number, size: Size) => T;
+  getPixelValue: (x: number, y: number) => T;
   renderSize: Size;
   repaint: () => void;
 }
 
 export class ProgressiveRenderer<T> {
   pixels: T[][] = [];
+
+  @computed
+  get fps(): number {
+    return this.fpsCounter.fps;
+  }
+
   private source: PixelSource<T>;
   private calculation: IterableIterator<boolean> | undefined;
+  private fpsCounter = new FpsCalculator();
 
   constructor(source: PixelSource<T>) {
     this.source = source;
@@ -33,7 +42,6 @@ export class ProgressiveRenderer<T> {
     const source = this.source;
     const pixels = this.pixels;
     const { width, height } = source.renderSize;
-    const size = { width, height };
     const step = 8;
     if (width < 0 || height < 0) {
       return;
@@ -51,8 +59,7 @@ export class ProgressiveRenderer<T> {
           for (let y = 0; y < height; y += step) {
             const value = source.getPixelValue(
               x + from.x,
-              height - (y + from.y),
-              size
+              height - (y + from.y)
             );
             for (let dx = from.x; dx < to.x; ++dx) {
               for (let dy = from.y; dy < to.y; ++dy) {
@@ -75,6 +82,7 @@ export class ProgressiveRenderer<T> {
     if (!this.calculation) {
       return;
     }
+    this.fpsCounter.tick();
     if (this.calculation.next().value) {
       this.source.repaint();
       setImmediate(this.nextCalc);

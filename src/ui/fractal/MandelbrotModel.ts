@@ -37,6 +37,11 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   zeroValue = 0;
   renderCallback: () => void = noop;
 
+  @computed
+  get fps(): number {
+    return this.renderer.fps;
+  }
+
   @observable
   modelCenter: Position = { x: -0.8, y: 0 };
 
@@ -96,7 +101,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     this.renderCallback();
   };
 
-  getPixelValue = (x: number, y: number, _: Size) => {
+  getPixelValue = (x: number, y: number) => {
     const { x: r, y: i } = this.screenToFractal(x, y);
     return this.fractal.calculate(r, i, this.resolution);
   };
