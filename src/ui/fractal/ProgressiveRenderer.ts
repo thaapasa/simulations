@@ -65,7 +65,7 @@ export class ProgressiveRenderer<T> {
         if (next.done) {
           return;
         }
-        console.time('Calc');
+        // console.time('Calc');
         const { from, to } = next.value;
         for (let x = 0; x < width; x += step) {
           for (let y = 0; y < height; y += step) {
@@ -85,7 +85,7 @@ export class ProgressiveRenderer<T> {
             }
           }
         }
-        console.timeEnd('Calc');
+        // console.timeEnd('Calc');
         yield true;
       }
     }
