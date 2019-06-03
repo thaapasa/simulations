@@ -74,12 +74,25 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   }
 
   screenToFractal(x: number, y: number): Position {
-    const area = this.fractalArea;
-    const size = this.renderSize;
-    const offs = this.modelCenter;
+    return this.screenToFractalCalc(
+      x,
+      y,
+      this.fractalArea,
+      this.renderSize,
+      this.modelCenter
+    );
+  }
+
+  screenToFractalCalc(
+    x: number,
+    y: number,
+    area: Size,
+    size: Size,
+    offset: Position
+  ): Position {
     return {
-      x: ((x - size.width / 2) * area.width) / size.width + offs.x,
-      y: ((y - size.height / 2) * area.height) / size.height + offs.y,
+      x: ((x - size.width / 2) * area.width) / size.width + offset.x,
+      y: ((y - size.height / 2) * area.height) / size.height + offset.y,
     };
   }
 
@@ -101,8 +114,14 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     this.renderCallback();
   };
 
-  getPixelValue = (x: number, y: number) => {
-    const { x: r, y: i } = this.screenToFractal(x, y);
+  getPixelValue = (
+    x: number,
+    y: number,
+    area: Size,
+    size: Size,
+    offset: Position
+  ) => {
+    const { x: r, y: i } = this.screenToFractalCalc(x, y, area, size, offset);
     return this.fractal.calculate(r, i, this.resolution);
   };
 

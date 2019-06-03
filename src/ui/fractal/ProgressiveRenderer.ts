@@ -1,11 +1,20 @@
-import { computed } from 'mobx';
+import { computed, toJS } from 'mobx';
+import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { FpsCalculator } from '../../util/FpsCalculator';
 import { generateTiling } from '../../util/ProgressiveTiling';
 
 export interface PixelSource<T> {
   zeroValue: T;
-  getPixelValue: (x: number, y: number) => T;
+  getPixelValue: (
+    x: number,
+    y: number,
+    area: Size,
+    size: Size,
+    offset: Position
+  ) => T;
+  modelCenter: Position;
+  fractalArea: Size;
   renderSize: Size;
   repaint: () => void;
 }
@@ -42,6 +51,9 @@ export class ProgressiveRenderer<T> {
     const source = this.source;
     const pixels = this.pixels;
     const { width, height } = source.renderSize;
+    const size = { width, height };
+    const area = toJS(source.fractalArea);
+    const offset = toJS(source.modelCenter);
     const step = 8;
     if (width < 0 || height < 0) {
       return;
@@ -59,7 +71,10 @@ export class ProgressiveRenderer<T> {
           for (let y = 0; y < height; y += step) {
             const value = source.getPixelValue(
               x + from.x,
-              height - (y + from.y)
+              height - (y + from.y),
+              area,
+              size,
+              offset
             );
             for (let dx = from.x; dx < to.x; ++dx) {
               for (let dy = from.y; dy < to.y; ++dy) {
