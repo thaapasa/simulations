@@ -55,7 +55,8 @@ export class MandelbrotModel implements Model, PixelSource<number> {
 
   @computed
   get fractalScreenRatio(): number {
-    return 2 / this.scale.value / this.screenMinDimension;
+    const scale = Math.pow(2, this.scale.value) / 2;
+    return 2 / scale / this.screenMinDimension;
   }
 
   @computed
