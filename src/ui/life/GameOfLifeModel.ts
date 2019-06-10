@@ -12,20 +12,10 @@ const baseStepDelay = 100;
 
 export class GameOfLifeModel implements Model {
   @observable
-  scale: BoundValue = {
-    min: 0.3,
-    max: 1.5,
-    value: 1,
-    step: 0.05,
-  };
+  scale = new BoundValue(1, 0.3, 1.5, 0.05);
 
   @observable
-  speed: BoundValue = {
-    min: 0.1,
-    max: 5,
-    value: 1,
-    step: 0.1,
-  };
+  speed = new BoundValue(1, 0.5, 5, 0.1);
 
   @observable
   renderSize: Size = { width: 1, height: 1 };

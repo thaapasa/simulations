@@ -60,10 +60,12 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
         const pixelindex = (y * width + x) * 4;
         const pos = pixels[x][y];
         const color = colors.getColorAt(pos);
-        buffer.data[pixelindex] = color.r;
-        buffer.data[pixelindex + 1] = color.g;
-        buffer.data[pixelindex + 2] = color.b;
-        buffer.data[pixelindex + 3] = 255;
+        if (color) {
+          buffer.data[pixelindex] = color.r;
+          buffer.data[pixelindex + 1] = color.g;
+          buffer.data[pixelindex + 2] = color.b;
+          buffer.data[pixelindex + 3] = 255;
+        }
       }
     }
     ctx.putImageData(buffer, 0, 0);

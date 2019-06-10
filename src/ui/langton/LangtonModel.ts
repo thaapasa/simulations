@@ -16,20 +16,10 @@ export class LangtonModel implements Model {
   renderSize: Size = { width: 1, height: 1 };
 
   @observable
-  scale: BoundValue = {
-    min: 0.3,
-    max: 1.5,
-    value: 1,
-    step: 0.05,
-  };
+  scale = new BoundValue(1, 0.3, 1.5, 0.05);
 
   @observable
-  speed: BoundValue = {
-    min: 0.1,
-    max: 5,
-    value: 1,
-    step: 0.1,
-  };
+  speed = new BoundValue(1, 0.1, 5, 0.1);
 
   @computed
   get halfStepDelay(): number {

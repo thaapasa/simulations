@@ -2,6 +2,10 @@ export function noop() {
   // No-op
 }
 
+export function identity<T>(t: T): T {
+  return t;
+}
+
 export async function timeout(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

@@ -4,8 +4,9 @@ import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Mandelbrot } from '../../game/fractal/Mandelbrot';
 import { BoundValue } from '../../util/BoundValue';
+import { ByteColors } from '../Colors';
 import { Model } from '../common/Model';
-import { defaultPalette, PrecalcColor, precalcColors } from '../Palette';
+import { Palette, PrecalcColor, precalcColors } from '../Palette';
 import { PixelSource, ProgressiveRenderer } from './ProgressiveRenderer';
 
 export class MandelbrotModel implements Model, PixelSource<number> {
@@ -13,10 +14,10 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   renderSize: Size = { width: 1, height: 1 };
 
   @observable
-  scale: BoundValue = { min: 0.3, max: 100, value: 1, step: 0.05 };
+  scale = new BoundValue(1, 0.3, 100, 0.05);
 
   @observable
-  speed: BoundValue = { min: 1, max: 1, value: 1, step: 1 };
+  speed = new BoundValue(1, 1, 1, 1);
 
   get centerPoint(): Position {
     const p = this.modelCenter;
@@ -31,7 +32,43 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   }
 
   @observable
-  resolution: number = 255;
+  resolution: BoundValue = new BoundValue(10, 1, 100, 1, n => n * n);
+
+  @observable
+  paletteStep1: BoundValue = new BoundValue(0.07, 0, 1, 0.01);
+  @observable
+  paletteStep2: BoundValue = new BoundValue(0.6, 0, 1, 0.01);
+
+  @computed
+  get paletteStep3(): number {
+    const p1 = this.paletteStep1.converted;
+    const p2 = this.paletteStep2.converted;
+    return Math.abs((p2 - p1) * 0.3 + p1);
+  }
+
+  @computed
+  get palette(): Palette {
+    const p1 = this.paletteStep1.converted;
+    const p2 = this.paletteStep2.converted;
+    const p3 = this.paletteStep3;
+    if (p1 < p2) {
+      return [
+        { position: 0, color: ByteColors.black },
+        { position: p1, color: ByteColors.darkBlue },
+        { position: p3, color: ByteColors.darkRed },
+        { position: p2, color: ByteColors.lightRed },
+        { position: 1, color: ByteColors.white },
+      ];
+    } else {
+      return [
+        { position: 0, color: ByteColors.black },
+        { position: p2, color: ByteColors.darkBlue },
+        { position: p3, color: ByteColors.darkRed },
+        { position: p1, color: ByteColors.lightRed },
+        { position: 1, color: ByteColors.white },
+      ];
+    }
+  }
 
   fractal = new Mandelbrot();
   zeroValue = 0;
@@ -71,7 +108,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
 
   @computed
   get colorProvider(): PrecalcColor {
-    return precalcColors(this.resolution, defaultPalette);
+    return precalcColors(this.resolution.converted, this.palette);
   }
 
   screenToFractal(x: number, y: number): Position {
@@ -123,7 +160,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     offset: Position
   ) => {
     const { x: r, y: i } = this.screenToFractalCalc(x, y, area, size, offset);
-    return this.fractal.calculate(r, i, this.resolution);
+    return this.fractal.calculate(r, i, this.resolution.converted);
   };
 
   calculate = () => {
