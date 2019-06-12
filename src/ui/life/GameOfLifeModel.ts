@@ -18,6 +18,9 @@ export class GameOfLifeModel implements Model {
   speed = new BoundValue(1, 0.5, 5, 0.1);
 
   @observable
+  dragPoint: Position = { x: 0, y: 0 };
+
+  @observable
   renderSize: Size = { width: 1, height: 1 };
 
   set centerPoint(pos: Position) {
@@ -48,6 +51,8 @@ export class GameOfLifeModel implements Model {
   get mode(): GameMode {
     return this.control.visibleMode;
   }
+
+  repaint = () => this.render();
 
   stepNoAnimation = () => {
     this.grid.step();

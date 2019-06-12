@@ -14,6 +14,7 @@ class PlainCanvasSimulationView extends React.Component<{
   createRenderer: (
     containerRef: React.RefObject<HTMLCanvasElement>
   ) => ModelRenderer<void>;
+  useDragPoint: boolean;
 }> {
   private containerRef = React.createRef<HTMLCanvasElement>();
   private renderer = this.props.createRenderer(this.containerRef);
@@ -30,7 +31,10 @@ class PlainCanvasSimulationView extends React.Component<{
 
   render() {
     return (
-      <ModelMover model={this.props.model}>
+      <ModelMover
+        model={this.props.model}
+        useDragPoint={this.props.useDragPoint}
+      >
         <canvas
           ref={this.containerRef}
           width={this.props.size.width}

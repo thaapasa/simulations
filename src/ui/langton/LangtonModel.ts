@@ -21,6 +21,9 @@ export class LangtonModel implements Model {
   @observable
   speed = new BoundValue(1, 0.1, 5, 0.1);
 
+  @observable
+  dragPoint: Position = { x: 0, y: 0 };
+
   @computed
   get halfStepDelay(): number {
     return halfStepDelayBase / this.speed.value;
@@ -45,6 +48,8 @@ export class LangtonModel implements Model {
   constructor() {
     this.render();
   }
+
+  repaint = () => this.render();
 
   @computed
   get mode(): GameMode {

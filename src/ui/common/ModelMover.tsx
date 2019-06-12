@@ -1,5 +1,10 @@
+import { action } from 'mobx';
 import React from 'react';
-import { useGesture } from 'react-use-gesture';
+import {
+  CoordinatesGestureState,
+  DistanceAngleGestureState,
+  useGesture,
+} from 'react-use-gesture';
 import styled from 'styled-components';
 import { bound } from '../../util/Util';
 import { Model } from './Model';
@@ -7,35 +12,66 @@ import { Model } from './Model';
 export function ModelMover({
   model,
   children,
+  useDragPoint,
 }: {
   model: Model;
   children?: any;
+  useDragPoint: boolean;
 }) {
   const bind = useGesture(
     {
-      onDrag: s => {
-        model.centerPoint = {
-          x: model.centerPoint.x - (s.xy[0] - s.previous[0]),
-          y: model.centerPoint.y + (s.xy[1] - s.previous[1]),
-        };
-        model.render();
-      },
-      onWheel: s => {
+      onDragStart: action((_: CoordinatesGestureState) => {
+        if (useDragPoint) {
+          model.dragPoint.x = 0;
+          model.dragPoint.y = 0;
+        }
+      }),
+      onDrag: action((s: CoordinatesGestureState) => {
+        if (useDragPoint) {
+          model.dragPoint = {
+            x: model.dragPoint.x - (s.xy[0] - s.previous[0]),
+            y: model.dragPoint.y + (s.xy[1] - s.previous[1]),
+          };
+          model.repaint();
+        } else {
+          model.centerPoint = {
+            x: model.centerPoint.x - (s.xy[0] - s.previous[0]),
+            y: model.centerPoint.y + (s.xy[1] - s.previous[1]),
+          };
+          model.render();
+        }
+      }),
+      onDragEnd: action((s: CoordinatesGestureState) => {
+        if (useDragPoint) {
+          model.dragPoint = {
+            x: model.dragPoint.x - (s.xy[0] - s.previous[0]),
+            y: model.dragPoint.y + (s.xy[1] - s.previous[1]),
+          };
+          model.centerPoint = {
+            x: model.centerPoint.x + model.dragPoint.x,
+            y: model.centerPoint.y + model.dragPoint.y,
+          };
+          model.dragPoint.x = 0;
+          model.dragPoint.y = 0;
+          model.render();
+        }
+      }),
+      onWheel: action((s: CoordinatesGestureState) => {
         model.scale.value = bound(
-          model.scale.value - s.xy[1] / 2000,
+          model.scale.value - s.xy[1] / 1000,
           model.scale.min,
           model.scale.max
         );
         model.render();
-      },
-      onPinch: s => {
+      }),
+      onPinch: action((s: DistanceAngleGestureState) => {
         model.scale.value = bound(
-          model.scale.value - (s.previous[0] - s.da[0]) / 100,
+          model.scale.value - (s.previous[0] - s.da[0]) / 70,
           model.scale.min,
           model.scale.max
         );
         model.render();
-      },
+      }),
     },
     { event: { passive: false } }
   );

@@ -5,9 +5,11 @@ import { BoundValue } from '../../util/BoundValue';
 export interface Model {
   renderSize: Size;
   centerPoint: Position;
+  dragPoint: Position;
   scale: BoundValue;
   speed: BoundValue;
 
   renderCallback: () => void;
   render(): void;
+  repaint(): void;
 }

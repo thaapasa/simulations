@@ -15,6 +15,7 @@ class PlainPixiSimulationView extends React.Component<{
   createRenderer: (
     containerRef: React.RefObject<HTMLDivElement>
   ) => ModelRenderer<PIXI.Application>;
+  useDragPoint: boolean;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();
   private renderer = this.props.createRenderer(this.containerRef);
@@ -31,7 +32,10 @@ class PlainPixiSimulationView extends React.Component<{
 
   render() {
     return (
-      <ModelMover model={this.props.model}>
+      <ModelMover
+        model={this.props.model}
+        useDragPoint={this.props.useDragPoint}
+      >
         <div ref={this.containerRef} />
       </ModelMover>
     );

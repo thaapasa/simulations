@@ -28,6 +28,7 @@ export default class LangtonsAntUI extends React.Component<{}> {
           <FpsBar model={this.model.control} />
         </ToolBar>
         <PixiSimulationView
+          useDragPoint={false}
           model={this.model}
           createRenderer={this.createRenderer}
         />

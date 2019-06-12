@@ -68,7 +68,8 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
         }
       }
     }
-    ctx.putImageData(buffer, 0, 0);
+    const drag = this.model.dragPoint;
+    ctx.putImageData(buffer, -drag.x, drag.y);
     // console.timeEnd('Render');
   };
 

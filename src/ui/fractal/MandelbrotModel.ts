@@ -32,6 +32,9 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   }
 
   @observable
+  dragPoint: Position = { x: 0, y: 0 };
+
+  @observable
   resolution: BoundValue = new BoundValue(10, 1, 100, 1, n => n * n);
 
   @observable
@@ -165,6 +168,5 @@ export class MandelbrotModel implements Model, PixelSource<number> {
 
   calculate = () => {
     this.renderer.calculate();
-    this.repaint();
   };
 }

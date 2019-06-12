@@ -23,6 +23,7 @@ export default class MandelbrotUI extends React.Component<{}> {
           <Route component={UISelector} />
         </ToolBar>
         <CanvasSimulationView
+          useDragPoint={true}
           model={this.model}
           createRenderer={this.createRenderer}
         />
