@@ -30,7 +30,7 @@ export function SizeAware<T extends { size: Size }>(
       return (
         <div ref={this.ref} className={this.props.className}>
           {this.size ? (
-            <WrappedComponent {...this.props as any} size={this.size} />
+            <WrappedComponent {...(this.props as any)} size={this.size} />
           ) : null}
         </div>
       );
