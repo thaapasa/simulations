@@ -1,6 +1,6 @@
 import { action, computed, observable, runInAction } from 'mobx';
 import { FpsCalculator } from '../../util/FpsCalculator';
-import { nextTick } from '../../util/Util';
+import { nextTick, noop } from '../../util/Util';
 
 export type GameMode = 'pause' | 'step' | 'play' | 'fast' | 'skip';
 
@@ -21,6 +21,7 @@ export class ModeHandler {
 
   @observable
   private requestedMode: GameMode | undefined;
+  private requestCallback?: () => void;
 
   private game: GameImplementation;
 
@@ -39,21 +40,28 @@ export class ModeHandler {
   }
 
   skip = async (frames: number) => {
-    if (this.mode !== 'pause') {
+    const originalMode = this.mode;
+    if (originalMode === 'step') {
       return;
     }
+    if (originalMode !== 'pause') {
+      await this.pause();
+    }
     this.mode = 'skip';
-    this.requestedMode = 'pause';
     await nextTick();
 
     for (let i = 0; i < frames; ++i) {
       this.game.stepNoAnimation();
     }
     this.frame += frames;
-    this.fpsCounter.tick(frames);
     this.game.render();
 
-    runInAction(this.setRequestedMode);
+    if (originalMode !== 'pause') {
+      runInAction(() => {
+        this.requestMode(originalMode);
+        this.setRequestedMode();
+      });
+    }
   };
 
   step = async () => {
@@ -61,7 +69,7 @@ export class ModeHandler {
       return;
     }
     this.mode = 'step';
-    this.requestedMode = 'pause';
+    this.requestMode('pause');
     await this.game.stepAnimated();
     this.frame++;
     this.fpsCounter.tick();
@@ -70,7 +78,7 @@ export class ModeHandler {
 
   play = async () => {
     if (this.mode === 'fast') {
-      this.requestedMode = 'play';
+      this.requestMode('play');
       return;
     }
     if (this.mode !== 'pause') {
@@ -88,7 +96,7 @@ export class ModeHandler {
 
   fastForward = async () => {
     if (this.mode === 'play') {
-      this.requestedMode = 'fast';
+      this.requestMode('fast');
       return;
     }
     if (this.mode !== 'pause') {
@@ -107,11 +115,16 @@ export class ModeHandler {
   };
 
   @action
-  pause = () => {
+  pause = async () => {
     if (this.mode === 'pause' || this.mode === 'step') {
       return;
     }
-    this.requestedMode = 'pause';
+    return new Promise(resolve => this.requestMode('pause', resolve));
+  };
+
+  private requestMode = (mode: GameMode, callback?: () => void) => {
+    this.requestedMode = mode;
+    this.requestCallback = callback;
   };
 
   @action
@@ -122,17 +135,28 @@ export class ModeHandler {
     this.mode = 'pause';
     const req = this.requestedMode;
     this.requestedMode = undefined;
+    const cb = this.requestCallback || noop;
     switch (req) {
       case 'step':
-        setImmediate(this.step);
+        setImmediate(() => {
+          this.step();
+          cb();
+        });
         break;
       case 'play':
-        setImmediate(this.play);
+        setImmediate(() => {
+          this.play();
+          cb();
+        });
         break;
       case 'fast':
-        setImmediate(this.fastForward);
+        setImmediate(() => {
+          this.fastForward();
+          cb();
+        });
         break;
       default:
+        cb();
     }
   };
 }
