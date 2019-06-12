@@ -6,7 +6,7 @@ import {
   useGesture,
 } from 'react-use-gesture';
 import styled from 'styled-components';
-import { bound } from '../../util/Util';
+import { bound, noop } from '../../util/Util';
 import { Model } from './Model';
 
 export function ModelMover({
@@ -18,16 +18,19 @@ export function ModelMover({
   children?: any;
   useDragPoint: boolean;
 }) {
+  const stopCalc = model.stopCalculation || noop;
   const bind = useGesture(
     {
       onDragStart: action((_: CoordinatesGestureState) => {
         if (useDragPoint) {
           model.dragPoint.x = 0;
           model.dragPoint.y = 0;
+          stopCalc();
         }
       }),
       onDrag: action((s: CoordinatesGestureState) => {
         if (useDragPoint) {
+          stopCalc();
           model.dragPoint = {
             x: model.dragPoint.x - (s.xy[0] - s.previous[0]),
             y: model.dragPoint.y + (s.xy[1] - s.previous[1]),
@@ -57,14 +60,16 @@ export function ModelMover({
         }
       }),
       onWheel: action((s: CoordinatesGestureState) => {
+        stopCalc();
         model.scale.value = bound(
-          model.scale.value - s.xy[1] / 1000,
+          model.scale.value - s.xy[1] / 2000,
           model.scale.min,
           model.scale.max
         );
         model.render();
       }),
       onPinch: action((s: DistanceAngleGestureState) => {
+        stopCalc();
         model.scale.value = bound(
           model.scale.value - (s.previous[0] - s.da[0]) / 70,
           model.scale.min,

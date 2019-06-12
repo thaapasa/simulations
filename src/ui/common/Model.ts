@@ -8,6 +8,7 @@ export interface Model {
   dragPoint: Position;
   scale: BoundValue;
   speed: BoundValue;
+  stopCalculation?: () => void;
 
   renderCallback: () => void;
   render(): void;

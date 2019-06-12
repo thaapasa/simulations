@@ -35,6 +35,11 @@ export class ProgressiveRenderer<T> {
     this.source = source;
   }
 
+  stopRender = () => {
+    // console.log('Stop render');
+    this.calculation = undefined;
+  };
+
   resetPixels = () => {
     this.pixels = [];
     const size = this.source.renderSize;
@@ -65,6 +70,7 @@ export class ProgressiveRenderer<T> {
         if (next.done) {
           return;
         }
+        // console.log('Calc');
         // console.time('Calc');
         const { from, to } = next.value;
         for (let x = 0; x < width; x += step) {

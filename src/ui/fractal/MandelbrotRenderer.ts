@@ -36,6 +36,7 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
 
   render = () => {
     // console.time('Render');
+    // console.log('Render');
     if (!this.canvasRef.current) {
       return;
     }

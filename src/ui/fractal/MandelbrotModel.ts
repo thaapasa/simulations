@@ -155,6 +155,10 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     this.renderCallback();
   };
 
+  stopCalculation = () => {
+    this.renderer.stopRender();
+  };
+
   getPixelValue = (
     x: number,
     y: number,
