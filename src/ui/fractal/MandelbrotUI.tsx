@@ -1,7 +1,9 @@
+import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
-import { Route } from 'react-router';
+import { Route, RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
+import { parseQueryString } from '../../util/QueryString';
 import BoundValueView from '../common/BoundValueView';
 import CanvasSimulationView from '../common/CanvasSimulationView';
 import { ToolBar, UIContainer } from '../common/Components';
@@ -13,8 +15,18 @@ import { MandelbrotRenderer } from './MandelbrotRenderer';
 import ResolutionBar from './ResolutionBar';
 
 @observer
-export default class MandelbrotUI extends React.Component<{}> {
+export default class MandelbrotUI extends React.Component<
+  RouteComponentProps<{}>
+> {
   private model = new MandelbrotModel();
+
+  componentDidMount() {
+    this.updateModelParams();
+  }
+
+  componentDidUpdate() {
+    this.updateModelParams();
+  }
 
   render() {
     return (
@@ -50,8 +62,25 @@ export default class MandelbrotUI extends React.Component<{}> {
     );
   }
 
+  @action
+  private updateModelParams = () => {
+    const q = parseQueryString(this.props.location.search, Number);
+    if (q.r && this.model.modelCenter.x !== q.r) {
+      this.model.modelCenter.x = q.r;
+    }
+    if (q.i && this.model.modelCenter.y !== q.i) {
+      this.model.modelCenter.y = Number(q.i);
+    }
+    if (q.scale && this.model.scale.value !== q.scale) {
+      this.model.scale.value = Number(q.scale);
+    }
+    if (q.resolution && this.model.resolution.value !== q.resolution) {
+      this.model.resolution.value = Number(q.resolution);
+    }
+  };
+
   private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement>) =>
-    new MandelbrotRenderer(this.model, attachRef);
+    new MandelbrotRenderer(this.model, attachRef, this.props.history);
 }
 
 const Column = styled.div`

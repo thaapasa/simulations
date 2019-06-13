@@ -1,4 +1,6 @@
+import { History } from 'history';
 import { Size, sizeEquals } from '../../game/common/Size';
+import { toQueryString } from '../../util/QueryString';
 import { ModelRenderer } from '../common/ModelRenderer';
 import { MandelbrotModel } from './MandelbrotModel';
 
@@ -9,13 +11,16 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private buffer: ImageData | undefined;
   private context: CanvasRenderingContext2D | undefined;
+  private history: History;
 
   constructor(
     model: MandelbrotModel,
-    canvasRef: React.RefObject<HTMLCanvasElement>
+    canvasRef: React.RefObject<HTMLCanvasElement>,
+    history: History
   ) {
     this.model = model;
     this.canvasRef = canvasRef;
+    this.history = history;
   }
 
   destroy = () => {
@@ -40,6 +45,15 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
     if (!this.canvasRef.current) {
       return;
     }
+    this.history.replace(
+      '/p/mandelbrot?' +
+        toQueryString({
+          r: this.model.modelCenter.x,
+          i: this.model.modelCenter.y,
+          scale: this.model.scale.value,
+          resolution: this.model.resolution.value,
+        })
+    );
     const { width, height } = this.model.renderSize;
     if (!this.context) {
       this.context = this.canvasRef.current.getContext('2d') || undefined;
