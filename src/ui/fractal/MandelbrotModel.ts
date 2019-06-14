@@ -73,6 +73,16 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     }
   }
 
+  @computed
+  get progress(): string {
+    const steps = this.renderer.calculationSteps;
+    const completed = this.renderer.completedSteps;
+    if (completed >= steps) {
+      return 'Valmis!';
+    }
+    return `${completed} / ${steps}`;
+  }
+
   fractal = new Mandelbrot();
   zeroValue = 0;
   renderCallback: () => void = noop;

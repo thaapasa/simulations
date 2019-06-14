@@ -8,6 +8,7 @@ import BoundValueView from '../common/BoundValueView';
 import CanvasSimulationView from '../common/CanvasSimulationView';
 import { ToolBar, UIContainer } from '../common/Components';
 import FpsBar from '../common/FpsBar';
+import ProgressBar from '../common/ProgressBar';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
 import { MandelbrotModel } from './MandelbrotModel';
@@ -56,7 +57,10 @@ export default class MandelbrotUI extends React.Component<
               onChange={this.model.repaint}
             />
           </Column>
-          <FpsBar model={this.model} />
+          <Column>
+            <FpsBar model={this.model} />
+            <ProgressBar model={this.model} />
+          </Column>
         </ToolBar>
       </UIContainer>
     );

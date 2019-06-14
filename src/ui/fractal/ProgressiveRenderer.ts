@@ -1,6 +1,7 @@
-import { computed, toJS } from 'mobx';
+import { action, computed, observable, runInAction, toJS } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
+import { BoundValue } from '../../util/BoundValue';
 import { FpsCalculator } from '../../util/FpsCalculator';
 import { generateTiling } from '../../util/ProgressiveTiling';
 
@@ -16,6 +17,7 @@ export interface PixelSource<T> {
   modelCenter: Position;
   fractalArea: Size;
   renderSize: Size;
+  resolution: BoundValue;
   repaint: () => void;
 }
 
@@ -26,6 +28,11 @@ export class ProgressiveRenderer<T> {
   get fps(): number {
     return this.fpsCounter.fps;
   }
+
+  @observable
+  calculationSteps = 1;
+  @observable
+  completedSteps = 1;
 
   private source: PixelSource<T>;
   private calculation: IterableIterator<boolean> | undefined;
@@ -59,7 +66,10 @@ export class ProgressiveRenderer<T> {
     const size = { width, height };
     const area = toJS(source.fractalArea);
     const offset = toJS(source.modelCenter);
-    const step = 8;
+    const resolution = source.resolution.value;
+    const step = resolution < 70 ? 8 : 16;
+    this.calculationSteps = step * step;
+    this.completedSteps = 0;
     if (width < 0 || height < 0) {
       return;
     }
@@ -99,12 +109,16 @@ export class ProgressiveRenderer<T> {
     setImmediate(this.nextCalc);
   };
 
+  @action
   private nextCalc = () => {
     if (!this.calculation) {
       return;
     }
     this.fpsCounter.tick();
     if (this.calculation.next().value) {
+      runInAction(() => {
+        this.completedSteps++;
+      });
       this.source.repaint();
       setImmediate(this.nextCalc);
     } else {
