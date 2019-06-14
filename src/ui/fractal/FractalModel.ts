@@ -2,14 +2,14 @@ import { noop } from '@babel/types';
 import { computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
-import { Mandelbrot } from '../../game/fractal/Mandelbrot';
+import { Fractal } from '../../game/fractal/Fractal';
 import { BoundValue } from '../../util/BoundValue';
 import { ByteColors } from '../Colors';
 import { Model } from '../common/Model';
 import { Palette, PrecalcColor, precalcColors } from '../Palette';
 import { PixelSource, ProgressiveRenderer } from './ProgressiveRenderer';
 
-export class MandelbrotModel implements Model, PixelSource<number> {
+export class FractalModel implements Model, PixelSource<number> {
   @observable
   renderSize: Size = { width: 1, height: 1 };
 
@@ -83,7 +83,7 @@ export class MandelbrotModel implements Model, PixelSource<number> {
     return `${completed} / ${steps}`;
   }
 
-  fractal = new Mandelbrot();
+  fractal: Fractal;
   zeroValue = 0;
   renderCallback: () => void = noop;
 
@@ -122,6 +122,10 @@ export class MandelbrotModel implements Model, PixelSource<number> {
   @computed
   get colorProvider(): PrecalcColor {
     return precalcColors(this.resolution.converted, this.palette);
+  }
+
+  constructor(fractal: Fractal) {
+    this.fractal = fractal;
   }
 
   screenToFractal(x: number, y: number): Position {

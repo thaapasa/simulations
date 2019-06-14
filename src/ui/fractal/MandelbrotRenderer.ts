@@ -2,19 +2,19 @@ import { History } from 'history';
 import { Size, sizeEquals } from '../../game/common/Size';
 import { toQueryString } from '../../util/QueryString';
 import { ModelRenderer } from '../common/ModelRenderer';
-import { MandelbrotModel } from './MandelbrotModel';
+import { FractalModel } from './FractalModel';
 
 export class MandelbrotRenderer implements ModelRenderer<void> {
   zeroValue = 0;
 
-  private model: MandelbrotModel;
+  private model: FractalModel;
   private canvasRef: React.RefObject<HTMLCanvasElement>;
   private buffer: ImageData | undefined;
   private context: CanvasRenderingContext2D | undefined;
   private history: History;
 
   constructor(
-    model: MandelbrotModel,
+    model: FractalModel,
     canvasRef: React.RefObject<HTMLCanvasElement>,
     history: History
   ) {

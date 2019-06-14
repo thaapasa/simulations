@@ -1,5 +1,7 @@
+import { Fractal } from './Fractal';
+
 const limit = 4;
-export class Mandelbrot {
+export class Mandelbrot implements Fractal {
   calculate(r: number, i: number, maxIterations: number): number {
     let cr = r;
     let ci = i;

@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import { Route, RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
+import { Mandelbrot } from '../../game/fractal/Mandelbrot';
 import { parseQueryString } from '../../util/QueryString';
 import BoundValueView from '../common/BoundValueView';
 import CanvasSimulationView from '../common/CanvasSimulationView';
@@ -11,7 +12,7 @@ import FpsBar from '../common/FpsBar';
 import ProgressBar from '../common/ProgressBar';
 import ZoomBar from '../common/ZoomBar';
 import UISelector from '../UISelector';
-import { MandelbrotModel } from './MandelbrotModel';
+import { FractalModel } from './FractalModel';
 import { MandelbrotRenderer } from './MandelbrotRenderer';
 import ResolutionBar from './ResolutionBar';
 
@@ -19,7 +20,7 @@ import ResolutionBar from './ResolutionBar';
 export default class MandelbrotUI extends React.Component<
   RouteComponentProps<{}>
 > {
-  private model = new MandelbrotModel();
+  private model = new FractalModel(new Mandelbrot());
 
   componentDidMount() {
     this.updateModelParams();
