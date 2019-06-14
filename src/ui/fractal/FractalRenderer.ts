@@ -4,7 +4,7 @@ import { toQueryString } from '../../util/QueryString';
 import { ModelRenderer } from '../common/ModelRenderer';
 import { FractalModel } from './FractalModel';
 
-export class MandelbrotRenderer implements ModelRenderer<void> {
+export class FractalRenderer implements ModelRenderer<void> {
   zeroValue = 0;
 
   private model: FractalModel;
@@ -46,7 +46,8 @@ export class MandelbrotRenderer implements ModelRenderer<void> {
       return;
     }
     this.history.replace(
-      '/p/mandelbrot?' +
+      this.model.pathPrefix +
+        '?' +
         toQueryString({
           r: this.model.modelCenter.x,
           i: this.model.modelCenter.y,

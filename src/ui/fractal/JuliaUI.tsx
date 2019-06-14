@@ -3,9 +3,8 @@ import { observer } from 'mobx-react';
 import React from 'react';
 import { Route, RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
-import { Mandelbrot } from '../../game/fractal/Mandelbrot';
+import { Julia } from '../../game/fractal/Julia';
 import { parseQueryString } from '../../util/QueryString';
-import { Colors } from '../Colors';
 import BoundValueView from '../common/BoundValueView';
 import CanvasSimulationView from '../common/CanvasSimulationView';
 import { ToolBar, UIContainer } from '../common/Components';
@@ -18,13 +17,14 @@ import { FractalRenderer } from './FractalRenderer';
 import ResolutionBar from './ResolutionBar';
 
 @observer
-export default class MandelbrotUI extends React.Component<
-  RouteComponentProps<{}>
+export default class JuliaUI extends React.Component<
+  RouteComponentProps<{ r: string; i: string }>
 > {
+  private fractal = new Julia(0, 0);
   private model = new FractalModel(
-    new Mandelbrot(),
-    { x: -0.8, y: 0 },
-    '/p/mandelbrot'
+    this.fractal,
+    { x: 0, y: 0 },
+    '/p/julia/0/0'
   );
 
   componentDidMount() {
@@ -36,15 +36,10 @@ export default class MandelbrotUI extends React.Component<
   }
 
   render() {
-    const center = this.model.modelCenter;
     return (
       <UIContainer className="MandelbrotUI">
-        <ToolBar className="TopBar">
-          <div />
+        <ToolBar className="TopBar Center">
           <Route component={UISelector} />
-          <div>
-            <Link href={`/p/julia/${center.x}/${center.y}`}>Julia</Link>
-          </div>
         </ToolBar>
         <CanvasSimulationView
           useDragPoint={true}
@@ -79,6 +74,14 @@ export default class MandelbrotUI extends React.Component<
 
   @action
   private updateModelParams = () => {
+    const { r, i } = this.props.match.params;
+    const nr = Number(r);
+    const ni = Number(i);
+    if (nr !== this.fractal.r || ni !== this.fractal.i) {
+      this.fractal = new Julia(nr, ni);
+      this.model.updateSource(this.fractal, `/p/julia/${nr}/${ni}`);
+    }
+
     const q = parseQueryString(this.props.location.search, Number);
     if (q.r && this.model.modelCenter.x !== q.r) {
       this.model.modelCenter.x = q.r;
@@ -107,11 +110,4 @@ const Column = styled.div`
   & > div:first {
     margin-top: 0;
   }
-`;
-
-const Link = styled.a`
-  color: ${Colors.white};
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
 `;

@@ -93,7 +93,7 @@ export class FractalModel implements Model, PixelSource<number> {
   }
 
   @observable
-  modelCenter: Position = { x: -0.8, y: 0 };
+  modelCenter: Position;
 
   renderer = new ProgressiveRenderer(this);
 
@@ -124,9 +124,18 @@ export class FractalModel implements Model, PixelSource<number> {
     return precalcColors(this.resolution.converted, this.palette);
   }
 
-  constructor(fractal: Fractal) {
+  pathPrefix: string;
+
+  constructor(fractal: Fractal, modelCenter: Position, pathPrefix: string) {
     this.fractal = fractal;
+    this.pathPrefix = pathPrefix;
+    this.modelCenter = modelCenter;
   }
+
+  updateSource = (fractal: Fractal, pathPrefix: string) => {
+    this.fractal = fractal;
+    this.pathPrefix = pathPrefix;
+  };
 
   screenToFractal(x: number, y: number): Position {
     return this.screenToFractalCalc(
