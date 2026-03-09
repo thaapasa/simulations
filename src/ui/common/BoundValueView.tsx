@@ -1,4 +1,3 @@
-import Slider from '@material-ui/lab/Slider';
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
@@ -18,7 +17,8 @@ export default class BoundValueView extends React.Component<{
       <IconBar className={this.props.className}>
         <Label>{this.props.title}</Label>
         <SliderArea>
-          <Slider
+          <input
+            type="range"
             value={value.value}
             onChange={this.onChange}
             min={value.min}
@@ -30,8 +30,8 @@ export default class BoundValueView extends React.Component<{
     );
   }
 
-  onChange = (_: React.ChangeEvent<{}>, value: number) => {
-    this.props.value.value = value;
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.props.value.value = Number(e.target.value);
     if (this.props.onChange) {
       this.props.onChange();
     }

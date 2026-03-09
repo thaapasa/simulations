@@ -1,4 +1,3 @@
-import Slider from '@material-ui/lab/Slider';
 import { observer } from 'mobx-react';
 import React from 'react';
 import styled from 'styled-components';
@@ -15,7 +14,8 @@ export default class ZoomBar extends React.Component<{
       <IconBar>
         <Label>Nopeus</Label>
         <SliderArea>
-          <Slider
+          <input
+            type="range"
             value={model.speed.value}
             onChange={this.onChange}
             min={model.speed.min}
@@ -27,8 +27,8 @@ export default class ZoomBar extends React.Component<{
     );
   }
 
-  onChange = (_: React.ChangeEvent<{}>, value: number) => {
-    this.props.model.speed.value = value;
+  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.props.model.speed.value = Number(e.target.value);
   };
 }
 
