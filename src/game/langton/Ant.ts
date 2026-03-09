@@ -1,4 +1,4 @@
-import { action, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import {
   closestEquivalentAngle,
   Direction,
@@ -17,6 +17,10 @@ export class Ant {
   @observable
   rotation: number = DirectionRotation[Direction.NORTH];
   private stepping = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action
   step(grid: InfiniteGrid) {

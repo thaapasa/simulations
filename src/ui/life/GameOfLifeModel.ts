@@ -1,4 +1,4 @@
-import { action, computed, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { GameOfLife } from '../../game/gameoflife/GameOfLife';
@@ -44,6 +44,7 @@ export class GameOfLifeModel implements Model {
   renderCallback: () => void = noop;
 
   constructor() {
+    makeObservable(this);
     this.render();
   }
 

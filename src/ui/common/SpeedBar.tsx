@@ -1,15 +1,14 @@
 import { observer } from 'mobx-react';
-import React from 'react';
 import styled from 'styled-components';
 import { BoundValue } from '../../util/BoundValue';
 import { IconBar } from '../Icons';
 
-@observer
-export default class ZoomBar extends React.Component<{
-  model: { speed: BoundValue };
-}> {
-  render() {
-    const { model } = this.props;
+const SpeedBar = observer(
+  ({ model }: { model: { speed: BoundValue } }) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      model.speed.value = Number(e.target.value);
+    };
+
     return (
       <IconBar>
         <Label>Nopeus</Label>
@@ -17,7 +16,7 @@ export default class ZoomBar extends React.Component<{
           <input
             type="range"
             value={model.speed.value}
-            onChange={this.onChange}
+            onChange={handleChange}
             min={model.speed.min}
             max={model.speed.max}
             step={model.speed.step}
@@ -26,11 +25,9 @@ export default class ZoomBar extends React.Component<{
       </IconBar>
     );
   }
+);
 
-  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.model.speed.value = Number(e.target.value);
-  };
-}
+export default SpeedBar;
 
 const Label = styled.div``;
 

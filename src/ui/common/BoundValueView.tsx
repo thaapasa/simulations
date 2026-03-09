@@ -4,23 +4,31 @@ import styled from 'styled-components';
 import { BoundValue } from '../../util/BoundValue';
 import { IconBar } from '../Icons';
 
-@observer
-export default class BoundValueView extends React.Component<{
-  value: BoundValue;
-  title: string;
-  className?: string;
-  onChange?: () => void;
-}> {
-  render() {
-    const value = this.props.value;
+const BoundValueView = observer(
+  ({
+    value,
+    title,
+    className,
+    onChange,
+  }: {
+    value: BoundValue;
+    title: string;
+    className?: string;
+    onChange?: () => void;
+  }) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      value.value = Number(e.target.value);
+      onChange?.();
+    };
+
     return (
-      <IconBar className={this.props.className}>
-        <Label>{this.props.title}</Label>
+      <IconBar className={className}>
+        <Label>{title}</Label>
         <SliderArea>
           <input
             type="range"
             value={value.value}
-            onChange={this.onChange}
+            onChange={handleChange}
             min={value.min}
             max={value.max}
             step={value.step}
@@ -29,14 +37,9 @@ export default class BoundValueView extends React.Component<{
       </IconBar>
     );
   }
+);
 
-  onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.props.value.value = Number(e.target.value);
-    if (this.props.onChange) {
-      this.props.onChange();
-    }
-  };
-}
+export default BoundValueView;
 
 const Label = styled.div``;
 

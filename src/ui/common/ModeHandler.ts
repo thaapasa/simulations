@@ -1,4 +1,4 @@
-import { action, computed, observable, runInAction } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 import { FpsCalculator } from '../../util/FpsCalculator';
 import { nextTick, noop } from '../../util/Util';
 
@@ -26,6 +26,7 @@ export class ModeHandler {
   private game: GameImplementation;
 
   constructor(game: GameImplementation) {
+    makeObservable(this);
     this.game = game;
   }
 

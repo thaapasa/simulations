@@ -1,4 +1,4 @@
-import { computed, observable } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Range } from '../../game/common/Range';
 import { Model } from './Model';
@@ -10,6 +10,7 @@ export class TileCalculator {
   centerInTiles: Position = { x: 0, y: 0 };
 
   constructor(model: Model) {
+    makeObservable(this);
     this.model = model;
   }
 

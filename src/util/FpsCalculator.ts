@@ -1,4 +1,4 @@
-import { action, computed, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 
 const FpsUpdateFrequencyMs = 200;
 
@@ -7,6 +7,10 @@ class Averager {
   value: number = 0;
 
   private initialized: boolean = false;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action
   newValue = (newVal: number) => {
@@ -34,6 +38,10 @@ export class FpsCalculator {
   private lastFrames = 0;
   private currentFrames = 0;
   private fpsAverager = new Averager();
+
+  constructor() {
+    makeObservable(this);
+  }
 
   @action
   tick = (frames: number = 1) => {

@@ -1,4 +1,4 @@
-import { computed, observable } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Fractal } from '../../game/fractal/Fractal';
@@ -127,6 +127,7 @@ export class FractalModel implements Model, PixelSource<number> {
   pathPrefix: string;
 
   constructor(fractal: Fractal, modelCenter: Position, pathPrefix: string) {
+    makeObservable(this);
     this.fractal = fractal;
     this.pathPrefix = pathPrefix;
     this.modelCenter = modelCenter;

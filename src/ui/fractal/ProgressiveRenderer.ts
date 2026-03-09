@@ -1,4 +1,4 @@
-import { action, computed, observable, runInAction, toJS } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction, toJS } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { BoundValue } from '../../util/BoundValue';
@@ -39,6 +39,7 @@ export class ProgressiveRenderer<T> {
   private fpsCounter = new FpsCalculator();
 
   constructor(source: PixelSource<T>) {
+    makeObservable(this);
     this.source = source;
   }
 

@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { makeObservable, observable } from 'mobx';
 import { identity } from './Util';
 
 export class BoundValue {
@@ -17,6 +17,7 @@ export class BoundValue {
     step: number,
     converter: (n: number) => number = identity
   ) {
+    makeObservable(this);
     this.value = value;
     this.min = min;
     this.max = max;
