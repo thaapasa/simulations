@@ -1,50 +1,41 @@
-import { action, observable } from 'mobx';
+import { observable, action, makeObservable } from 'mobx';
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Size } from '../game/common/Size';
 
 export function SizeAware<T extends { size: Size }>(
   WrappedComponent: React.ComponentType<T>
 ) {
-  @observer
-  class Wrapper extends React.Component<
-    Omit<T, 'size'> & { className?: string }
-  > {
-    private ref = React.createRef<HTMLDivElement>();
+  const Wrapper = observer(
+    (props: Omit<T, 'size'> & { className?: string }) => {
+      const ref = useRef<HTMLDivElement>(null);
+      const [size, setSize] = useState<Size | undefined>(undefined);
 
-    @observable
-    private size: Size | undefined;
+      const updateSize = useCallback(() => {
+        if (ref.current) {
+          setSize({
+            width: ref.current.clientWidth,
+            height: ref.current.clientHeight,
+          });
+        }
+      }, []);
 
-    componentDidMount() {
-      this.updateSize();
-      window.addEventListener('resize', this.updateSize);
-      setTimeout(this.updateSize, 0);
-    }
+      useEffect(() => {
+        updateSize();
+        window.addEventListener('resize', updateSize);
+        setTimeout(updateSize, 0);
+        return () => window.removeEventListener('resize', updateSize);
+      }, [updateSize]);
 
-    componentWillUnmount() {
-      window.removeEventListener('resize', this.updateSize);
-    }
-
-    render() {
       return (
-        <div ref={this.ref} className={this.props.className}>
-          {this.size ? (
-            <WrappedComponent {...(this.props as any)} size={this.size} />
+        <div ref={ref} className={props.className}>
+          {size ? (
+            <WrappedComponent {...(props as any)} size={size} />
           ) : null}
         </div>
       );
     }
-
-    @action
-    private updateSize = () => {
-      this.size = this.ref.current
-        ? {
-            width: this.ref.current.clientWidth,
-            height: this.ref.current.clientHeight,
-          }
-        : undefined;
-    };
-  }
+  );
 
   return Wrapper;
 }

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useRef } from 'react';
 import { ToolBar, UIContainer } from '../common/Components';
 import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
@@ -11,37 +11,40 @@ import UISelector from '../UISelector';
 import { GameOfLifeModel } from './GameOfLifeModel';
 import { GameOfLifeRenderer } from './GameOfLifeRenderer';
 
-@observer
-export default class GameOfLifeUI extends React.Component<{}> {
-  private model = new GameOfLifeModel();
-
-  constructor(p: {}) {
-    super(p);
-    this.model.grid.addMover();
+const GameOfLifeUI = observer(() => {
+  const modelRef = useRef(() => {
+    const m = new GameOfLifeModel();
+    m.grid.addMover();
+    return m;
+  });
+  // Lazy init: only call the factory once
+  if (typeof modelRef.current === 'function') {
+    modelRef.current = modelRef.current() as any;
   }
+  const model = modelRef.current as unknown as GameOfLifeModel;
 
-  render() {
-    return (
-      <UIContainer className="GameOfLifeUI">
-        <ToolBar className="TopBar">
-          <FrameBar model={this.model.control} />
-          <UISelector />
-          <FpsBar model={this.model.control} />
-        </ToolBar>
-        <PixiSimulationView
-          useDragPoint={false}
-          model={this.model}
-          createRenderer={this.createRenderer}
-        />
-        <ToolBar className="BottomBar">
-          <SpeedBar model={this.model} />
-          <ZoomBar model={this.model} />
-          <ControlBar control={this.model.control} />
-        </ToolBar>
-      </UIContainer>
-    );
-  }
+  const createRenderer = (attachRef: React.RefObject<HTMLDivElement | null>) =>
+    new GameOfLifeRenderer(model, attachRef);
 
-  private createRenderer = (attachRef: React.RefObject<HTMLDivElement | null>) =>
-    new GameOfLifeRenderer(this.model, attachRef);
-}
+  return (
+    <UIContainer className="GameOfLifeUI">
+      <ToolBar className="TopBar">
+        <FrameBar model={model.control} />
+        <UISelector />
+        <FpsBar model={model.control} />
+      </ToolBar>
+      <PixiSimulationView
+        useDragPoint={false}
+        model={model}
+        createRenderer={createRenderer}
+      />
+      <ToolBar className="BottomBar">
+        <SpeedBar model={model} />
+        <ZoomBar model={model} />
+        <ControlBar control={model.control} />
+      </ToolBar>
+    </UIContainer>
+  );
+});
+
+export default GameOfLifeUI;

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import { Application } from 'pixi.js';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Size } from '../../game/common/Size';
 import { SizeAware } from '../SizeAware';
 import { Model } from './Model';
@@ -8,39 +8,46 @@ import { ModelMover } from './ModelMover';
 import { ModelRenderer } from './ModelRenderer';
 import { stylizeSimulationView } from './SimulationView';
 
-@observer
-class PlainPixiSimulationView extends React.Component<{
-  size: Size;
-  model: Model;
-  createRenderer: (
-    containerRef: React.RefObject<HTMLDivElement | null>
-  ) => ModelRenderer<Application>;
-  useDragPoint: boolean;
-}> {
-  private containerRef = React.createRef<HTMLDivElement>();
-  private renderer = this.props.createRenderer(this.containerRef);
+const PlainPixiSimulationView = observer(
+  ({
+    size,
+    model,
+    createRenderer,
+    useDragPoint,
+  }: {
+    size: Size;
+    model: Model;
+    createRenderer: (
+      containerRef: React.RefObject<HTMLDivElement | null>
+    ) => ModelRenderer<Application>;
+    useDragPoint: boolean;
+  }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const rendererRef = useRef<ModelRenderer<Application> | null>(null);
 
-  componentDidMount() {
-    this.props.model.renderCallback = this.renderer.render;
-    this.renderer.updateSize(this.props.size);
-    this.renderer.render();
-  }
+    if (!rendererRef.current) {
+      rendererRef.current = createRenderer(containerRef);
+    }
+    const renderer = rendererRef.current;
 
-  componentDidUpdate() {
-    this.renderer.updateSize(this.props.size);
-  }
+    useEffect(() => {
+      model.renderCallback = renderer.render;
+      renderer.updateSize(size);
+      renderer.render();
+      return () => renderer.destroy?.();
+    }, []);
 
-  render() {
+    useEffect(() => {
+      renderer.updateSize(size);
+    }, [size.width, size.height]);
+
     return (
-      <ModelMover
-        model={this.props.model}
-        useDragPoint={this.props.useDragPoint}
-      >
-        <div ref={this.containerRef} />
+      <ModelMover model={model} useDragPoint={useDragPoint}>
+        <div ref={containerRef} />
       </ModelMover>
     );
   }
-}
+);
 
 const SizedPixiSimulationView = SizeAware(PlainPixiSimulationView);
 const PixiSimulationView = stylizeSimulationView(SizedPixiSimulationView);

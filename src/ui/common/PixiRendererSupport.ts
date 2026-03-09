@@ -1,5 +1,5 @@
 import { toJS } from 'mobx';
-import { Application, Sprite } from 'pixi.js';
+import { Application } from 'pixi.js';
 import { Size, sizeEquals } from '../../game/common/Size';
 import { HexColors } from '../Colors';
 import { removeChildNodes } from '../DomUtils';
@@ -12,6 +12,7 @@ export class PixiRendererSupport {
   private model: Model;
   private modelRenderer: ModelRenderer<Application>;
   private domAttachPoint: React.RefObject<HTMLDivElement | null>;
+  private initCounter = 0;
 
   constructor(
     model: Model,
@@ -21,17 +22,17 @@ export class PixiRendererSupport {
     this.model = model;
     this.modelRenderer = modelRenderer;
     this.domAttachPoint = attachRef;
-    this.initApp();
   }
 
   updateSize = (newSize: Size) => {
-    if (!sizeEquals(newSize, this.model.renderSize)) {
+    if (!this.app || !sizeEquals(newSize, this.model.renderSize)) {
       this.model.renderSize = newSize;
       this.initApp();
     }
   };
 
   destroy = () => {
+    this.initCounter++;
     if (this.domAttachPoint.current) {
       removeChildNodes(this.domAttachPoint.current);
     }
@@ -42,22 +43,31 @@ export class PixiRendererSupport {
   };
 
   private initApp = async () => {
+    const thisInit = ++this.initCounter;
+
     if (this.app) {
       this.app.destroy();
+      this.app = undefined;
     }
 
     const size = this.model.renderSize;
-    const resolution = 1;
     console.log('Creating PIXI app of size', toJS(size));
     const app = new Application();
     await app.init({
       width: size.width,
       height: size.height,
       backgroundColor: HexColors.darkBlue,
-      resolution,
+      resolution: 1,
     });
+
+    // Another initApp was called while we were awaiting; discard this one
+    if (thisInit !== this.initCounter) {
+      app.destroy();
+      return;
+    }
+
     this.app = app;
-    this.modelRenderer.createSprites(app);
+    await this.modelRenderer.createSprites(app);
     const cur = this.domAttachPoint.current;
     if (cur) {
       removeChildNodes(cur);

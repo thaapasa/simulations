@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useRef } from 'react';
 import { ToolBar, UIContainer } from '../common/Components';
 import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
@@ -14,38 +14,38 @@ import { LangtonRenderer } from './LangtonRenderer';
 
 const showDebug = false;
 
-@observer
-export default class LangtonsAntUI extends React.Component<{}> {
-  private model = new LangtonModel();
+const LangtonsAntUI = observer(() => {
+  const modelRef = useRef(new LangtonModel());
+  const model = modelRef.current;
 
-  render() {
-    return (
-      <UIContainer className="LangtonsAntUI">
-        <ToolBar className="TopBar">
-          <FrameBar model={this.model.control} />
-          <UISelector />
-          <FpsBar model={this.model.control} />
-        </ToolBar>
-        <PixiSimulationView
-          useDragPoint={false}
-          model={this.model}
-          createRenderer={this.createRenderer}
-        />
-        <ToolBar className="BottomBar">
-          {showDebug ? (
-            <TileDebugView model={this.model.tileCalc} />
-          ) : (
-            <>
-              <SpeedBar model={this.model} />
-              <ZoomBar model={this.model} />
-              <ControlBar control={this.model.control} />
-            </>
-          )}
-        </ToolBar>
-      </UIContainer>
-    );
-  }
+  const createRenderer = (attachRef: React.RefObject<HTMLDivElement | null>) =>
+    new LangtonRenderer(model, attachRef);
 
-  private createRenderer = (attachRef: React.RefObject<HTMLDivElement | null>) =>
-    new LangtonRenderer(this.model, attachRef);
-}
+  return (
+    <UIContainer className="LangtonsAntUI">
+      <ToolBar className="TopBar">
+        <FrameBar model={model.control} />
+        <UISelector />
+        <FpsBar model={model.control} />
+      </ToolBar>
+      <PixiSimulationView
+        useDragPoint={false}
+        model={model}
+        createRenderer={createRenderer}
+      />
+      <ToolBar className="BottomBar">
+        {showDebug ? (
+          <TileDebugView model={model.tileCalc} />
+        ) : (
+          <>
+            <SpeedBar model={model} />
+            <ZoomBar model={model} />
+            <ControlBar control={model.control} />
+          </>
+        )}
+      </ToolBar>
+    </UIContainer>
+  );
+});
+
+export default LangtonsAntUI;

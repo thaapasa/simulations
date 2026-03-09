@@ -1,6 +1,6 @@
-import { action } from 'mobx';
+import { runInAction } from 'mobx';
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Julia } from '../../game/fractal/Julia';
@@ -16,109 +16,79 @@ import { FractalModel } from './FractalModel';
 import { FractalRenderer } from './FractalRenderer';
 import ResolutionBar from './ResolutionBar';
 
-type NavigateFn = (path: string, options?: { replace?: boolean }) => void;
-
-@observer
-class JuliaUIInner extends React.Component<{
-  r: string;
-  i: string;
-  search: string;
-  navigate: NavigateFn;
-}> {
-  private fractal = new Julia(0, 0);
-  private model = new FractalModel(
-    this.fractal,
-    { x: 0, y: 0 },
-    '/p/julia/0/0'
-  );
-
-  componentDidMount() {
-    this.updateModelParams();
-  }
-
-  componentDidUpdate() {
-    this.updateModelParams();
-  }
-
-  render() {
-    return (
-      <UIContainer className="MandelbrotUI">
-        <ToolBar className="TopBar Center">
-          <UISelector />
-        </ToolBar>
-        <CanvasSimulationView
-          useDragPoint={true}
-          model={this.model}
-          createRenderer={this.createRenderer}
-        />
-        <ToolBar className="BottomBar">
-          <Column>
-            <ZoomBar model={this.model} />
-            <ResolutionBar model={this.model} />
-          </Column>
-          <Column>
-            <BoundValueView
-              title="Palette 1"
-              value={this.model.paletteStep1}
-              onChange={this.model.repaint}
-            />
-            <BoundValueView
-              title="Palette 2"
-              value={this.model.paletteStep2}
-              onChange={this.model.repaint}
-            />
-          </Column>
-          <Column>
-            <FpsBar model={this.model} />
-            <ProgressBar model={this.model} />
-          </Column>
-        </ToolBar>
-      </UIContainer>
-    );
-  }
-
-  @action
-  private updateModelParams = () => {
-    const { r, i } = this.props;
-    const nr = Number(r);
-    const ni = Number(i);
-    if (nr !== this.fractal.r || ni !== this.fractal.i) {
-      this.fractal = new Julia(nr, ni);
-      this.model.updateSource(this.fractal, `/p/julia/${nr}/${ni}`);
-    }
-
-    const q = parseQueryString(this.props.search, Number);
-    if (q.r && this.model.modelCenter.x !== q.r) {
-      this.model.modelCenter.x = q.r;
-    }
-    if (q.i && this.model.modelCenter.y !== q.i) {
-      this.model.modelCenter.y = Number(q.i);
-    }
-    if (q.scale && this.model.scale.value !== q.scale) {
-      this.model.scale.value = Number(q.scale);
-    }
-    if (q.resolution && this.model.resolution.value !== q.resolution) {
-      this.model.resolution.value = Number(q.resolution);
-    }
-  };
-
-  private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement | null>) =>
-    new FractalRenderer(this.model, attachRef, this.props.navigate);
-}
-
-export default function JuliaUI() {
+const JuliaUI = observer(() => {
   const params = useParams<{ r: string; i: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  return (
-    <JuliaUIInner
-      r={params.r || '0'}
-      i={params.i || '0'}
-      search={location.search}
-      navigate={navigate}
-    />
+
+  const r = params.r || '0';
+  const i = params.i || '0';
+
+  const fractalRef = useRef(new Julia(Number(r), Number(i)));
+  const modelRef = useRef(
+    new FractalModel(fractalRef.current, { x: 0, y: 0 }, `/p/julia/${r}/${i}`)
   );
-}
+  const model = modelRef.current;
+
+  useEffect(() => {
+    const nr = Number(r);
+    const ni = Number(i);
+    if (nr !== fractalRef.current.r || ni !== fractalRef.current.i) {
+      fractalRef.current = new Julia(nr, ni);
+      model.updateSource(fractalRef.current, `/p/julia/${nr}/${ni}`);
+    }
+
+    const q = parseQueryString(location.search, Number);
+    runInAction(() => {
+      if (q.r && model.modelCenter.x !== q.r) model.modelCenter.x = q.r;
+      if (q.i && model.modelCenter.y !== q.i) model.modelCenter.y = q.i;
+      if (q.scale && model.scale.value !== q.scale) model.scale.value = q.scale;
+      if (q.resolution && model.resolution.value !== q.resolution)
+        model.resolution.value = q.resolution;
+    });
+  }, [r, i, location.search]);
+
+  const createRenderer = (
+    attachRef: React.RefObject<HTMLCanvasElement | null>
+  ) => new FractalRenderer(model, attachRef, navigate);
+
+  return (
+    <UIContainer className="JuliaUI">
+      <ToolBar className="TopBar Center">
+        <UISelector />
+      </ToolBar>
+      <CanvasSimulationView
+        useDragPoint={true}
+        model={model}
+        createRenderer={createRenderer}
+      />
+      <ToolBar className="BottomBar">
+        <Column>
+          <ZoomBar model={model} />
+          <ResolutionBar model={model} />
+        </Column>
+        <Column>
+          <BoundValueView
+            title="Palette 1"
+            value={model.paletteStep1}
+            onChange={model.repaint}
+          />
+          <BoundValueView
+            title="Palette 2"
+            value={model.paletteStep2}
+            onChange={model.repaint}
+          />
+        </Column>
+        <Column>
+          <FpsBar model={model} />
+          <ProgressBar model={model} />
+        </Column>
+      </ToolBar>
+    </UIContainer>
+  );
+});
+
+export default JuliaUI;
 
 const Column = styled.div`
   display: flex;
@@ -126,7 +96,7 @@ const Column = styled.div`
   & > div {
     margin-top: 8px;
   }
-  & > div:first {
+  & > div:first-child {
     margin-top: 0;
   }
 `;

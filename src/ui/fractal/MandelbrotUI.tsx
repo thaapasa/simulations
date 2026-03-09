@@ -1,6 +1,6 @@
-import { action } from 'mobx';
+import { action, runInAction } from 'mobx';
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Mandelbrot } from '../../game/fractal/Mandelbrot';
@@ -17,95 +17,73 @@ import { FractalModel } from './FractalModel';
 import { FractalRenderer } from './FractalRenderer';
 import ResolutionBar from './ResolutionBar';
 
-type NavigateFn = (path: string, options?: { replace?: boolean }) => void;
-
-@observer
-class MandelbrotUIInner extends React.Component<{
-  search: string;
-  navigate: NavigateFn;
-}> {
-  private model = new FractalModel(
-    new Mandelbrot(),
-    { x: -0.8, y: 0 },
-    '/p/mandelbrot'
-  );
-
-  componentDidMount() {
-    this.updateModelParams();
-  }
-
-  componentDidUpdate() {
-    this.updateModelParams();
-  }
-
-  render() {
-    const center = this.model.modelCenter;
-    return (
-      <UIContainer className="MandelbrotUI">
-        <ToolBar className="TopBar">
-          <div />
-          <UISelector />
-          <div>
-            <Link href={`/p/julia/${center.x}/${center.y}`}>Julia</Link>
-          </div>
-        </ToolBar>
-        <CanvasSimulationView
-          useDragPoint={true}
-          model={this.model}
-          createRenderer={this.createRenderer}
-        />
-        <ToolBar className="BottomBar">
-          <Column>
-            <ZoomBar model={this.model} />
-            <ResolutionBar model={this.model} />
-          </Column>
-          <Column>
-            <BoundValueView
-              title="Palette 1"
-              value={this.model.paletteStep1}
-              onChange={this.model.repaint}
-            />
-            <BoundValueView
-              title="Palette 2"
-              value={this.model.paletteStep2}
-              onChange={this.model.repaint}
-            />
-          </Column>
-          <Column>
-            <FpsBar model={this.model} />
-            <ProgressBar model={this.model} />
-          </Column>
-        </ToolBar>
-      </UIContainer>
-    );
-  }
-
-  @action
-  private updateModelParams = () => {
-    const q = parseQueryString(this.props.search, Number);
-    if (q.r && this.model.modelCenter.x !== q.r) {
-      this.model.modelCenter.x = q.r;
-    }
-    if (q.i && this.model.modelCenter.y !== q.i) {
-      this.model.modelCenter.y = Number(q.i);
-    }
-    if (q.scale && this.model.scale.value !== q.scale) {
-      this.model.scale.value = Number(q.scale);
-    }
-    if (q.resolution && this.model.resolution.value !== q.resolution) {
-      this.model.resolution.value = Number(q.resolution);
-    }
-  };
-
-  private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement | null>) =>
-    new FractalRenderer(this.model, attachRef, this.props.navigate);
-}
-
-export default function MandelbrotUI() {
+const MandelbrotUI = observer(() => {
   const location = useLocation();
   const navigate = useNavigate();
-  return <MandelbrotUIInner search={location.search} navigate={navigate} />;
-}
+
+  const modelRef = useRef(
+    new FractalModel(new Mandelbrot(), { x: -0.8, y: 0 }, '/p/mandelbrot')
+  );
+  const model = modelRef.current;
+
+  useEffect(() => {
+    const q = parseQueryString(location.search, Number);
+    runInAction(() => {
+      if (q.r && model.modelCenter.x !== q.r) model.modelCenter.x = q.r;
+      if (q.i && model.modelCenter.y !== q.i) model.modelCenter.y = q.i;
+      if (q.scale && model.scale.value !== q.scale) model.scale.value = q.scale;
+      if (q.resolution && model.resolution.value !== q.resolution)
+        model.resolution.value = q.resolution;
+    });
+  }, [location.search]);
+
+  const createRenderer = (
+    attachRef: React.RefObject<HTMLCanvasElement | null>
+  ) => new FractalRenderer(model, attachRef, navigate);
+
+  const center = model.modelCenter;
+
+  return (
+    <UIContainer className="MandelbrotUI">
+      <ToolBar className="TopBar">
+        <div />
+        <UISelector />
+        <div>
+          <Link href={`/p/julia/${center.x}/${center.y}`}>Julia</Link>
+        </div>
+      </ToolBar>
+      <CanvasSimulationView
+        useDragPoint={true}
+        model={model}
+        createRenderer={createRenderer}
+      />
+      <ToolBar className="BottomBar">
+        <Column>
+          <ZoomBar model={model} />
+          <ResolutionBar model={model} />
+        </Column>
+        <Column>
+          <BoundValueView
+            title="Palette 1"
+            value={model.paletteStep1}
+            onChange={model.repaint}
+          />
+          <BoundValueView
+            title="Palette 2"
+            value={model.paletteStep2}
+            onChange={model.repaint}
+          />
+        </Column>
+        <Column>
+          <FpsBar model={model} />
+          <ProgressBar model={model} />
+        </Column>
+      </ToolBar>
+    </UIContainer>
+  );
+});
+
+export default MandelbrotUI;
 
 const Column = styled.div`
   display: flex;
@@ -113,7 +91,7 @@ const Column = styled.div`
   & > div {
     margin-top: 8px;
   }
-  & > div:first {
+  & > div:first-child {
     margin-top: 0;
   }
 `;

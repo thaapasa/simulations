@@ -1,6 +1,6 @@
-import { Application, Sprite } from 'pixi.js';
-import blackTile from '../../icons/black-tile.svg';
-import whiteTile from '../../icons/white-tile.svg';
+import { Application, Assets, Sprite, Texture } from 'pixi.js';
+import blackTileUrl from '../../icons/black-tile.svg';
+import whiteTileUrl from '../../icons/white-tile.svg';
 import { Model } from './Model';
 import { TileCalculator } from './TileCalculator';
 
@@ -15,9 +15,16 @@ export class TileRenderer {
   model: TiledModel;
   whiteTiles: Sprite[] = [];
   blackTiles: Sprite[] = [];
+  private whiteTileTexture: Texture | undefined;
+  private blackTileTexture: Texture | undefined;
 
   constructor(model: TiledModel) {
     this.model = model;
+  }
+
+  async loadAssets() {
+    this.whiteTileTexture = await Assets.load(whiteTileUrl);
+    this.blackTileTexture = await Assets.load(blackTileUrl);
   }
 
   render = () => {
@@ -62,7 +69,8 @@ export class TileRenderer {
     }
   }
 
-  createSprites(app: Application) {
+  async createSprites(app: Application) {
+    await this.loadAssets();
     for (const im of this.whiteTiles) {
       im.destroy();
     }
@@ -82,6 +90,9 @@ export class TileRenderer {
   }
 
   createMissingTiles(app: Application) {
+    if (!this.whiteTileTexture || !this.blackTileTexture) {
+      return;
+    }
     const required = this.model.tileCalc.tileCount;
     const tileSize = this.model.tileCalc.tileSize;
     if (
@@ -91,7 +102,7 @@ export class TileRenderer {
       return;
     }
     for (let i = this.whiteTiles.length; i < required; ++i) {
-      const sprite = Sprite.from(whiteTile);
+      const sprite = new Sprite(this.whiteTileTexture);
       sprite.anchor.set(0.5);
       sprite.visible = false;
       sprite.x = -tileSize - 10;
@@ -99,7 +110,7 @@ export class TileRenderer {
       app.stage.addChild(sprite);
     }
     for (let i = this.blackTiles.length; i < required; ++i) {
-      const sprite = Sprite.from(blackTile);
+      const sprite = new Sprite(this.blackTileTexture);
       sprite.anchor.set(0.5);
       sprite.visible = false;
       sprite.x = -tileSize - 10;

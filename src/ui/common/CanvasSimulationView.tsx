@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Size } from '../../game/common/Size';
 import { SizeAware } from '../SizeAware';
 import { Model } from './Model';
@@ -7,43 +7,46 @@ import { ModelMover } from './ModelMover';
 import { ModelRenderer } from './ModelRenderer';
 import { stylizeSimulationView } from './SimulationView';
 
-@observer
-class PlainCanvasSimulationView extends React.Component<{
-  size: Size;
-  model: Model;
-  createRenderer: (
-    containerRef: React.RefObject<HTMLCanvasElement | null>
-  ) => ModelRenderer<void>;
-  useDragPoint: boolean;
-}> {
-  private containerRef = React.createRef<HTMLCanvasElement>();
-  private renderer = this.props.createRenderer(this.containerRef);
+const PlainCanvasSimulationView = observer(
+  ({
+    size,
+    model,
+    createRenderer,
+    useDragPoint,
+  }: {
+    size: Size;
+    model: Model;
+    createRenderer: (
+      containerRef: React.RefObject<HTMLCanvasElement | null>
+    ) => ModelRenderer<void>;
+    useDragPoint: boolean;
+  }) => {
+    const containerRef = useRef<HTMLCanvasElement>(null);
+    const rendererRef = useRef<ModelRenderer<void> | null>(null);
 
-  componentDidMount() {
-    this.props.model.renderCallback = this.renderer.render;
-    this.renderer.updateSize(this.props.size);
-    this.renderer.render();
-  }
+    if (!rendererRef.current) {
+      rendererRef.current = createRenderer(containerRef);
+    }
+    const renderer = rendererRef.current;
 
-  componentDidUpdate() {
-    this.renderer.updateSize(this.props.size);
-  }
+    useEffect(() => {
+      model.renderCallback = renderer.render;
+      renderer.updateSize(size);
+      renderer.render();
+      return () => renderer.destroy?.();
+    }, []);
 
-  render() {
+    useEffect(() => {
+      renderer.updateSize(size);
+    }, [size.width, size.height]);
+
     return (
-      <ModelMover
-        model={this.props.model}
-        useDragPoint={this.props.useDragPoint}
-      >
-        <canvas
-          ref={this.containerRef}
-          width={this.props.size.width}
-          height={this.props.size.height}
-        />
+      <ModelMover model={model} useDragPoint={useDragPoint}>
+        <canvas ref={containerRef} width={size.width} height={size.height} />
       </ModelMover>
     );
   }
-}
+);
 
 const SizedCanvasSimulationView = SizeAware(PlainCanvasSimulationView);
 const CanvasSimulationView = stylizeSimulationView(SizedCanvasSimulationView);

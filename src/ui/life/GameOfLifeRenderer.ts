@@ -29,7 +29,7 @@ export class GameOfLifeRenderer implements ModelRenderer<Application> {
     this.tileRenderer.render();
   };
 
-  createSprites(app: Application) {
-    this.tileRenderer.createSprites(app);
+  async createSprites(app: Application) {
+    await this.tileRenderer.createSprites(app);
   }
 }

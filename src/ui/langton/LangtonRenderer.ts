@@ -1,6 +1,6 @@
-import { Application, Sprite } from 'pixi.js';
+import { Application, Assets, Sprite } from 'pixi.js';
 import { Size } from '../../game/common/Size';
-import ant from '../../icons/ant.svg';
+import antUrl from '../../icons/ant.svg';
 import { ModelRenderer } from '../common/ModelRenderer';
 import { PixiRendererSupport } from '../common/PixiRendererSupport';
 import { TileRenderer } from '../common/TileRenderer';
@@ -11,11 +11,10 @@ export class LangtonRenderer implements ModelRenderer<Application> {
   private tileRenderer: TileRenderer;
   private support: PixiRendererSupport;
 
-  private ant = Sprite.from(ant);
+  private ant: Sprite | undefined;
 
   constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement | null>) {
     this.model = model;
-    this.ant.anchor.set(0.5);
     this.tileRenderer = new TileRenderer(model);
     this.support = new PixiRendererSupport(model, this, attachRef);
   }
@@ -27,7 +26,7 @@ export class LangtonRenderer implements ModelRenderer<Application> {
   updateSize = (newSize: Size) => this.support.updateSize(newSize);
 
   render = () => {
-    if (!this.support.app) {
+    if (!this.support.app || !this.ant) {
       return;
     }
     if (!this.tileRenderer.hasAllTiles()) {
@@ -45,8 +44,11 @@ export class LangtonRenderer implements ModelRenderer<Application> {
     );
   };
 
-  createSprites = (app: Application) => {
-    this.tileRenderer.createSprites(app);
+  createSprites = async (app: Application) => {
+    const antTexture = await Assets.load(antUrl);
+    this.ant = new Sprite(antTexture);
+    this.ant.anchor.set(0.5);
+    await this.tileRenderer.createSprites(app);
     app.stage.addChild(this.ant);
   };
 }
