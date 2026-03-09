@@ -1,7 +1,7 @@
 import { action } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
-import { Route, RouteComponentProps } from 'react-router';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Mandelbrot } from '../../game/fractal/Mandelbrot';
 import { parseQueryString } from '../../util/QueryString';
@@ -17,10 +17,13 @@ import { FractalModel } from './FractalModel';
 import { FractalRenderer } from './FractalRenderer';
 import ResolutionBar from './ResolutionBar';
 
+type NavigateFn = (path: string, options?: { replace?: boolean }) => void;
+
 @observer
-export default class MandelbrotUI extends React.Component<
-  RouteComponentProps<{}>
-> {
+class MandelbrotUIInner extends React.Component<{
+  search: string;
+  navigate: NavigateFn;
+}> {
   private model = new FractalModel(
     new Mandelbrot(),
     { x: -0.8, y: 0 },
@@ -41,7 +44,7 @@ export default class MandelbrotUI extends React.Component<
       <UIContainer className="MandelbrotUI">
         <ToolBar className="TopBar">
           <div />
-          <Route component={UISelector} />
+          <UISelector />
           <div>
             <Link href={`/p/julia/${center.x}/${center.y}`}>Julia</Link>
           </div>
@@ -79,7 +82,7 @@ export default class MandelbrotUI extends React.Component<
 
   @action
   private updateModelParams = () => {
-    const q = parseQueryString(this.props.location.search, Number);
+    const q = parseQueryString(this.props.search, Number);
     if (q.r && this.model.modelCenter.x !== q.r) {
       this.model.modelCenter.x = q.r;
     }
@@ -94,8 +97,14 @@ export default class MandelbrotUI extends React.Component<
     }
   };
 
-  private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement>) =>
-    new FractalRenderer(this.model, attachRef, this.props.history);
+  private createRenderer = (attachRef: React.RefObject<HTMLCanvasElement | null>) =>
+    new FractalRenderer(this.model, attachRef, this.props.navigate);
+}
+
+export default function MandelbrotUI() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  return <MandelbrotUIInner search={location.search} navigate={navigate} />;
 }
 
 const Column = styled.div`

@@ -1,4 +1,3 @@
-import 'jest';
 import { hexByte, rgbColor } from './Colors';
 
 describe('Color utils', () => {

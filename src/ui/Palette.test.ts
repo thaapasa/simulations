@@ -1,4 +1,3 @@
-import 'jest';
 import { ByteColors, rgbByte } from './Colors';
 import { getColorAt, Palette } from './Palette';
 

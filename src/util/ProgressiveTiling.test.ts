@@ -1,4 +1,3 @@
-import 'jest';
 import { generateTiling } from './ProgressiveTiling';
 
 describe('ProgressiveTiling', () => {

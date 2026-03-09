@@ -1,4 +1,3 @@
-import 'jest';
 import { Ant } from './Ant';
 import { InfiniteGrid } from './InfiniteGrid';
 

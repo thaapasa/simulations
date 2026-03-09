@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import { Application, Sprite } from 'pixi.js';
 import blackTile from '../../icons/black-tile.svg';
 import whiteTile from '../../icons/white-tile.svg';
 import { Model } from './Model';
@@ -13,8 +13,8 @@ interface TiledModel extends Model {
 
 export class TileRenderer {
   model: TiledModel;
-  whiteTiles: PIXI.Sprite[] = [];
-  blackTiles: PIXI.Sprite[] = [];
+  whiteTiles: Sprite[] = [];
+  blackTiles: Sprite[] = [];
 
   constructor(model: TiledModel) {
     this.model = model;
@@ -43,7 +43,7 @@ export class TileRenderer {
   };
 
   showAtPosition(
-    sprite: PIXI.Sprite,
+    sprite: Sprite,
     x: number,
     y: number,
     scale: number,
@@ -62,7 +62,7 @@ export class TileRenderer {
     }
   }
 
-  createSprites(app: PIXI.Application) {
+  createSprites(app: Application) {
     for (const im of this.whiteTiles) {
       im.destroy();
     }
@@ -81,7 +81,7 @@ export class TileRenderer {
     );
   }
 
-  createMissingTiles(app: PIXI.Application) {
+  createMissingTiles(app: Application) {
     const required = this.model.tileCalc.tileCount;
     const tileSize = this.model.tileCalc.tileSize;
     if (
@@ -91,7 +91,7 @@ export class TileRenderer {
       return;
     }
     for (let i = this.whiteTiles.length; i < required; ++i) {
-      const sprite = PIXI.Sprite.from(whiteTile);
+      const sprite = Sprite.from(whiteTile);
       sprite.anchor.set(0.5);
       sprite.visible = false;
       sprite.x = -tileSize - 10;
@@ -99,7 +99,7 @@ export class TileRenderer {
       app.stage.addChild(sprite);
     }
     for (let i = this.blackTiles.length; i < required; ++i) {
-      const sprite = PIXI.Sprite.from(blackTile);
+      const sprite = Sprite.from(blackTile);
       sprite.anchor.set(0.5);
       sprite.visible = false;
       sprite.x = -tileSize - 10;

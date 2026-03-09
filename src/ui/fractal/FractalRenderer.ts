@@ -1,26 +1,27 @@
-import { History } from 'history';
 import { Size, sizeEquals } from '../../game/common/Size';
 import { toQueryString } from '../../util/QueryString';
 import { ModelRenderer } from '../common/ModelRenderer';
 import { FractalModel } from './FractalModel';
 
+type NavigateFn = (path: string, options?: { replace?: boolean }) => void;
+
 export class FractalRenderer implements ModelRenderer<void> {
   zeroValue = 0;
 
   private model: FractalModel;
-  private canvasRef: React.RefObject<HTMLCanvasElement>;
+  private canvasRef: React.RefObject<HTMLCanvasElement | null>;
   private buffer: ImageData | undefined;
   private context: CanvasRenderingContext2D | undefined;
-  private history: History;
+  private navigate: NavigateFn;
 
   constructor(
     model: FractalModel,
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    history: History
+    canvasRef: React.RefObject<HTMLCanvasElement | null>,
+    navigate: NavigateFn
   ) {
     this.model = model;
     this.canvasRef = canvasRef;
-    this.history = history;
+    this.navigate = navigate;
   }
 
   destroy = () => {
@@ -35,17 +36,15 @@ export class FractalRenderer implements ModelRenderer<void> {
       this.model.renderer.resetPixels();
       this.buffer = undefined;
       this.render();
-      setImmediate(this.model.calculate);
+      setTimeout(this.model.calculate, 0);
     }
   };
 
   render = () => {
-    // console.time('Render');
-    // console.log('Render');
     if (!this.canvasRef.current) {
       return;
     }
-    this.history.replace(
+    this.navigate(
       this.model.pathPrefix +
         '?' +
         toQueryString({
@@ -53,7 +52,8 @@ export class FractalRenderer implements ModelRenderer<void> {
           i: this.model.modelCenter.y,
           scale: this.model.scale.value,
           resolution: this.model.resolution.value,
-        })
+        }),
+      { replace: true }
     );
     const { width, height } = this.model.renderSize;
     if (!this.context) {
@@ -86,7 +86,6 @@ export class FractalRenderer implements ModelRenderer<void> {
     }
     const drag = this.model.dragPoint;
     ctx.putImageData(buffer, -drag.x, drag.y);
-    // console.timeEnd('Render');
   };
 
   createSprites = (_: void) => {

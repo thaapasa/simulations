@@ -2,7 +2,6 @@ import { action, observable } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Size } from '../game/common/Size';
-import { Omit } from '../util/Types';
 
 export function SizeAware<T extends { size: Size }>(
   WrappedComponent: React.ComponentType<T>
@@ -19,7 +18,7 @@ export function SizeAware<T extends { size: Size }>(
     componentDidMount() {
       this.updateSize();
       window.addEventListener('resize', this.updateSize);
-      setImmediate(this.updateSize);
+      setTimeout(this.updateSize, 0);
     }
 
     componentWillUnmount() {

@@ -12,7 +12,7 @@ class PlainCanvasSimulationView extends React.Component<{
   size: Size;
   model: Model;
   createRenderer: (
-    containerRef: React.RefObject<HTMLCanvasElement>
+    containerRef: React.RefObject<HTMLCanvasElement | null>
   ) => ModelRenderer<void>;
   useDragPoint: boolean;
 }> {

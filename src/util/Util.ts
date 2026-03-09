@@ -11,7 +11,7 @@ export async function timeout(ms: number) {
 }
 
 export async function nextTick() {
-  return new Promise(resolve => setImmediate(resolve));
+  return new Promise(resolve => setTimeout(resolve, 0));
 }
 
 export function allNumbers(from: number, to: number): number[] {

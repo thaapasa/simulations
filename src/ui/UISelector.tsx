@@ -1,7 +1,6 @@
-import { History } from 'history';
 import { observer } from 'mobx-react';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import {
   GameOfLifeLogo,
@@ -10,49 +9,45 @@ import {
   MandelbrotLogo,
 } from './Icons';
 
-@observer
-export default class GameSelector extends React.Component<
-  RouteComponentProps<{}>
-> {
-  render() {
-    return (
-      <LogoBar>
-        <LogoIcon
-          logo={LangtonsAntLogo}
-          history={this.props.history}
-          path="/p/langtons-ant"
-        />
-        <LogoIcon
-          logo={GameOfLifeLogo}
-          history={this.props.history}
-          path="/p/game-of-life"
-        />
-        <LogoIcon
-          logo={MandelbrotLogo}
-          history={this.props.history}
-          path="/p/mandelbrot"
-        />
-      </LogoBar>
-    );
-  }
-}
+const GameSelector = observer(() => {
+  const navigate = useNavigate();
+  return (
+    <LogoBar>
+      <LogoIcon
+        logo={LangtonsAntLogo}
+        navigate={navigate}
+        path="/p/langtons-ant"
+      />
+      <LogoIcon
+        logo={GameOfLifeLogo}
+        navigate={navigate}
+        path="/p/game-of-life"
+      />
+      <LogoIcon
+        logo={MandelbrotLogo}
+        navigate={navigate}
+        path="/p/mandelbrot"
+      />
+    </LogoBar>
+  );
+});
 
-class LogoIcon extends React.Component<{
+export default GameSelector;
+
+function LogoIcon({
+  logo: LogoComponent,
+  navigate,
+  path,
+}: {
   logo: React.FunctionComponent<IconProps>;
-  history: History;
+  navigate: (path: string) => void;
   path: string;
-}> {
-  render() {
-    return (
-      <Logo>
-        <this.props.logo onClick={this.navigate} />
-      </Logo>
-    );
-  }
-
-  navigate = () => {
-    this.props.history.push(this.props.path);
-  };
+}) {
+  return (
+    <Logo>
+      <LogoComponent onClick={() => navigate(path)} />
+    </Logo>
+  );
 }
 
 const LogoBar = styled.div`

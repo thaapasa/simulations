@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react';
 import React from 'react';
-import { Route } from 'react-router';
 import { ToolBar, UIContainer } from '../common/Components';
 import ControlBar from '../common/ControlBar';
 import FpsBar from '../common/FpsBar';
@@ -24,7 +23,7 @@ export default class LangtonsAntUI extends React.Component<{}> {
       <UIContainer className="LangtonsAntUI">
         <ToolBar className="TopBar">
           <FrameBar model={this.model.control} />
-          <Route component={UISelector} />
+          <UISelector />
           <FpsBar model={this.model.control} />
         </ToolBar>
         <PixiSimulationView
@@ -47,6 +46,6 @@ export default class LangtonsAntUI extends React.Component<{}> {
     );
   }
 
-  private createRenderer = (attachRef: React.RefObject<HTMLDivElement>) =>
+  private createRenderer = (attachRef: React.RefObject<HTMLDivElement | null>) =>
     new LangtonRenderer(this.model, attachRef);
 }

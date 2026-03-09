@@ -119,7 +119,7 @@ export class ModeHandler {
     if (this.mode === 'pause' || this.mode === 'step') {
       return;
     }
-    return new Promise(resolve => this.requestMode('pause', resolve));
+    return new Promise<void>(resolve => this.requestMode('pause', resolve));
   };
 
   private requestMode = (mode: GameMode, callback?: () => void) => {
@@ -138,22 +138,22 @@ export class ModeHandler {
     const cb = this.requestCallback || noop;
     switch (req) {
       case 'step':
-        setImmediate(() => {
+        setTimeout(() => {
           this.step();
           cb();
-        });
+        }, 0);
         break;
       case 'play':
-        setImmediate(() => {
+        setTimeout(() => {
           this.play();
           cb();
-        });
+        }, 0);
         break;
       case 'fast':
-        setImmediate(() => {
+        setTimeout(() => {
           this.fastForward();
           cb();
-        });
+        }, 0);
         break;
       default:
         cb();

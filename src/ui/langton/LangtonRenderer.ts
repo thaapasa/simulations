@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js';
+import { Application, Sprite } from 'pixi.js';
 import { Size } from '../../game/common/Size';
 import ant from '../../icons/ant.svg';
 import { ModelRenderer } from '../common/ModelRenderer';
@@ -6,14 +6,14 @@ import { PixiRendererSupport } from '../common/PixiRendererSupport';
 import { TileRenderer } from '../common/TileRenderer';
 import { LangtonModel } from './LangtonModel';
 
-export class LangtonRenderer implements ModelRenderer<PIXI.Application> {
+export class LangtonRenderer implements ModelRenderer<Application> {
   private model: LangtonModel;
   private tileRenderer: TileRenderer;
   private support: PixiRendererSupport;
 
-  private ant = PIXI.Sprite.from(ant);
+  private ant = Sprite.from(ant);
 
-  constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement>) {
+  constructor(model: LangtonModel, attachRef: React.RefObject<HTMLDivElement | null>) {
     this.model = model;
     this.ant.anchor.set(0.5);
     this.tileRenderer = new TileRenderer(model);
@@ -27,6 +27,9 @@ export class LangtonRenderer implements ModelRenderer<PIXI.Application> {
   updateSize = (newSize: Size) => this.support.updateSize(newSize);
 
   render = () => {
+    if (!this.support.app) {
+      return;
+    }
     if (!this.tileRenderer.hasAllTiles()) {
       this.support.app.stage.removeChild(this.ant);
       this.tileRenderer.createMissingTiles(this.support.app);
@@ -42,7 +45,7 @@ export class LangtonRenderer implements ModelRenderer<PIXI.Application> {
     );
   };
 
-  createSprites = (app: PIXI.Application) => {
+  createSprites = (app: Application) => {
     this.tileRenderer.createSprites(app);
     app.stage.addChild(this.ant);
   };

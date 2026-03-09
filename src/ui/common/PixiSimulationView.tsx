@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import * as PIXI from 'pixi.js';
+import { Application } from 'pixi.js';
 import React from 'react';
 import { Size } from '../../game/common/Size';
 import { SizeAware } from '../SizeAware';
@@ -13,8 +13,8 @@ class PlainPixiSimulationView extends React.Component<{
   size: Size;
   model: Model;
   createRenderer: (
-    containerRef: React.RefObject<HTMLDivElement>
-  ) => ModelRenderer<PIXI.Application>;
+    containerRef: React.RefObject<HTMLDivElement | null>
+  ) => ModelRenderer<Application>;
   useDragPoint: boolean;
 }> {
   private containerRef = React.createRef<HTMLDivElement>();

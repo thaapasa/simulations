@@ -1,10 +1,5 @@
+import { useGesture } from '@use-gesture/react';
 import { action } from 'mobx';
-import React from 'react';
-import {
-  CoordinatesGestureState,
-  DistanceAngleGestureState,
-  useGesture,
-} from 'react-use-gesture';
 import styled from 'styled-components';
 import { bound, noop } from '../../util/Util';
 import { Model } from './Model';
@@ -21,34 +16,34 @@ export function ModelMover({
   const stopCalc = model.stopCalculation || noop;
   const bind = useGesture(
     {
-      onDragStart: action((_: CoordinatesGestureState) => {
+      onDragStart: action(() => {
         if (useDragPoint) {
           model.dragPoint.x = 0;
           model.dragPoint.y = 0;
           stopCalc();
         }
       }),
-      onDrag: action((s: CoordinatesGestureState) => {
+      onDrag: action(({ delta }) => {
         if (useDragPoint) {
           stopCalc();
           model.dragPoint = {
-            x: model.dragPoint.x - (s.xy[0] - s.previous[0]),
-            y: model.dragPoint.y + (s.xy[1] - s.previous[1]),
+            x: model.dragPoint.x - delta[0],
+            y: model.dragPoint.y + delta[1],
           };
           model.repaint();
         } else {
           model.centerPoint = {
-            x: model.centerPoint.x - (s.xy[0] - s.previous[0]),
-            y: model.centerPoint.y + (s.xy[1] - s.previous[1]),
+            x: model.centerPoint.x - delta[0],
+            y: model.centerPoint.y + delta[1],
           };
           model.render();
         }
       }),
-      onDragEnd: action((s: CoordinatesGestureState) => {
+      onDragEnd: action(({ delta }) => {
         if (useDragPoint) {
           model.dragPoint = {
-            x: model.dragPoint.x - (s.xy[0] - s.previous[0]),
-            y: model.dragPoint.y + (s.xy[1] - s.previous[1]),
+            x: model.dragPoint.x - delta[0],
+            y: model.dragPoint.y + delta[1],
           };
           model.centerPoint = {
             x: model.centerPoint.x + model.dragPoint.x,
@@ -59,26 +54,26 @@ export function ModelMover({
           model.render();
         }
       }),
-      onWheel: action((s: CoordinatesGestureState) => {
+      onWheel: action(({ delta }) => {
         stopCalc();
         model.scale.value = bound(
-          model.scale.value - s.xy[1] / 2000,
+          model.scale.value - delta[1] / 2000,
           model.scale.min,
           model.scale.max
         );
         model.render();
       }),
-      onPinch: action((s: DistanceAngleGestureState) => {
+      onPinch: action(({ offset }) => {
         stopCalc();
         model.scale.value = bound(
-          model.scale.value - (s.previous[0] - s.da[0]) / 70,
+          offset[0] / 100,
           model.scale.min,
           model.scale.max
         );
         model.render();
       }),
     },
-    { event: { passive: false } }
+    { eventOptions: { passive: false } }
   );
   return (
     <Container {...bind()} className="ModelMover">

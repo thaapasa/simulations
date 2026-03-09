@@ -1,9 +1,9 @@
-import { noop } from '@babel/types';
 import { computed, observable } from 'mobx';
 import { Position } from '../../game/common/Position';
 import { Size } from '../../game/common/Size';
 import { Fractal } from '../../game/fractal/Fractal';
 import { BoundValue } from '../../util/BoundValue';
+import { noop } from '../../util/Util';
 import { ByteColors } from '../Colors';
 import { Model } from '../common/Model';
 import { Palette, PrecalcColor, precalcColors } from '../Palette';

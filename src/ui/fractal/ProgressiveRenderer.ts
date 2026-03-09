@@ -106,7 +106,7 @@ export class ProgressiveRenderer<T> {
       }
     }
     this.calculation = calc();
-    setImmediate(this.nextCalc);
+    setTimeout(this.nextCalc, 0);
   };
 
   @action
@@ -120,7 +120,7 @@ export class ProgressiveRenderer<T> {
         this.completedSteps++;
       });
       this.source.repaint();
-      setImmediate(this.nextCalc);
+      setTimeout(this.nextCalc, 0);
     } else {
       this.source.repaint();
       this.calculation = undefined;
