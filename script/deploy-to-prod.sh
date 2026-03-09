@@ -9,8 +9,8 @@ export REV=`git rev-parse HEAD | cut -c 1-8`
 
 echo "Copying files to production (rev $REV)..."
 
-ssh deployer@$HOST "mkdir -p simulations/deploy" || exit -1
-scp deploy/simulations-$REV.tar.gz deployer@$HOST:~/simulations/deploy || exit -1
+ssh deployer@$HOST "mkdir -p simulations/deploy" || exit 1
+scp deploy/simulations-$REV.tar.gz deployer@$HOST:~/simulations/deploy || exit 1
 
 echo "Deploying on server..."
 
