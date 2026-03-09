@@ -48,13 +48,17 @@ export class ModeHandler {
     if (originalMode !== 'pause') {
       await this.pause();
     }
-    this.mode = 'skip';
+    runInAction(() => {
+      this.mode = 'skip';
+    });
     await nextTick();
 
     for (let i = 0; i < frames; ++i) {
       this.game.stepNoAnimation();
     }
-    this.frame += frames;
+    runInAction(() => {
+      this.frame += frames;
+    });
     this.game.render();
 
     if (originalMode !== 'pause') {
@@ -69,46 +73,58 @@ export class ModeHandler {
     if (this.mode !== 'pause') {
       return;
     }
-    this.mode = 'step';
-    this.requestMode('pause');
+    runInAction(() => {
+      this.mode = 'step';
+      this.requestMode('pause');
+    });
     await this.game.stepAnimated();
-    this.frame++;
-    this.fpsCounter.tick();
+    runInAction(() => {
+      this.frame++;
+      this.fpsCounter.tick();
+    });
     runInAction(this.setRequestedMode);
   };
 
   play = async () => {
     if (this.mode === 'fast') {
-      this.requestMode('play');
+      runInAction(() => this.requestMode('play'));
       return;
     }
     if (this.mode !== 'pause') {
       return;
     }
-    this.mode = 'play';
-    this.fpsCounter.reset();
-    while (this.mode === 'play' && !this.requestedMode) {
+    runInAction(() => {
+      this.mode = 'play';
+      this.fpsCounter.reset();
+    });
+    while ((this.mode as GameMode) === 'play' && !this.requestedMode) {
       await this.game.stepAnimated();
-      this.frame++;
-      this.fpsCounter.tick();
+      runInAction(() => {
+        this.frame++;
+        this.fpsCounter.tick();
+      });
     }
     runInAction(this.setRequestedMode);
   };
 
   fastForward = async () => {
     if (this.mode === 'play') {
-      this.requestMode('fast');
+      runInAction(() => this.requestMode('fast'));
       return;
     }
     if (this.mode !== 'pause') {
       return;
     }
-    this.mode = 'fast';
-    this.fpsCounter.reset();
-    while (this.mode === 'fast' && !this.requestedMode) {
+    runInAction(() => {
+      this.mode = 'fast';
+      this.fpsCounter.reset();
+    });
+    while ((this.mode as GameMode) === 'fast' && !this.requestedMode) {
       this.game.stepNoAnimation();
-      this.frame++;
-      this.fpsCounter.tick();
+      runInAction(() => {
+        this.frame++;
+        this.fpsCounter.tick();
+      });
       this.game.render();
       await nextTick();
     }
@@ -123,6 +139,7 @@ export class ModeHandler {
     return new Promise<void>(resolve => this.requestMode('pause', resolve));
   };
 
+  @action
   private requestMode = (mode: GameMode, callback?: () => void) => {
     this.requestedMode = mode;
     this.requestCallback = callback;
