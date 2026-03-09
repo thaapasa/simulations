@@ -8,6 +8,10 @@ export class GameOfLife {
     this.defaultValue = defaultValue;
   }
 
+  clear() {
+    this.grid = {};
+  }
+
   get(x: number, y: number): boolean {
     const key = `${x},${y}`;
     const val = this.grid[key];
@@ -15,6 +19,19 @@ export class GameOfLife {
       return this.defaultValue;
     }
     return val;
+  }
+
+  set(x: number, y: number, value: boolean) {
+    const key = `${x},${y}`;
+    if (value === this.defaultValue) {
+      delete this.grid[key];
+    } else {
+      this.grid[key] = value;
+    }
+  }
+
+  toggle(x: number, y: number) {
+    this.set(x, y, !this.get(x, y));
   }
 
   randomize(num: number) {
