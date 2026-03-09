@@ -9,19 +9,24 @@ export function ModelMover({
   model,
   children,
   useDragPoint,
+  dragEnabled = true,
 }: {
   model: Model;
   children?: any;
   useDragPoint: boolean;
+  dragEnabled?: boolean;
 }) {
   const stopCalc = model.stopCalculation || noop;
   const containerRef = useRef<HTMLDivElement>(null);
   // Track scale at pinch start so offset is applied relative to initial value
   const pinchStartScale = useRef(model.scale.value);
+  const dragEnabledRef = useRef(dragEnabled);
+  dragEnabledRef.current = dragEnabled;
 
   useGesture(
     {
       onDragStart: action(() => {
+        if (!dragEnabledRef.current) return;
         if (useDragPoint) {
           model.dragPoint.x = 0;
           model.dragPoint.y = 0;
@@ -29,6 +34,7 @@ export function ModelMover({
         }
       }),
       onDrag: action(({ delta }) => {
+        if (!dragEnabledRef.current) return;
         if (useDragPoint) {
           stopCalc();
           model.dragPoint = {
@@ -45,6 +51,7 @@ export function ModelMover({
         }
       }),
       onDragEnd: action(({ delta }) => {
+        if (!dragEnabledRef.current) return;
         if (useDragPoint) {
           model.dragPoint = {
             x: model.dragPoint.x - delta[0],

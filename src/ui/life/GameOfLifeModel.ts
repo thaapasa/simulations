@@ -29,7 +29,7 @@ export class GameOfLifeModel implements Model {
   renderSize: Size = { width: 1, height: 1 };
 
   @observable
-  selectedBrushIndex = 0;
+  selectedBrushIndex: number | null = null;
 
   @observable
   brushRotation = 0;
@@ -52,18 +52,26 @@ export class GameOfLifeModel implements Model {
   }
 
   @computed
-  get selectedBrush(): BrushPattern {
-    return PATTERNS[this.selectedBrushIndex];
+  get selectedBrush(): BrushPattern | null {
+    return this.selectedBrushIndex !== null
+      ? PATTERNS[this.selectedBrushIndex]
+      : null;
   }
 
   @computed
   get brushCells(): Position[] {
+    if (!this.selectedBrush) return [];
     return getBrushCells(this.selectedBrush, this.brushRotation);
   }
 
   @computed
   get canPaint(): boolean {
-    return this.control.mode === 'pause';
+    return this.selectedBrushIndex !== null;
+  }
+
+  @computed
+  get canDragPaint(): boolean {
+    return this.canPaint && (this.selectedBrush?.paintable ?? false);
   }
 
   grid = new GameOfLife(false);
@@ -106,8 +114,13 @@ export class GameOfLifeModel implements Model {
 
   @action
   selectBrush = (index: number) => {
-    this.selectedBrushIndex = index;
+    if (this.selectedBrushIndex === index) {
+      this.selectedBrushIndex = null;
+    } else {
+      this.selectedBrushIndex = index;
+    }
     this.brushRotation = 0;
+    this.render();
   };
 
   @action
@@ -154,14 +167,14 @@ export class GameOfLifeModel implements Model {
   }
 
   @action
-  placeBrush = (tileX: number, tileY: number) => {
+  placeBrush = (tileX: number, tileY: number, dragging = false) => {
     if (!this.canPaint) return;
     const cells = this.brushCells;
-    if (cells.length === 1 && cells[0].x === 0 && cells[0].y === 0) {
-      // Single cell: toggle
+    const isSingleCell =
+      cells.length === 1 && cells[0].x === 0 && cells[0].y === 0;
+    if (isSingleCell && !dragging) {
       this.grid.toggle(tileX, tileY);
     } else {
-      // Pattern: set all cells to alive
       for (const cell of cells) {
         this.grid.set(tileX + cell.x, tileY + cell.y, true);
       }

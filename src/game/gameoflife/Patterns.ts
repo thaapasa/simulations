@@ -3,12 +3,36 @@ import { Position } from '../common/Position';
 export interface BrushPattern {
   name: string;
   cells: Position[];
+  /** Can drag-paint continuously with this brush */
+  paintable?: boolean;
 }
 
 export const PATTERNS: BrushPattern[] = [
   {
     name: 'Solu',
     cells: [{ x: 0, y: 0 }],
+    paintable: true,
+  },
+  {
+    name: 'Neliö',
+    cells: [
+      { x: 0, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 },
+      { x: 1, y: 1 },
+    ],
+    paintable: true,
+  },
+  {
+    name: 'Risti',
+    cells: [
+      { x: 0, y: 0 },
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: -1 },
+      { x: 0, y: 1 },
+    ],
+    paintable: true,
   },
   {
     name: 'Liitäjä',

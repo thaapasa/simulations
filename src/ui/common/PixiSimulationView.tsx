@@ -14,6 +14,7 @@ const PlainPixiSimulationView = observer(
     model,
     createRenderer,
     useDragPoint,
+    dragEnabled,
   }: {
     size: Size;
     model: Model;
@@ -21,6 +22,7 @@ const PlainPixiSimulationView = observer(
       containerRef: React.RefObject<HTMLDivElement | null>
     ) => ModelRenderer<Application>;
     useDragPoint: boolean;
+    dragEnabled?: boolean;
   }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const rendererRef = useRef<ModelRenderer<Application> | null>(null);
@@ -42,7 +44,7 @@ const PlainPixiSimulationView = observer(
     }, [size.width, size.height]);
 
     return (
-      <ModelMover model={model} useDragPoint={useDragPoint}>
+      <ModelMover model={model} useDragPoint={useDragPoint} dragEnabled={dragEnabled}>
         <div ref={containerRef} />
       </ModelMover>
     );
