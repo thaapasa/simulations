@@ -22,7 +22,22 @@ export class FractalRenderer implements ModelRenderer<void> {
     this.model = model;
     this.canvasRef = canvasRef;
     this.navigate = navigate;
+    model.onParamsChange = this.updateUrl;
   }
+
+  updateUrl = () => {
+    this.navigate(
+      this.model.pathPrefix +
+        '?' +
+        toQueryString({
+          r: this.model.modelCenter.x,
+          i: this.model.modelCenter.y,
+          scale: this.model.scale.value,
+          resolution: this.model.resolution.value,
+        }),
+      { replace: true }
+    );
+  };
 
   destroy = () => {
     if (this.buffer) {
@@ -44,17 +59,6 @@ export class FractalRenderer implements ModelRenderer<void> {
     if (!this.canvasRef.current) {
       return;
     }
-    this.navigate(
-      this.model.pathPrefix +
-        '?' +
-        toQueryString({
-          r: this.model.modelCenter.x,
-          i: this.model.modelCenter.y,
-          scale: this.model.scale.value,
-          resolution: this.model.resolution.value,
-        }),
-      { replace: true }
-    );
     const { width, height } = this.model.renderSize;
     if (!this.context) {
       this.context = this.canvasRef.current.getContext('2d') || undefined;

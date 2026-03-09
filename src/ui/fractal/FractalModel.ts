@@ -86,6 +86,7 @@ export class FractalModel implements Model, PixelSource<number> {
   fractal: Fractal;
   zeroValue = 0;
   renderCallback: () => void = noop;
+  onParamsChange: () => void = noop;
 
   @computed
   get fps(): number {
@@ -172,6 +173,7 @@ export class FractalModel implements Model, PixelSource<number> {
   }
 
   render = () => {
+    this.onParamsChange();
     this.calculate();
   };
 

@@ -59,6 +59,7 @@ export class ProgressiveRenderer<T> {
     }
   };
 
+  @action
   calculate = () => {
     this.calculation = undefined;
     const source = this.source;
