@@ -1,5 +1,6 @@
 import { useGesture } from '@use-gesture/react';
 import { action } from 'mobx';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { bound, noop } from '../../util/Util';
 import { Model } from './Model';
@@ -14,7 +15,11 @@ export function ModelMover({
   useDragPoint: boolean;
 }) {
   const stopCalc = model.stopCalculation || noop;
-  const bind = useGesture(
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Track scale at pinch start so offset is applied relative to initial value
+  const pinchStartScale = useRef(model.scale.value);
+
+  useGesture(
     {
       onDragStart: action(() => {
         if (useDragPoint) {
@@ -54,29 +59,56 @@ export function ModelMover({
           model.render();
         }
       }),
-      onWheel: action(({ delta }) => {
+      onWheel: action(({ event, delta }) => {
+        event.preventDefault();
         stopCalc();
+        const range = model.scale.max - model.scale.min;
         model.scale.value = bound(
-          model.scale.value - delta[1] / 2000,
+          model.scale.value - (delta[1] / 500) * (range / 5),
           model.scale.min,
           model.scale.max
         );
         model.render();
       }),
-      onPinch: action(({ offset }) => {
+      onPinchStart: action(() => {
+        pinchStartScale.current = model.scale.value;
         stopCalc();
+      }),
+      onPinch: action(({ event, offset }) => {
+        event?.preventDefault();
+        stopCalc();
+        // offset[0] is the cumulative scale factor (starts at 1)
         model.scale.value = bound(
-          offset[0] / 100,
+          pinchStartScale.current * offset[0],
           model.scale.min,
           model.scale.max
         );
         model.render();
       }),
     },
-    { eventOptions: { passive: false } }
+    {
+      target: containerRef,
+      wheel: { eventOptions: { passive: false } },
+      pinch: { eventOptions: { passive: false } },
+      drag: { filterTaps: true },
+    }
   );
+
+  // Prevent Safari gesturestart/gesturechange default zoom
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const prevent = (e: Event) => e.preventDefault();
+    el.addEventListener('gesturestart', prevent, { passive: false });
+    el.addEventListener('gesturechange', prevent, { passive: false });
+    return () => {
+      el.removeEventListener('gesturestart', prevent);
+      el.removeEventListener('gesturechange', prevent);
+    };
+  }, []);
+
   return (
-    <Container {...bind()} className="ModelMover">
+    <Container ref={containerRef} className="ModelMover">
       {children}
     </Container>
   );
@@ -85,4 +117,5 @@ export function ModelMover({
 const Container = styled.div`
   width: 100%;
   height: 100%;
+  touch-action: none;
 `;
