@@ -22,7 +22,8 @@ export interface PixelSource<T> {
 }
 
 export class ProgressiveRenderer<T> {
-  pixels: T[][] = [];
+  pixels: T[] = [];
+  private pixelWidth = 0;
 
   @computed
   get fps(): number {
@@ -43,20 +44,18 @@ export class ProgressiveRenderer<T> {
     this.source = source;
   }
 
+  getPixel(x: number, y: number): T {
+    return this.pixels[y * this.pixelWidth + x];
+  }
+
   stopRender = () => {
-    // console.log('Stop render');
     this.calculation = undefined;
   };
 
   resetPixels = () => {
-    this.pixels = [];
-    const size = this.source.renderSize;
-    for (let x = 0; x < size.width; ++x) {
-      this.pixels.push([]);
-      for (let y = 0; y < size.height; ++y) {
-        this.pixels[x].push(this.source.zeroValue);
-      }
-    }
+    const { width, height } = this.source.renderSize;
+    this.pixelWidth = width;
+    this.pixels = new Array(width * height).fill(this.source.zeroValue);
   };
 
   @action
@@ -96,8 +95,10 @@ export class ProgressiveRenderer<T> {
             );
             for (let dx = from.x; dx < to.x; ++dx) {
               for (let dy = from.y; dy < to.y; ++dy) {
-                if (x + dx < width && y + dy < height) {
-                  pixels[x + dx][y + dy] = value;
+                const px = x + dx;
+                const py = y + dy;
+                if (px < width && py < height) {
+                  pixels[py * width + px] = value;
                 }
               }
             }

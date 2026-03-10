@@ -77,21 +77,25 @@ export class FractalRenderer implements ModelRenderer<void> {
     // Skip expensive pixel-to-buffer copy during drag;
     // just reposition the existing buffer
     if (!isDragging) {
-      const buffer = this.buffer;
+      const data = this.buffer.data;
       const pixels = this.model.renderer.pixels;
       const colors = this.model.colorProvider;
+      const w = width;
 
-      for (let x = 0; x < width; ++x) {
-        for (let y = 0; y < height; ++y) {
-          const pixelindex = (y * width + x) * 4;
-          const pos = pixels[x][y];
-          const color = colors.getColorAt(pos);
+      // Row-major order for cache-friendly sequential access
+      for (let y = 0; y < height; ++y) {
+        let pixelindex = y * w * 4;
+        let pi = y * w;
+        for (let x = 0; x < w; ++x) {
+          const color = colors.getColorAt(pixels[pi]);
           if (color) {
-            buffer.data[pixelindex] = color.r;
-            buffer.data[pixelindex + 1] = color.g;
-            buffer.data[pixelindex + 2] = color.b;
-            buffer.data[pixelindex + 3] = 255;
+            data[pixelindex] = color.r;
+            data[pixelindex + 1] = color.g;
+            data[pixelindex + 2] = color.b;
+            data[pixelindex + 3] = 255;
           }
+          pixelindex += 4;
+          pi++;
         }
       }
     }
