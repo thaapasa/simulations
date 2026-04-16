@@ -32,6 +32,6 @@
     "preview": "vite preview",
     "deploy": "sh script/deploy.sh",
     "clean": "rm -rf dist",
-    "build:dist": "vite build && rm -rf public_html && cp -r dist public_html"
+    "build:dist": "vite build && rm -rf site && cp -r dist site"
   }
 }

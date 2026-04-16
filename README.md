@@ -17,10 +17,13 @@ All simulations support pan (drag) and zoom (scroll/pinch), including touch on m
 ## Development
 
 ```sh
-yarn dev       # Start dev server
-yarn build     # Production build
-yarn test      # Run tests (Vitest)
+yarn dev        # Start dev server
+yarn build      # Production build (outputs to dist/)
+yarn test       # Run tests (Vitest)
+yarn build:dist # Rebuild the committed site/ bundle
 ```
+
+The [`site/`](site) directory holds a prebuilt, committed copy of the production SPA so the project can be served directly from the repository without a build step. Run `yarn build:dist` to refresh it after changes.
 
 ## Tech Stack
 
