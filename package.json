@@ -7,23 +7,23 @@
     "@use-gesture/react": "^10.3.1",
     "mobx": "^6.15.0",
     "mobx-react": "^9.2.1",
-    "pixi.js": "^8.17.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-router": "^7.13.1",
-    "react-router-dom": "^7.13.1",
-    "styled-components": "^6.3.11"
+    "pixi.js": "^8.18.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router": "^7.14.1",
+    "react-router-dom": "^7.14.1",
+    "styled-components": "^6.4.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.29.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.4",
-    "prettier": "^3.8.1",
-    "typescript": "~5.9.0",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18"
+    "@vitejs/plugin-react": "^6.0.1",
+    "prettier": "^3.8.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
   },
   "scripts": {
     "dev": "vite",
