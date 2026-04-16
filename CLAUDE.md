@@ -1,13 +1,15 @@
-# Copilot Instructions
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
 
 - **Dev server**: `yarn dev`
-- **Build**: `yarn build` (uses Vite)
+- **Build**: `yarn build` (Vite)
 - **Test all**: `yarn test` (Vitest)
 - **Test single file**: `yarn vitest run src/util/Colors.test.ts`
 - **Type check**: `npx tsc --noEmit`
-- **Deploy**: `yarn deploy` (runs `script/deploy.sh`)
+- **Deploy**: `yarn deploy` (builds, tars, SCPs to simulaatiot.pomeranssi.fi)
 
 ## Architecture
 
@@ -15,7 +17,7 @@ Interactive math/physics simulations (Langton's Ant, Game of Life, Mandelbrot/Ju
 
 ### Simulation structure
 
-Each simulation follows a **Model → Renderer → View** pattern across three layers:
+Each simulation follows a **Model -> Renderer -> View** pattern across three layers:
 
 - **`src/game/{sim}/`** — Pure simulation logic (no UI, no React). Grid state, stepping, fractal math.
 - **`src/ui/{sim}/`** — Model class (MobX state), Renderer class (drawing), and React UI component.
@@ -25,21 +27,21 @@ Each simulation follows a **Model → Renderer → View** pattern across three l
 
 ```
 UI Component creates Model + Renderer
-  → PixiSimulationView/CanvasSimulationView manages lifecycle
-  → model.renderCallback = renderer.render
-  → ModelMover handles drag/zoom/pinch gestures
-  → User interaction updates model (centerPoint, scale, dragPoint)
-  → model.render() triggers renderer.render() via callback
+  -> PixiSimulationView/CanvasSimulationView manages lifecycle
+  -> model.renderCallback = renderer.render
+  -> ModelMover handles drag/zoom/pinch gestures
+  -> User interaction updates model (centerPoint, scale, dragPoint)
+  -> model.render() triggers renderer.render() via callback
 ```
 
 ### Two rendering backends
 
-- **PixiJS** (tile-based sims: Langton's Ant, Game of Life) — `PixiSimulationView` + `PixiRendererSupport` manages async PIXI app init, sprite loading via `Assets.load()`
+- **PixiJS** (tile-based: Langton's Ant, Game of Life) — `PixiSimulationView` + `PixiRendererSupport` manages async PIXI app init, sprite loading via `Assets.load()`
 - **Canvas 2D** (fractals) — `CanvasSimulationView` + direct pixel manipulation via `ImageData`
 
 ### Key interfaces
 
-- **`Model`** (`src/ui/common/Model.ts`) — All simulations implement this: `renderSize`, `centerPoint`, `dragPoint`, `scale`, `speed`, `render()`, `repaint()`
+- **`Model`** (`src/ui/common/Model.ts`) — All simulations implement: `renderSize`, `centerPoint`, `dragPoint`, `scale`, `speed`, `render()`, `repaint()`
 - **`ModelRenderer<T>`** (`src/ui/common/ModelRenderer.ts`) — Renderers implement: `render()`, `updateSize()`, `createSprites()`, optional `destroy()`
 - **`ModeHandler`** — Playback state machine (pause/step/play/fast/skip) shared by grid-based sims
 - **`BoundValue`** — Observable min/max/step value with optional converter, used for all sliders
